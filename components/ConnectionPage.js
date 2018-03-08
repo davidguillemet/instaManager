@@ -23,6 +23,6 @@ export default class ConnectionPage extends React.Component {
   }
 
   _onNavigationStateChange(webViewState){
-    Alert.alert(webViewState.url);
+    if (webViewState.url);
   }
 }
