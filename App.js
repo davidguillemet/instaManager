@@ -20,6 +20,7 @@ import {
 
 import ConnectionPage from './components/ConnectionPage.js';
 import UnconnectedHomePage from './components/UnconnectedHomePage.js';
+import HomePage from './components/HomePage.js';
 
 const instructions = Platform.select({
   ios: 'Press Cmd+R to reload,\n' +
@@ -32,24 +33,13 @@ export default class App extends React.Component {
   render() {
     return <RootStack/>;
   }
-
-  componentDidMount() {
-    Linking.addEventListener('url', this._handleOpenURL);
-  }
-  
-  componentWillUnmount() {
-    Linking.removeEventListener('url', this._handleOpenURL);
-  }
-  
-  _handleOpenURL(event) {
-
-  }
 }
 
 const RootStack = StackNavigator(
   {
     UnconnectedHome: { screen: UnconnectedHomePage },
     Connection: { screen: ConnectionPage },
+    Home: { screen: HomePage }
   },
   {
     initialRouteName: 'UnconnectedHome',
