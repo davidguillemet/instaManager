@@ -10,6 +10,7 @@
     "node": "^9.7.0",
     "react": "^16.0.0",
     "react-native": "^0.48.3",
+    "react-native-cookies": "^3.2.0",
     "react-navigation": "^1.4.0"
   },
   "devDependencies": {

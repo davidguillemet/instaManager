@@ -2,21 +2,41 @@ import React, { Component } from 'react';
 import {
   StyleSheet,
   WebView,
-  Alert
+  ActivityIndicator
 } from 'react-native';
+
+import CommonStyles from '../styles/common';
+
+import CookieManager from 'react-native-cookies';
 
 import InstaFacade from '../managers/InstaFacade.js';
 
-export default class ConnectionPage extends React.Component {
+export default class ConnectionScreen extends React.Component {
   
   static navigationOptions = {
     title: 'Connection'
   };  
   
+  componentDidMount() {
+    CookieManager.clearAll();
+  }
+  
+  ActivityIndicatorLoadingView() {
+    return (
+      <ActivityIndicator
+        color='#009688'
+        size='large'
+        style={styles.ActivityIndicatorStyle}
+      />
+    );
+  }
+
   render() {
     return (
       <WebView
         source={{uri: InstaFacade.getAuthorizationUrl()}}
+        startInLoadingState={true}
+        renderLoading={this.ActivityIndicatorLoadingView}
         onShouldStartLoadWithRequest={this._onShouldStartLoadWithRequest.bind(this)}
       />
     );
@@ -38,8 +58,8 @@ export default class ConnectionPage extends React.Component {
         var authToken = this._requireAccessToken(code);
 
       } else {
-        // Error...
-        Alert.alert("An error Occurred");
+        // cancel authorization = go back to unconnected home
+        this.props.navigation.goBack();
       } 
       
       return false;
@@ -71,7 +91,21 @@ export default class ConnectionPage extends React.Component {
     })
     .then((jsonToken) => {
       InstaFacade.openSession(jsonToken);
-      this.props.navigation.navigate('Home');
+      this.props.navigation.navigate('AppStack');
     });
   }
 }
+
+const styles = StyleSheet.create(
+{
+  ActivityIndicatorStyle:{
+      position: 'absolute',
+      left: 0,
+      right: 0,
+      top: 0,
+      bottom: 0,
+      alignItems: 'center',
+      justifyContent: 'center'
+    
+  }
+});

@@ -5,8 +5,9 @@ import {
   Button,
   View
 } from 'react-native';
+import styles from './styles';
 
-export default class UnconnectedHomePage extends React.Component {
+export default class UnconnectedHomeScreen extends React.Component {
 
     static navigationOptions = {
       title: 'Welcome'
@@ -25,25 +26,4 @@ export default class UnconnectedHomePage extends React.Component {
       );
     }
   }
-
-  const styles = StyleSheet.create({
-    mainBackground: {
-      flex: 1,
-      justifyContent: 'center',
-      alignItems: 'center',
-      backgroundColor: '#406eb7',
-    },
-    welcome: {
-      fontSize: 24,
-      fontFamily: 'Arial',
-      textAlign: 'center',
-      color: 'white',
-      margin: 10,
-    },
-    buttonConnect: {
-      textAlign: 'center',
-      color: '#333333',
-      marginBottom: 5,
-    },
-  });
   

@@ -7,7 +7,7 @@ import {
 
 import InstaFacade from '../managers/InstaFacade.js';
 
-export default class HomePage extends React.Component {
+export default class HomeScreen extends React.Component {
 
     render() {
         return (
