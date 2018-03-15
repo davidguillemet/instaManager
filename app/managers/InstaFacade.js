@@ -1,8 +1,4 @@
-import {
-    Alert
-  } from 'react-native';
-
-class InstaFacadeClass {
+export default class InstaFacadeClass {
     
     constructor() {
         this.config = {
@@ -24,7 +20,7 @@ class InstaFacadeClass {
         //       "is_business": true|false
         //   }
         // }
-        this.authToken = null;
+        this.currentSession = null;
     }
     
     getAuthorizationUrl() {
@@ -34,21 +30,19 @@ class InstaFacadeClass {
     }
 
     openSession(authToken) {
-        this.authToken = authToken;
+        this.currentSession = authToken;
     }
 
     isSessionOpen() {
-        return this.authToken != null;
+        return this.currentSession != null;
     }
 
     getUserName() {
         if (!this.isSessionOpen()) {
             return '';
         }
-        return this.authToken.user.full_name;
+        return this.currentSession.user.full_name;
     }
 }
-
-export default InstaFacade = new InstaFacadeClass();
 
 

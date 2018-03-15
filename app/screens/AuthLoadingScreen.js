@@ -4,26 +4,32 @@ import {
   AsyncStorage,
   StatusBar,
   StyleSheet,
-  View,
-  Alert
+  View
 } from 'react-native';
 
 export default class AuthLoadingScreen extends React.Component {
     constructor() {
       super();
-      this._bootstrapAsync();
+      this.tryToOpenLastSession();
     }
   
     // Fetch the token from storage then navigate to our appropriate place
-    _bootstrapAsync = async () => {
-      const userToken = await AsyncStorage.getItem('userToken');
-  
-      // This will switch to the App screen or Auth screen and this loading
-      // screen will be unmounted and thrown away.
-      var initialStack = userToken ? 'AppStack' : 'AuthStack';
+    tryToOpenLastSession = async () => {
+
+      var lastUserInfo = await global.connectionManager.getLastUserInfo();
+
+      var initialStack = 'AuthStack';
+
+      if (lastUserInfo != null) {
+
+        global.instaFacade.openSession(lastUserInfo);
+        // Session is opened, we can go directly to the application stack
+        initialStack = 'AppStack'
+      }
+
       this.props.navigation.navigate(initialStack);
     };
-  
+
     // Render any loading content that you like here
     render() {
       return (

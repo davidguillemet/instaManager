@@ -9,8 +9,6 @@ import CommonStyles from '../styles/common';
 
 import CookieManager from 'react-native-cookies';
 
-import InstaFacade from '../managers/InstaFacade.js';
-
 export default class ConnectionScreen extends React.Component {
   
   static navigationOptions = {
@@ -34,7 +32,7 @@ export default class ConnectionScreen extends React.Component {
   render() {
     return (
       <WebView
-        source={{uri: InstaFacade.getAuthorizationUrl()}}
+        source={{uri: global.instaFacade.getAuthorizationUrl()}}
         startInLoadingState={true}
         renderLoading={this.ActivityIndicatorLoadingView}
         onShouldStartLoadWithRequest={this._onShouldStartLoadWithRequest.bind(this)}
@@ -43,19 +41,19 @@ export default class ConnectionScreen extends React.Component {
   }
 
   _onShouldStartLoadWithRequest(webViewState) {
-    if (webViewState.url.startsWith(InstaFacade.config.redirectUri)) {
+    if (webViewState.url.startsWith(global.instaFacade.config.redirectUri)) {
       // redirect Uri lookslike http://<redirect path>?<parameters>
       // Parameters might be
       // - code=<code>
       // - error=<error>&error_reason=<reason>&error_description=<decription>
       // -> extract code and return false
-      var parametersStart = InstaFacade.config.redirectUri.length + 1; // + 1 for '?'
+      var parametersStart = global.instaFacade.config.redirectUri.length + 1; // + 1 for '?'
       var parameters = webViewState.url.substr(parametersStart);
       
       if (parameters.startsWith('code=')) {
         
         var code = parameters.substr('code='.length);
-        var authToken = this._requireAccessToken(code);
+        this._requireAccessToken(code);
 
       } else {
         // cancel authorization = go back to unconnected home
@@ -69,14 +67,14 @@ export default class ConnectionScreen extends React.Component {
   }
 
   _requireAccessToken(code) {
-    var authBody = "client_id=" + InstaFacade.config.clientId +
-          "&client_secret=" + InstaFacade.config.clientSecret +
+    var authBody = "client_id=" + global.instaFacade.config.clientId +
+          "&client_secret=" + global.instaFacade.config.clientSecret +
           "&grant_type=authorization_code" +
-          "&redirect_uri=" + InstaFacade.config.redirectUri +
+          "&redirect_uri=" + global.instaFacade.config.redirectUri +
           "&code=" + code;
 
     return fetch(
-      InstaFacade.config.accessTokenUri,
+      global.instaFacade.config.accessTokenUri,
       {
         method: 'POST',
         headers: {
@@ -90,7 +88,8 @@ export default class ConnectionScreen extends React.Component {
       return response.json();
     })
     .then((jsonToken) => {
-      InstaFacade.openSession(jsonToken);
+      global.connectionManager.updateAuthorizedUsersInfo(jsonToken);
+      global.instaFacade.openSession(jsonToken);
       this.props.navigation.navigate('AppStack');
     });
   }
