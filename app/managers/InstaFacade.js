@@ -1,26 +1,16 @@
+import { AsyncStorage } from 'react-native';
+
 export default class InstaFacadeClass {
     
     constructor() {
+        this.lastUserInfo = 'lastUserInfo';
         this.config = {
             clientId: '9617d6b1d9ec403db0d97aa848fa81d5',
-            clientSecret:'2802dfc11bbb4065982ab888913ddaec',
             redirectUri: 'http://localhost/callback',
-            authorizationUrlPattern: 'https://api.instagram.com/oauth/authorize/?client_id={CLIENT-ID}&redirect_uri={REDIRECT-URI}&response_type=code&scope=public_content+follower_list',
-            accessTokenUri: 'https://api.instagram.com/oauth/access_token'
+            authorizationUrlPattern: 'https://api.instagram.com/oauth/authorize/?client_id={CLIENT-ID}&redirect_uri={REDIRECT-URI}&response_type=token&scope=public_content+follower_list',
+            rootApiUrl: 'https://api.instagram.com/v1/'
         }
-        // {
-        //   "access_token": "fb2e77d.47a0479900504cb3ab4a1f626d174d2d",
-        //   "user": {
-        //       "id": "1574083",
-        //       "username": "snoopdogg",
-        //       "full_name": "Snoop Dogg",
-        //       "profile_picture": "...
-        //       "bio": "....",
-        //       "website": "....",
-        //       "is_business": true|false
-        //   }
-        // }
-        this.currentSession = null;
+        this.currentAccessToken = null;
     }
     
     getAuthorizationUrl() {
@@ -29,20 +19,34 @@ export default class InstaFacadeClass {
             .replace('{REDIRECT-URI}', this.config.redirectUri);
     }
 
-    openSession(authToken) {
-        this.currentSession = authToken;
+    openSession(accessToken) {
+        this.currentAccessToken = accessToken;
     }
 
     isSessionOpen() {
-        return this.currentSession != null;
+        return this.currentAccessToken != null;
     }
 
-    getUserName() {
-        if (!this.isSessionOpen()) {
-            return '';
-        }
-        return this.currentSession.user.full_name;
+    getCurrentSession() {
+        return this.currentAccessToken;
     }
+    
+    getLastUserInfo = async () => {
+        var lastUserInfo = await AsyncStorage.getItem(this.lastUserInfo);
+        try {
+            return JSON.parse(lastUserInfo);
+        } catch (e) {
+            return null;
+        }
+    };
+    
+    setLastUserInfo = async (userId, accessToken) => {
+        var userInfo = {
+            userId: userId,
+            accessToken: accessToken
+        };
+        await AsyncStorage.setItem(this.lastUserInfo, JSON.stringify(userInfo));
+    };
 }
 
 

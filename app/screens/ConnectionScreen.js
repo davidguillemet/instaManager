@@ -5,16 +5,20 @@ import {
   ActivityIndicator
 } from 'react-native';
 
-import CommonStyles from '../styles/common';
-
 import CookieManager from 'react-native-cookies';
+import CommonStyles from '../styles/common';
+import UserService from '../services/users/UserService';
 
 export default class ConnectionScreen extends React.Component {
-  
+
   static navigationOptions = {
     title: 'Connection'
-  };  
-  
+  };
+
+  constructor(props) {
+    super(props);
+  }
+    
   componentDidMount() {
     CookieManager.clearAll();
   }
@@ -47,14 +51,21 @@ export default class ConnectionScreen extends React.Component {
       // - code=<code>
       // - error=<error>&error_reason=<reason>&error_description=<decription>
       // -> extract code and return false
-      var parametersStart = global.instaFacade.config.redirectUri.length + 1; // + 1 for '?'
+      var parametersStart = global.instaFacade.config.redirectUri.length + 1; // + 1 for '?' (explicit) or '#' (implicit)
       var parameters = webViewState.url.substr(parametersStart);
       
       if (parameters.startsWith('code=')) {
         
+        // Server-sode authentication (Explicit) -> not for mobile app
         var code = parameters.substr('code='.length);
         this._requireAccessToken(code);
 
+      } else if (parameters.startsWith('access_token=')) {
+
+        // Client-side authentication (Implicit) -> for mobile app
+        var accessToken = parameters.substr('access_token='.length);
+        this._getUserInformations(accessToken);
+        
       } else {
         // cancel authorization = go back to unconnected home
         this.props.navigation.goBack();
@@ -66,32 +77,22 @@ export default class ConnectionScreen extends React.Component {
     return true;
   }
 
-  _requireAccessToken(code) {
-    var authBody = "client_id=" + global.instaFacade.config.clientId +
-          "&client_secret=" + global.instaFacade.config.clientSecret +
-          "&grant_type=authorization_code" +
-          "&redirect_uri=" + global.instaFacade.config.redirectUri +
-          "&code=" + code;
+  _getUserInformations(accessToken) {
 
-    return fetch(
-      global.instaFacade.config.accessTokenUri,
-      {
-        method: 'POST',
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/x-www-form-urlencoded'
-        },
-        body: authBody
-      }
-    )
-    .then((response) => {
-      return response.json();
-    })
-    .then((jsonToken) => {
-      global.connectionManager.updateAuthorizedUsersInfo(jsonToken);
-      global.instaFacade.openSession(jsonToken);
-      this.props.navigation.navigate('AppStack');
+    var userServiceDelegate = new UserService('self');//, (response) => this._onGetUserInfo(response, accessToken));
+    global.serviceManager.invoke(userServiceDelegate, accessToken)
+    .then((userInfo) => {
+      // FIXME: why forcing the context as this for _onGetUserInfo?
+      //        while this._onGetUserInfo is properly called????
+      this._onGetUserInfo.call(this, userInfo, accessToken);
     });
+  }
+
+  _onGetUserInfo(userInfo, accessToken) {
+    global.instaFacade.openSession(accessToken);
+    global.instaFacade.setLastUserInfo(userInfo.id, accessToken);
+    global.userManager.setCurrentUser(userInfo, accessToken);
+    this.props.navigation.navigate('AppStack');
   }
 }
 
@@ -105,6 +106,5 @@ const styles = StyleSheet.create(
       bottom: 0,
       alignItems: 'center',
       justifyContent: 'center'
-    
   }
 });

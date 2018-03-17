@@ -4,31 +4,48 @@ import {
   AsyncStorage,
   StatusBar,
   StyleSheet,
-  View
+  View,
+  Alert
 } from 'react-native';
+
+import UserService from '../services/users/UserService';
 
 export default class AuthLoadingScreen extends React.Component {
     constructor() {
       super();
-      this.tryToOpenLastSession();
+      this._tryToOpenLastSession();
     }
   
     // Fetch the token from storage then navigate to our appropriate place
-    tryToOpenLastSession = async () => {
+    _tryToOpenLastSession = async () => {
 
-      var lastUserInfo = await global.connectionManager.getLastUserInfo();
+      var lastUserInfo = await global.instaFacade.getLastUserInfo();
 
       var initialStack = 'AuthStack';
 
-      if (lastUserInfo != null) {
+      if (lastUserInfo) {
+      
+        var userServiceDelegate = new UserService('self');
+        global.serviceManager.invoke(userServiceDelegate, lastUserInfo.accessToken)
+        .then((userInfo) => {
+          // FIXME: why forcing the context as this for _onGetUserInfo?
+          //        while this._onGetUserInfo is properly called????
+          this._onGetUserInfo.call(this, userInfo, lastUserInfo.accessToken);
+        });
 
-        global.instaFacade.openSession(lastUserInfo);
-        // Session is opened, we can go directly to the application stack
-        initialStack = 'AppStack'
+      } else {
+
+        this.props.navigation.navigate('AuthStack');
       }
-
-      this.props.navigation.navigate(initialStack);
     };
+
+    _onGetUserInfo(userInfo, accessToken) {
+
+      global.instaFacade.openSession(accessToken);
+      global.userManager.setCurrentUser(userInfo, accessToken);      
+      this.props.navigation.navigate('AppStack');
+    }
+
 
     // Render any loading content that you like here
     render() {
