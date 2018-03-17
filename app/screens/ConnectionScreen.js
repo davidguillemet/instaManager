@@ -54,13 +54,7 @@ export default class ConnectionScreen extends React.Component {
       var parametersStart = global.instaFacade.config.redirectUri.length + 1; // + 1 for '?' (explicit) or '#' (implicit)
       var parameters = webViewState.url.substr(parametersStart);
       
-      if (parameters.startsWith('code=')) {
-        
-        // Server-sode authentication (Explicit) -> not for mobile app
-        var code = parameters.substr('code='.length);
-        this._requireAccessToken(code);
-
-      } else if (parameters.startsWith('access_token=')) {
+      if (parameters.startsWith('access_token=')) {
 
         // Client-side authentication (Implicit) -> for mobile app
         var accessToken = parameters.substr('access_token='.length);
