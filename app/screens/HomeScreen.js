@@ -7,6 +7,7 @@ import {
 } from 'react-native';
 
 import DeltaIndicator from '../components/DeltaIndicator';
+import RelatedUsersDetails from '../components/RelatedUsersDetails';
 import CommonStyles from '../styles/common';
 
 export default class HomeScreen extends React.Component {
@@ -40,6 +41,7 @@ export default class HomeScreen extends React.Component {
                     </View>
                 </View>
 
+                <RelatedUsersDetails />
 
             </View>
         );

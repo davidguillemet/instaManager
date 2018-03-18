@@ -1,3 +1,5 @@
+import { Alert } from 'react-native';
+
 export default class ServiceManagerClass  {
 
     constructor(instaFacade) {
@@ -6,7 +8,7 @@ export default class ServiceManagerClass  {
 
     invoke(serviceDelegate, accessToken) {
         
-        var accessTokenParam = '/?access_token=' + (accessToken ? accessToken : this.instaFacade.getCurrentSession().access_token);
+        var accessTokenParam = '?access_token=' + (accessToken ? accessToken : this.instaFacade.getCurrentSession());
         var serviceUrl = this.instaFacade.config.rootApiUrl + serviceDelegate.getUrl() + accessTokenParam;
         
         return fetch(
@@ -23,7 +25,9 @@ export default class ServiceManagerClass  {
             return response.json();
         })
         .then((jsonResponse) => {
-             return jsonResponse.data;
+            return jsonResponse.data;
+        }).catch(e => {
+            Alert.alert("fetch error", e.message);
         });
     }
 }

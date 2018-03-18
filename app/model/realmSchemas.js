@@ -23,27 +23,69 @@ export const UserSchema = {
 };
 
 /**
- * Lost Followers by user and by date
+ * Related users (followers or followeds, current or lost)
  */
-export const LostFollowersSchema = {
-    name: 'LostFollowers',
+export const RelatedUsersInfoSchema = {
+    name: 'RelatedUsersInfo',
+    primaryKey: 'id',
+    properties: {
+        id: 'string',
+        username: 'string',
+        full_name: 'string',
+        profile_picture: 'string'
+    }
+};
+
+/**
+ * The list of followers by user, updated at each update and used to extract lost related
+ */
+export const FollowersSchema = {
+    name: 'Followers',
     primaryKey: 'userId',
     properties: {
         userId: 'string',
-        lost: 'string[]',
-        date: 'date'
+        users: 'string[]'
+    }
+}
+/**
+ * The list of followings by user, updated at each update and used to extract lost related
+ */
+export const FollowingsSchema = {
+    name: 'Followings',
+    primaryKey: 'userId',
+    properties: {
+        userId: 'string',
+        users: 'string[]'
     }
 }
 
 /**
- * New followers by user and by date
+ * Followers history by user and by date
+ * date property is not a real Date object.
+ * In order to use it as a primary key, it a string formatted as a date without time information
  */
-export const NewFollowersSchema = {
-    name: 'NewFollowers',
-    primaryKey: 'userId',
+export const FollowersHistorySchema = {
+    name: 'FollowersHistory',
+    primaryKey: 'date',
     properties: {
         userId: 'string',
-        new: 'string[]',
-        date: 'date'
-    }    
-}
+        lostUsers: 'string[]',
+        newUsers: 'string[]',
+        date: 'string'
+    }
+};
+
+/**
+ * Followings history by user and by date
+ */
+export const FollowingsHistorySchema = {
+    name: 'FollowingsHistory',
+    primaryKey: 'date',
+    properties: {
+        userId: 'string',
+        lostUsers: 'string[]',
+        newUsers: 'string[]',
+        date: 'string'
+    }
+};
+
