@@ -1,13 +1,30 @@
-// import { ActivityIndicator} from 'react-native';
+import React from 'react';
+import { ActivityIndicator, StyleSheet } from 'react-native';
 
-// ActivityIndicatorLoadingView() {
+export default class ActivityIndicatorLoadingView extends React.Component {
     
-//     return (
+    constructor(props) {
+        super(props);
+    }
 
-//       <ActivityIndicator
-//         color='#009688'
-//         size='large'
-//         style={styles.ActivityIndicatorStyle}
-//       />
-//     );
-//   }
+    render() {
+        return <ActivityIndicator
+                color='#009688'
+                size='large'
+                style={styles.ActivityIndicatorStyle}
+        />;
+    }
+}
+
+const styles = StyleSheet.create(
+{
+    ActivityIndicatorStyle: {
+        position: 'absolute',
+        left: 0,
+        right: 0,
+        top: 0,
+        bottom: 0,
+        alignItems: 'center',
+        justifyContent: 'center'
+    }
+});

@@ -4,7 +4,7 @@
  * @flow
  */
 import React, { Component } from 'react';
-import { Platform } from 'react-native';
+import { Alert } from 'react-native';
 import { StackNavigator, SwitchNavigator } from 'react-navigation';
 
 import stylesDef from './styles/common';
@@ -14,22 +14,49 @@ import UnconnectedHomeScreen from './screens/UnconnectedHomeScreen';
 import AuthLoadingScreen from './screens/AuthLoadingScreen';
 import HomeScreen from './screens/HomeScreen';
 
-const instructions = Platform.select({
-  ios: 'Press Cmd+R to reload,\n' +
-    'Cmd+D or shake for dev menu',
-  android: 'Double tap R on your keyboard to reload,\n' +
-    'Shake or press menu button for dev menu',
-});
+import LoadingIndicatorView from './components/LoadingIndicator';
+
+import { UserSchema } from './model/realmSchemas';
+
+const Realm = require('realm');
 
 export default class App extends React.Component {
+
+  constructor(props) {
+    super(props);
+    this.state = { isLoading: true};
+  }
+
+  componentWillMount() {
+    // When loading the application, only loads user basic information
+    Realm.open({
+      schema: [ UserSchema ],
+      path: 'basicUserInfo.realm'
+    }).then(realm => {
+      global.userManager.setRealm(realm);
+      this.setState({
+        isLoading: false
+      });
+    }).catch(error => {
+      this.setState({
+        isLodaing: false
+      });
+      Alert.alert("Error", error.message);
+    });
+  }
+
   render() {
-    return <RootStack/>;
+    if (this.state.isLoading) {
+      return <LoadingIndicatorView/>;
+    } else {
+      return <RootStack/>;
+    }
   }
 }
 
 const navigationOptions = {
   headerStyle: {
-    backgroundColor: stylesDef.GLOBAL_BACKGROUND,
+    backgroundColor: stylesDef.GLOBAL_FOREGROUND,
   },
   headerTintColor: '#fff',
   headerTitleStyle: {

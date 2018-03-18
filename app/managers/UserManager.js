@@ -1,33 +1,60 @@
+const userType = 'User';
+
 export default class UserManagerClass {
 
     constructor() {
-        this._loadUsers();
         this.currentUserId = null;
+        this.realm = null;
     }
 
-    setCurrentUser(userInfo, accessToken) {
+    setRealm(realm) {
+        this.realm = realm;
+    }
+
+    setCurrentUser(newUserInfo, accessToken) {
         
-        this.users.set(userInfo.id, userInfo);
-        this.accessTokens.set(userInfo.id, accessToken);
-        this.currentUserId = userInfo.id;
+        // Check if the user already exists:
+        this.realm.write(() => {
+            
+            // newUserInfo is fresh from instgram API
+            // -> create/update realm object from this user info ref
+            // -> field name are the same, except counts which arenot embedded in count object for realm
+            let newUser = {
+                id: newUserInfo.id,
+                accessToken: accessToken,
+                username: newUserInfo.username,
+                full_name: newUserInfo.full_name,
+                profile_picture: newUserInfo.profile_picture,
+                bio: newUserInfo.bio,
+                website: newUserInfo.website,
+                is_business: newUserInfo.is_business,
+                media: newUserInfo.counts.media,
+                follows: newUserInfo.counts.follows,
+                followed_by: newUserInfo.counts.followed_by
+            };
+
+            // Get the user from realm if it already exists
+            let prevUser = this.realm.objectForPrimaryKey(userType, newUserInfo.id);
+            if (prevUser) {
+                // The user already exists
+                // -> update previous counts
+                newUser.prev_media = prevUser.media;
+                newUser.prev_follows = prevUser.follows;
+                newUser.prev_followed_by = prevUser.followed_by;
+            }
+
+            this.realm.create(userType, newUser, true /* update if needed */);
+        });
+
+        this.currentUserId = newUserInfo.id;
     }
 
     getCurrentUser() {
-        return this.users.get(this.currentUserId);
+        return this.getUserInfo(this.currentUserId);
     }
 
     getUserInfo(userId) {
 
-        return this.users.get(userId);
-    }
-
-    getAccessToken(userId) {
-
-        return this.accessTokens.get(userId);
-    }
-
-    _loadUsers() {
-        this.users = new Map();
-        this.accessTokens = new Map();
+        return this.realm.objectForPrimaryKey(userType, userId);
     }
 }

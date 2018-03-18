@@ -7,16 +7,27 @@ export default class InstaFacadeClass {
         this.config = {
             clientId: '9617d6b1d9ec403db0d97aa848fa81d5',
             redirectUri: 'http://localhost/callback',
-            authorizationUrlPattern: 'https://api.instagram.com/oauth/authorize/?client_id={CLIENT-ID}&redirect_uri={REDIRECT-URI}&response_type=token&scope=public_content+follower_list',
-            rootApiUrl: 'https://api.instagram.com/v1/'
+            authorizationUrlPattern: 'https://api.instagram.com/oauth/authorize/?client_id={CLIENT-ID}&redirect_uri={REDIRECT-URI}&response_type=token',
+            rootApiUrl: 'https://api.instagram.com/v1/',
+            scopes: [
+                'public_content',
+                'follower_list',
+                'comments',
+                'relationships',
+                'likes'
+            ]
         }
         this.currentAccessToken = null;
     }
     
     getAuthorizationUrl() {
-        return this.config.authorizationUrlPattern
+        // Init client id and redirect url
+        let authUrl = this.config.authorizationUrlPattern
             .replace('{CLIENT-ID}', this.config.clientId)
             .replace('{REDIRECT-URI}', this.config.redirectUri);
+        // Add mandatory scopes
+        authUrl += "&scope=" + this.config.scopes.join('+');
+        return authUrl;
     }
 
     openSession(accessToken) {
@@ -32,7 +43,7 @@ export default class InstaFacadeClass {
     }
     
     getLastUserInfo = async () => {
-        var lastUserInfo = await AsyncStorage.getItem(this.lastUserInfo);
+        const lastUserInfo = await AsyncStorage.getItem(this.lastUserInfo);
         try {
             return JSON.parse(lastUserInfo);
         } catch (e) {
@@ -41,7 +52,7 @@ export default class InstaFacadeClass {
     };
     
     setLastUserInfo = async (userId, accessToken) => {
-        var userInfo = {
+        const userInfo = {
             userId: userId,
             accessToken: accessToken
         };

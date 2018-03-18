@@ -1,13 +1,16 @@
 import React, { Component } from 'react';
 import {
   StyleSheet,
+  View,
   WebView,
-  ActivityIndicator
+  Alert
 } from 'react-native';
 
 import CookieManager from 'react-native-cookies';
 import CommonStyles from '../styles/common';
 import UserService from '../services/users/UserService';
+
+import LoadingIndicatorView from '../components/LoadingIndicator';
 
 export default class ConnectionScreen extends React.Component {
 
@@ -17,47 +20,46 @@ export default class ConnectionScreen extends React.Component {
 
   constructor(props) {
     super(props);
+    this.state = { isLoading: true };
   }
     
   componentDidMount() {
     CookieManager.clearAll();
   }
   
-  ActivityIndicatorLoadingView() {
-    return (
-      <ActivityIndicator
-        color='#009688'
-        size='large'
-        style={styles.ActivityIndicatorStyle}
-      />
-    );
+  _onWebViewLoaded() {
+    this.setState({ isLoading: false });
   }
 
   render() {
     return (
-      <WebView
-        source={{uri: global.instaFacade.getAuthorizationUrl()}}
-        startInLoadingState={true}
-        renderLoading={this.ActivityIndicatorLoadingView}
-        onShouldStartLoadWithRequest={this._onShouldStartLoadWithRequest.bind(this)}
-      />
+      <View style={{ flex: 1 }}>
+        { this.state.isLoading ? <LoadingIndicatorView/> : null }
+        <WebView
+          source={{uri: global.instaFacade.getAuthorizationUrl()}}
+          onLoadEnd={this._onWebViewLoaded.bind(this)}
+          style={(this.state.isLoading ? styles.loadingWebView : styles.loadedWebView)}
+          onShouldStartLoadWithRequest={this._onShouldStartLoadWithRequest.bind(this)}
+        />
+      </View>
     );
   }
 
   _onShouldStartLoadWithRequest(webViewState) {
+    
     if (webViewState.url.startsWith(global.instaFacade.config.redirectUri)) {
       // redirect Uri lookslike http://<redirect path>?<parameters>
       // Parameters might be
       // - code=<code>
       // - error=<error>&error_reason=<reason>&error_description=<decription>
       // -> extract code and return false
-      var parametersStart = global.instaFacade.config.redirectUri.length + 1; // + 1 for '?' (explicit) or '#' (implicit)
-      var parameters = webViewState.url.substr(parametersStart);
+      const parametersStart = global.instaFacade.config.redirectUri.length + 1; // + 1 for '?' (explicit) or '#' (implicit)
+      const parameters = webViewState.url.substr(parametersStart);
       
       if (parameters.startsWith('access_token=')) {
 
         // Client-side authentication (Implicit) -> for mobile app
-        var accessToken = parameters.substr('access_token='.length);
+        const accessToken = parameters.substr('access_token='.length);
         this._getUserInformations(accessToken);
         
       } else {
@@ -73,7 +75,7 @@ export default class ConnectionScreen extends React.Component {
 
   _getUserInformations(accessToken) {
 
-    var userServiceDelegate = new UserService('self');//, (response) => this._onGetUserInfo(response, accessToken));
+    const userServiceDelegate = new UserService('self');//, (response) => this._onGetUserInfo(response, accessToken));
     global.serviceManager.invoke(userServiceDelegate, accessToken)
     .then((userInfo) => {
       // FIXME: why forcing the context as this for _onGetUserInfo?
@@ -90,15 +92,16 @@ export default class ConnectionScreen extends React.Component {
   }
 }
 
-const styles = StyleSheet.create(
-{
-  ActivityIndicatorStyle:{
-      position: 'absolute',
-      left: 0,
-      right: 0,
-      top: 0,
-      bottom: 0,
-      alignItems: 'center',
-      justifyContent: 'center'
+const styles = StyleSheet.create({
+  loadedWebView: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    top: 0,
+    bottom: 0,
+  },
+  loadingWebView: {
+    width: 0,
+    height: 0
   }
 });
