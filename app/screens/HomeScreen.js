@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import {
   StyleSheet,
+  ScrollView,
+  RefreshControl,
   View,
   Text,
   Image
@@ -14,7 +16,25 @@ export default class HomeScreen extends React.Component {
 
     constructor(props) {
         super(props);
+        this.state = { refreshing: false };
     }
+    
+    getRefreshControl() {
+        return (
+            <RefreshControl
+                refreshing={this.state.refreshing}
+                onRefresh={this._onRefresh.bind(this)}
+            />
+        );
+    }
+
+    _onRefresh() {
+        this.setState({refreshing: true});
+        //fetchData().then(() => {
+            this.setState({refreshing: false});
+        //});
+    }
+
     render() {
         const userInfo = global.userManager.getCurrentUser();
         const delta = {
@@ -24,9 +44,9 @@ export default class HomeScreen extends React.Component {
         };
 
         return (
-            <View style={styles.container}>
+            <ScrollView style={styles.container} refreshControl={this.getRefreshControl()}>
                 
-                <View style={styles.userInfoMainView}>
+                <View style={CommonStyles.styles.userInfoMainView}>
                     <View style={styles.profilePictureView}>
                         <Image style={styles.profilePicture} source={{ uri: userInfo.profile_picture }}/>
                     </View>
@@ -43,7 +63,7 @@ export default class HomeScreen extends React.Component {
 
                 <RelatedUsersDetails />
 
-            </View>
+            </ScrollView>
         );
       }
 }
@@ -54,11 +74,6 @@ const styles = StyleSheet.create(
         flex: 1,
         backgroundColor: CommonStyles.GLOBAL_BACKGROUND,
         padding: CommonStyles.GLOBAL_PADDING,
-    },
-    userInfoMainView: {
-        flexDirection: 'row',
-        backgroundColor: CommonStyles.GLOBAL_FOREGROUND,
-        borderRadius: CommonStyles.BORDER_RADIUS
     },
     profilePictureView: {
         width: CommonStyles.PROFILE_PICTURE_SIZE + CommonStyles.GLOBAL_PADDING * 2,

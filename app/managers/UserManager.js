@@ -121,7 +121,6 @@ export default class UserManagerClass {
      */
     extractAndUpdateRelatedDifference(actualRelatedList, prevRelatedList, relatedSchemaName, relatedHistorySchemaName) {
         
-
         // Build a hash set from the list of previous related identifiers
         const prevRelatedSet = prevRelatedList ? new Set(prevRelatedList.users) : new Set();
         
@@ -129,14 +128,16 @@ export default class UserManagerClass {
         // -> and build a set containing actual related identifiers in the same time
         let actualRelatedSet = new Set();
         let newRelatedList = [];
-        for (let actualRelated of actualRelatedList) {
+        if (actualRelatedList) {
+            for (let actualRelated of actualRelatedList) {
 
-            // populate the hash set with the current actual related
-            actualRelatedSet.add(actualRelated.id);
+                // populate the hash set with the current actual related
+                actualRelatedSet.add(actualRelated.id);
 
-            // If the actual related is not part of the previous related, it is a new one !
-            if (!prevRelatedSet.has(actualRelated.id)) {
-                newRelatedList.push(actualRelated);
+                // If the actual related is not part of the previous related, it is a new one !
+                if (!prevRelatedSet.has(actualRelated.id)) {
+                    newRelatedList.push(actualRelated);
+                }
             }
         }
         
@@ -164,7 +165,9 @@ export default class UserManagerClass {
                 userId: this.currentUserId,
                 users: [...actualRelatedSet]
             };
-            this.relatedRealm.create(relatedSchemaName, userRelatedEntry, true /* update */);
+            
+            // TODO
+            //this.relatedRealm.create(relatedSchemaName, userRelatedEntry, true /* update */);
 
             // add/update a new history entry in the related history schema
             const today = this.formatDate(new Date());
@@ -178,12 +181,14 @@ export default class UserManagerClass {
                     newUsers: newRelatedList,
                     date: today
                 };
-                this.relatedRealm.create(relatedHistorySchemaName, historyEntryForToday);
+
+                // TODO
+                //this.relatedRealm.create(relatedHistorySchemaName, historyEntryForToday);
 
             } else {
 
                 // Update the lost and win lists...
-                let lostUsers = this.consolidateLostAndNewRelated(
+                let updatedHistoryEntries = this.consolidateLostAndNewRelated(
                     historyEntryForToday.newUsers, historyEntryForToday.lostUsers, newRelatedList, lostRelatedList);
                 
                 historyEntryForToday.newUsers = updatedHistoryEntries.newUsers;
@@ -193,7 +198,8 @@ export default class UserManagerClass {
             // Make sure to add short info about new users in the related user info schema
             for (let newRelatedUser of actualRelatedList) {
                 // The realm schema is the same as the object from the instagram API...
-                this.relatedRealm.create('RelatedUsersInfo', newRelatedUser, true /* Update possible */);
+                // TODO
+                //this.relatedRealm.create('RelatedUsersInfo', newRelatedUser, true /* Update possible */);
             }
         });
     }
@@ -212,7 +218,7 @@ export default class UserManagerClass {
         let consolidatedLostRelatedList = [];
 
         // 1. browse previous new related and consider only those which are not lost now
-        for (let prevNewRelatedId of realmHistoryEntry.newUsers) {
+        for (let prevNewRelatedId of prevNewRelatedList) {
             if (!actualLostRelatedSet.has(prevNewRelatedId)){
                 consolidatedNewRelatedList.push(prevNewRelatedId);
             }
@@ -262,5 +268,25 @@ export default class UserManagerClass {
     getUserInfo(userId) {
 
         return this.realm.objectForPrimaryKey(userType, userId);
+    }
+
+    getNewFollowersForToday() {
+
+        const historyEntryForToday = this.relatedRealm.objectForPrimaryKey('FollowersHistory', this.formatDate(new Date()));
+        if (historyEntryForToday) {
+            return historyEntryForToday.newUsers.size;
+        }
+
+        return 0;
+    }
+
+    getNewFollowingsForToday() {
+
+        const historyEntryForToday = this.relatedRealm.objectForPrimaryKey('FollowingsHistory', this.formatDate(new Date()));
+        if (historyEntryForToday) {
+            return historyEntryForToday.newUsers.size;
+        }
+
+        return 0;
     }
 }

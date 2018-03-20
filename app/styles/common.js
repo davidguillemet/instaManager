@@ -1,4 +1,6 @@
-export default CommonStyles  = {
+import { StyleSheet } from 'react-native';
+
+export default CommonStyles = {
   
   // Colors
   GLOBAL_BACKGROUND: '#223B62',
@@ -24,5 +26,16 @@ export default CommonStyles  = {
 
   // Padding
   GLOBAL_PADDING: 10
-
 }
+
+  // Predifined StyleSheet:
+CommonStyles.styles = StyleSheet.create(
+{
+    userInfoMainView: {
+      flexDirection: 'row',
+      backgroundColor: CommonStyles.GLOBAL_FOREGROUND,
+      borderRadius: CommonStyles.BORDER_RADIUS,
+      marginBottom: CommonStyles.GLOBAL_PADDING
+    }
+});
+  
