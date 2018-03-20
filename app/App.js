@@ -7,16 +7,11 @@ import React, { Component } from 'react';
 import { Alert } from 'react-native';
 import { StackNavigator, SwitchNavigator } from 'react-navigation';
 
-import stylesDef from './styles/common';
-
-import ConnectionScreen from './screens/ConnectionScreen';
-import UnconnectedHomeScreen from './screens/UnconnectedHomeScreen';
-import AuthLoadingScreen from './screens/AuthLoadingScreen';
-import HomeScreen from './screens/HomeScreen';
-
 import LoadingIndicatorView from './components/LoadingIndicator';
 
 import { UserSchema } from './model/realmSchemas';
+
+import RootStack from './navigation/Navigation';
 
 const Realm = require('realm');
 
@@ -54,44 +49,3 @@ export default class App extends React.Component {
   }
 }
 
-const navigationOptions = {
-  headerStyle: {
-    backgroundColor: stylesDef.GLOBAL_FOREGROUND,
-  },
-  headerTintColor: '#fff',
-  headerTitleStyle: {
-    fontWeight: 'bold',
-  }
-}
-
-const AppStack = StackNavigator(
-  {
-    Home: { screen: HomeScreen }
-  },
-  {
-    initialRouteName: 'Home',
-    navigationOptions: navigationOptions
-  },
-);
-
-const AuthStack = StackNavigator(
-  {
-    Unconnected: { screen: UnconnectedHomeScreen },
-    Connection: { screen: ConnectionScreen },
-  },
-  {
-    initialRouteName: 'Unconnected',
-    navigationOptions: navigationOptions
-  },
-);
-
-const RootStack = SwitchNavigator(
-  {
-    AuthLoading: AuthLoadingScreen,
-    AppStack: AppStack,
-    AuthStack: AuthStack,
-  },
-  {
-    initialRouteName: 'AuthLoading',
-  }
-);

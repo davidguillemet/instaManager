@@ -41,8 +41,8 @@ export default class RelatedUsersDetails extends React.Component {
     render() {
         return (
             <View>
-                <View style={[CommonStyles.styles.userInfoMainView, styles.relatedInfoContainer]}>
-                    <Text style={styles.relatedInfoText}>New followers today</Text>
+                <View style={CommonStyles.styles.standardTile}>
+                    <Text style={CommonStyles.styles.mediumLabel}>New followers today</Text>
                     {
                         this.state.followersLoading ?
                         <ActivityIndicator animating={this.state.followersLoading}/> :
@@ -52,8 +52,8 @@ export default class RelatedUsersDetails extends React.Component {
                         </View>
                     }
                 </View>
-                <View style={[CommonStyles.styles.userInfoMainView, styles.relatedInfoContainer]}>
-                    <Text style={styles.relatedInfoText}>Lost Followers today</Text>
+                <View style={CommonStyles.styles.standardTile}>
+                    <Text style={CommonStyles.styles.mediumLabel}>Lost Followers today</Text>
                     {
                         this.state.followingsLoading ?
                         <ActivityIndicator animating={this.state.followingsLoading}/> :
@@ -70,14 +70,6 @@ export default class RelatedUsersDetails extends React.Component {
 
 const styles = StyleSheet.create(
 {
-    relatedInfoContainer: {
-        padding: CommonStyles.GLOBAL_PADDING,
-    },
-    relatedInfoText: {
-        flex: 1,
-        color: CommonStyles.TEXT_COLOR,
-        fontSize: CommonStyles.MEDIUM_FONT_SIZE
-    },
     relatedInfoValue: {
         color: CommonStyles.KPI_COLOR,
         fontSize: CommonStyles.MEDIUM_FONT_SIZE,

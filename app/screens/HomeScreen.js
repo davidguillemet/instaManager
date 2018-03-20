@@ -44,9 +44,9 @@ export default class HomeScreen extends React.Component {
         };
 
         return (
-            <ScrollView style={styles.container} refreshControl={this.getRefreshControl()}>
+            <ScrollView style={CommonStyles.styles.standardPage} refreshControl={this.getRefreshControl()}>
                 
-                <View style={CommonStyles.styles.userInfoMainView}>
+                <View style={CommonStyles.styles.standardTile}>
                     <View style={styles.profilePictureView}>
                         <Image style={styles.profilePicture} source={{ uri: userInfo.profile_picture }}/>
                     </View>
@@ -70,20 +70,13 @@ export default class HomeScreen extends React.Component {
 
 const styles = StyleSheet.create(
 {
-    container: {
-        flex: 1,
-        backgroundColor: CommonStyles.GLOBAL_BACKGROUND,
-        padding: CommonStyles.GLOBAL_PADDING,
-    },
     profilePictureView: {
         width: CommonStyles.PROFILE_PICTURE_SIZE + CommonStyles.GLOBAL_PADDING * 2,
-        justifyContent: 'center',
-        alignItems: 'center',
-        padding: CommonStyles.GLOBAL_PADDING,
+        justifyContent: 'flex-start',
+        alignItems: 'flex-start',
     },
     userInfoView: {
         flex: 2,
-        padding: CommonStyles.GLOBAL_PADDING,
         paddingLeft: 0,
         justifyContent: 'space-between',
         alignItems: 'stretch'
