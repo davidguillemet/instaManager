@@ -3,6 +3,7 @@ package com.instamanager;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import com.facebook.reactnative.androidsdk.FBSDKPackage;
 import com.oblador.vectoricons.VectorIconsPackage;
 import io.realm.react.RealmReactPackage;
 import com.psykar.cookiemanager.CookieManagerPackage;
@@ -26,6 +27,7 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
+            new FBSDKPackage(),
             new VectorIconsPackage(),
             new RealmReactPackage(),
             new CookieManagerPackage()
