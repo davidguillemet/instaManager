@@ -48,5 +48,12 @@ CommonStyles.styles = StyleSheet.create(
     color: CommonStyles.TEXT_COLOR,
     fontSize: CommonStyles.MEDIUM_FONT_SIZE
   },
+  standardButton: {
+    backgroundColor: CommonStyles.GLOBAL_FOREGROUND,
+    color: CommonStyles.TEXT_COLOR,
+    fontSize: CommonStyles.MEDIUM_FONT_SIZE,
+    padding: 10,
+    borderRadius: CommonStyles.BORDER_RADIUS
+  }
 });
   
