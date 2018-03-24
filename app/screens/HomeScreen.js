@@ -8,6 +8,7 @@ import {
   Image
 } from 'react-native';
 
+import UserService from '../services/users/UserService';
 import DeltaIndicator from '../components/DeltaIndicator';
 import RelatedUsersDetails from '../components/RelatedUsersDetails';
 import CommonStyles from '../styles/common';
@@ -29,10 +30,16 @@ export default class HomeScreen extends React.Component {
     }
 
     _onRefresh() {
+
         this.setState({refreshing: true});
-        //fetchData().then(() => {
+
+        const userServiceDelegate = new UserService('self');
+        
+        global.serviceManager.invoke(userServiceDelegate)
+        .then((userInfo) => {
+            global.userManager.setCurrentUser(userInfo);
             this.setState({refreshing: false});
-        //});
+        });
     }
 
     render() {
