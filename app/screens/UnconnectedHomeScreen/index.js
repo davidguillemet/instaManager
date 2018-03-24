@@ -2,9 +2,10 @@ import React, { Component } from 'react';
 import {
   StyleSheet,
   Text,
-  Button,
   View
 } from 'react-native';
+import CustomButton from '../../components/CustomButton';
+import CommonStyles from '../../styles/common';
 import styles from './styles';
 
 export default class UnconnectedHomeScreen extends React.Component {
@@ -19,7 +20,7 @@ export default class UnconnectedHomeScreen extends React.Component {
           <Text style={styles.welcome}>
             Welcome to Insta Manager
           </Text>
-          <Button style={styles.buttonConnect}
+          <CustomButton style={CommonStyles.styles.standardButton}
                   title='Connect to Instagram'
                   onPress={() => this.props.navigation.navigate('Connection')}/>
         </View>

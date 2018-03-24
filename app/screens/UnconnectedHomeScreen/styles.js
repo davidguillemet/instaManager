@@ -12,13 +12,7 @@ export default StyleSheet.create({
       fontSize: 24,
       fontFamily: CommonStyles.FONT_NORMAL,
       textAlign: 'center',
-      color: 'white',
+      color: CommonStyles.TEXT_COLOR,
       margin: 10,
-    },
-    buttonConnect: {
-      textAlign: 'center',
-      fontFamily: CommonStyles.FONT_NORMAL,
-      color: '#333333',
-      marginBottom: 5,
-    },
+    }
   });

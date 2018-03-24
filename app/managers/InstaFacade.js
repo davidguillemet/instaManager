@@ -34,6 +34,11 @@ export default class InstaFacadeClass {
         this.currentAccessToken = accessToken;
     }
 
+    closeCurrentSession() {
+        this.currentAccessToken = null;
+        this.setLastUserInfo(null);
+    }
+
     isSessionOpen() {
         return this.currentAccessToken != null;
     }
@@ -43,20 +48,16 @@ export default class InstaFacadeClass {
     }
     
     getLastUserInfo = async () => {
-        const lastUserInfo = await AsyncStorage.getItem(this.lastUserInfo);
-        try {
-            return JSON.parse(lastUserInfo);
-        } catch (e) {
-            return null;
-        }
+        const lastAccessToken = await AsyncStorage.getItem(this.lastUserInfo);
+        return lastAccessToken;
     };
     
-    setLastUserInfo = async (userId, accessToken) => {
-        const userInfo = {
-            userId: userId,
-            accessToken: accessToken
-        };
-        await AsyncStorage.setItem(this.lastUserInfo, JSON.stringify(userInfo));
+    setLastUserInfo = async (accessToken) => {
+        if (accessToken == null) {
+            await AsyncStorage.removeItem(this.lastUserInfo);
+        } else {
+            await AsyncStorage.setItem(this.lastUserInfo, accessToken);
+        }
     };
 }
 

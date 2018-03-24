@@ -86,7 +86,7 @@ export default class ConnectionScreen extends React.Component {
 
   _onGetUserInfo(userInfo, accessToken) {
     global.instaFacade.openSession(accessToken);
-    global.instaFacade.setLastUserInfo(userInfo.id, accessToken);
+    global.instaFacade.setLastUserInfo(accessToken);
     global.userManager.setCurrentUser(userInfo, accessToken);
     this.props.navigation.navigate('AppStack');
   }
