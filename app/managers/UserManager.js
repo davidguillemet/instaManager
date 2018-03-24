@@ -26,7 +26,7 @@ export default class UserManagerClass {
         this.realm = realm;
     }
 
-    setCurrentUser(newUserInfo, accessToken) {
+    setCurrentUser(newUserInfo) {
         
         // Check if the user already exists:
         this.realm.write(() => {
@@ -36,7 +36,7 @@ export default class UserManagerClass {
             // -> field name are the same, except counts which arenot embedded in count object for realm
             let newUser = {
                 id: newUserInfo.id,
-                accessToken: accessToken,
+                accessToken: global.instaFacade.getCurrentSession(),
                 username: newUserInfo.username,
                 full_name: newUserInfo.full_name,
                 profile_picture: newUserInfo.profile_picture,

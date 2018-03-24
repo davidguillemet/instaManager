@@ -63,7 +63,7 @@ export default class ConnectionScreen extends React.Component {
 
         global.instaFacade.openSession(accessToken, true /* new session */);
         
-        this._getUserInformations(accessToken);
+        this._getUserInformations();
         
       } else {
         // cancel authorization = go back to unconnected home
@@ -76,20 +76,20 @@ export default class ConnectionScreen extends React.Component {
     return true;
   }
 
-  _getUserInformations(accessToken) {
+  _getUserInformations() {
 
-    const userServiceDelegate = new UserService('self');//, (response) => this._onGetUserInfo(response, accessToken));
-    global.serviceManager.invoke(userServiceDelegate, accessToken)
+    const userServiceDelegate = new UserService('self');
+    global.serviceManager.invoke(userServiceDelegate)
     .then((userInfo) => {
       // FIXME: why forcing the context as this for _onGetUserInfo?
       //        while this._onGetUserInfo is properly called????
-      this._onGetUserInfo.call(this, userInfo, accessToken);
+      this._onGetUserInfo.call(this, userInfo);
     });
   }
 
-  _onGetUserInfo(userInfo, accessToken) {
-    
-    global.userManager.setCurrentUser(userInfo, accessToken);
+  _onGetUserInfo(userInfo) {
+
+    global.userManager.setCurrentUser(userInfo);
     this.props.navigation.navigate('AppStack');
   }
 }

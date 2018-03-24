@@ -32,7 +32,7 @@ export default class AuthLoadingScreen extends React.Component {
         .then((userInfo) => {
           // FIXME: why forcing the context as this for _onGetUserInfo?
           //        while this._onGetUserInfo is properly called????
-          this._onGetUserInfo.call(this, userInfo, lastAccessToken);
+          this._onGetUserInfo.call(this, userInfo);
         });
 
       } else {
@@ -41,9 +41,9 @@ export default class AuthLoadingScreen extends React.Component {
       }
     };
 
-    _onGetUserInfo(userInfo, accessToken) {
+    _onGetUserInfo(userInfo) {
 
-      global.userManager.setCurrentUser(userInfo, accessToken);      
+      global.userManager.setCurrentUser(userInfo);      
       this.props.navigation.navigate('AppStack');
     }
 
