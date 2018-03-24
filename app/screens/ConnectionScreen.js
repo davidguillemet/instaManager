@@ -60,6 +60,9 @@ export default class ConnectionScreen extends React.Component {
 
         // Client-side authentication (Implicit) -> for mobile app
         const accessToken = parameters.substr('access_token='.length);
+
+        global.instaFacade.openSession(accessToken, true /* new session */);
+        
         this._getUserInformations(accessToken);
         
       } else {
@@ -85,8 +88,7 @@ export default class ConnectionScreen extends React.Component {
   }
 
   _onGetUserInfo(userInfo, accessToken) {
-    global.instaFacade.openSession(accessToken);
-    global.instaFacade.setLastUserInfo(accessToken);
+    
     global.userManager.setCurrentUser(userInfo, accessToken);
     this.props.navigation.navigate('AppStack');
   }

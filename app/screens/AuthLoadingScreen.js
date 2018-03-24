@@ -25,8 +25,10 @@ export default class AuthLoadingScreen extends React.Component {
 
       if (lastAccessToken) {
       
+        global.instaFacade.openSession(lastAccessToken, false /* same session than the registered one */);
+
         const userServiceDelegate = new UserService('self');
-        global.serviceManager.invoke(userServiceDelegate, lastAccessToken)
+        global.serviceManager.invoke(userServiceDelegate)
         .then((userInfo) => {
           // FIXME: why forcing the context as this for _onGetUserInfo?
           //        while this._onGetUserInfo is properly called????
@@ -41,7 +43,6 @@ export default class AuthLoadingScreen extends React.Component {
 
     _onGetUserInfo(userInfo, accessToken) {
 
-      global.instaFacade.openSession(accessToken);
       global.userManager.setCurrentUser(userInfo, accessToken);      
       this.props.navigation.navigate('AppStack');
     }

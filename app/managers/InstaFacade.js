@@ -30,8 +30,11 @@ export default class InstaFacadeClass {
         return authUrl;
     }
 
-    openSession(accessToken) {
+    openSession(accessToken, isNewSession) {
         this.currentAccessToken = accessToken;
+        if (isNewSession) {
+            this.setLastUserInfo(accessToken);
+        }
     }
 
     closeCurrentSession() {

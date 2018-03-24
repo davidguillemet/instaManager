@@ -6,9 +6,9 @@ export default class ServiceManagerClass  {
         this.instaFacade = instaFacade;
     }
 
-    invoke(serviceDelegate, accessToken) {
+    invoke(serviceDelegate) {
         
-        var accessTokenParam = '?access_token=' + (accessToken ? accessToken : this.instaFacade.getCurrentSession());
+        var accessTokenParam = '?access_token=' + this.instaFacade.getCurrentSession();
         var serviceUrl = this.instaFacade.config.rootApiUrl + serviceDelegate.getUrl() + accessTokenParam;
         
         return fetch(
