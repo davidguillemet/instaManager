@@ -9,7 +9,7 @@ import { StackNavigator, SwitchNavigator } from 'react-navigation';
 
 import LoadingIndicatorView from './components/LoadingIndicator';
 
-import { UserSchema } from './model/realmSchemas';
+import { UserSchema, HistorySchema } from './model/realmSchemas';
 
 import RootStack from './navigation/Navigation';
 
@@ -25,7 +25,7 @@ export default class App extends React.Component {
   componentWillMount() {
     // When loading the application, only loads user basic information
     Realm.open({
-      schema: [ UserSchema ],
+      schema: [ UserSchema, HistorySchema ],
       path: 'basicUserInfo.realm'
     }).then(realm => {
       global.userManager.setRealm(realm);

@@ -23,6 +23,20 @@ export const UserSchema = {
 };
 
 /**
+ * History information = Counts by day (media, followsers, follows)
+ */
+export const HistorySchema = {
+    name: 'History',
+    properties: {
+        userId: 'string',
+        date: 'date',
+        media: { type: 'int', default: 0 },
+        follows: { type: 'int', default: 0 },
+        followed_by: { type: 'int', default: 0 }
+    }
+}
+
+/**
  * Related users (followers or followeds, current or lost)
  */
 export const RelatedUsersInfoSchema = {

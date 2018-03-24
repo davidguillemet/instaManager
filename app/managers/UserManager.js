@@ -11,7 +11,8 @@ import { Alert } from 'react-native';
 import FollowerService from '../services/users/FollowerService';
 import FollowingService from '../services/users/FollowingService';
 
-const userType = 'User';
+const userSchema = 'User';
+const historySchema = 'History';
 const monthValues = ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12"];
 
 export default class UserManagerClass {
@@ -49,7 +50,7 @@ export default class UserManagerClass {
             };
 
             // Get the user from realm if it already exists
-            let prevUser = this.realm.objectForPrimaryKey(userType, newUserInfo.id);
+            let prevUser = this.realm.objectForPrimaryKey(userSchema, newUserInfo.id);
             if (prevUser) {
                 // The user already exists
                 // -> update previous counts
@@ -58,10 +59,52 @@ export default class UserManagerClass {
                 newUser.prev_followed_by = prevUser.followed_by;
             }
 
-            this.realm.create(userType, newUser, true /* update if needed */);
+            this.realm.create(userSchema, newUser, true /* update if needed */);
+
+            this.updateHistory(newUserInfo);
         });
 
         this.currentUserId = newUserInfo.id;
+    }
+
+    updateHistory(userInfo) {
+
+        const today = this.getToday();
+        
+        let historyEntriesForToday = this.realm.objects(historySchema)
+        .filtered('userId = $0 and date = $1', userInfo.id, today);
+
+        if (historyEntriesForToday.length == 0) {
+
+            // History for today does not exist yet, create a new one from scratch
+            const historyEntryForToday = {
+                userId: userInfo.id,
+                date: today,
+                media: userInfo.counts.media,
+                follows: userInfo.counts.follows,
+                followed_by: userInfo.counts.followed_by
+            };
+
+            this.realm.create(historySchema, historyEntryForToday);
+
+        } else {
+
+            // just Update the history for today
+            // -> we shall have only one entry in the list (one entry per day)
+            historyEntryForToday = historyEntriesForToday[0];
+            historyEntryForToday.media = userInfo.counts.media;
+            historyEntryForToday.follows = userInfo.counts.follows;
+            historyEntryForToday.followed_by = userInfo.counts.followed_by;
+        }            
+    }
+
+    getToday() {
+        let today = new Date();
+        today.setHours(0);
+        today.setMinutes(0);
+        today.setSeconds(0);
+        today.setMilliseconds(0);
+        return today;
     }
 
     openRelatedRealm() {
@@ -267,7 +310,7 @@ export default class UserManagerClass {
 
     getUserInfo(userId) {
 
-        return this.realm.objectForPrimaryKey(userType, userId);
+        return this.realm.objectForPrimaryKey(userSchema, userId);
     }
 
     getNewFollowersForToday() {
