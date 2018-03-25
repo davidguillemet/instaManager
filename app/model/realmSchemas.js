@@ -37,6 +37,30 @@ export const HistorySchema = {
 }
 
 /**
+ * Hashtag hierarchical categories
+ */
+export const TagCategorySchema = {
+    name: 'TagCategory',
+    primaryKey: 'name',
+    properties: {
+        name: 'string',
+        parent: 'string?'
+    }
+}
+
+/**
+ * Contains all the user hashtags. The category migh be null in case the tag does not belong to any category
+ */
+export const HashtagSchema = {
+    name: 'Hashtag',
+    primaryKey: 'name',
+    properties: {
+        name: 'string',
+        category: 'string?' 
+    }
+}
+
+/**
  * Related users (followers or followeds, current or lost)
  */
 export const RelatedUsersInfoSchema = {
