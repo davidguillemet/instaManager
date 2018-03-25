@@ -7,6 +7,10 @@ import {
 
 export default class HashTagsHomeScreen extends React.Component {
 
+    static navigationOptions = {
+        title: 'Your Hashtags'
+      };
+  
     render() {
         return(
             <View style={CommonStyles.styles.standardPage}>

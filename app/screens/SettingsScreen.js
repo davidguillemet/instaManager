@@ -11,7 +11,10 @@ import CommonStyles from '../styles/common';
 import CustomButton from '../components/CustomButton';
 
 export default class SettingsScreen extends React.Component {
-
+    static navigationOptions = {
+        title: 'Settings'
+      };
+  
     _onDisconnect() {
         global.instaFacade.closeCurrentSession();
         this.props.navigation.navigate('AuthLoading');
