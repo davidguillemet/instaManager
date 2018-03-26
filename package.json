@@ -12,6 +12,7 @@
     "react-native": "^0.48.3",
     "react-native-cookies": "^3.2.0",
     "react-native-fbsdk": "^0.7.0",
+    "react-native-fbsdklogin": "0.0.8",
     "react-native-vector-icons": "^4.5.0",
     "react-navigation": "^1.4.0",
     "realm": "^2.3.1"
