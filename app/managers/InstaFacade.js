@@ -17,7 +17,7 @@ export default class InstaFacadeClass {
                 'likes'
             ]
         }
-        this.currentAccessToken = null;
+        this.currentSession = null;
     }
     
     getAuthorizationUrl() {
@@ -30,38 +30,52 @@ export default class InstaFacadeClass {
         return authUrl;
     }
 
-    openSession(accessToken, isNewSession) {
-        this.currentAccessToken = accessToken;
-        if (isNewSession) {
-            this.setLastUserInfo(accessToken);
-        }
+    openSession(userId, accessToken) {
+        this.currentSession = {
+            userId: userId,
+            accessToken: accessToken
+        };
+        this.storeUserInfo(accessToken);
     }
 
     closeCurrentSession() {
-        this.currentAccessToken = null;
-        this.setLastUserInfo(null);
+        this.currentSession = null;
+        this.removeLastUserInfo();
     }
 
     isSessionOpen() {
-        return this.currentAccessToken != null;
+        return this.currentSession != null;
     }
 
-    getCurrentSession() {
-        return this.currentAccessToken;
+    getUserId() {
+        return this.currentSession.userId;
+    }
+
+    getAccessToken() {
+        return this.currentSession.accessToken;
     }
     
-    getLastUserInfo = async () => {
-        const lastAccessToken = await AsyncStorage.getItem(this.lastUserInfo);
-        return lastAccessToken;
-    };
-    
-    setLastUserInfo = async (accessToken) => {
-        if (accessToken == null) {
-            await AsyncStorage.removeItem(this.lastUserInfo);
-        } else {
-            await AsyncStorage.setItem(this.lastUserInfo, accessToken);
+    restoreLastUserInfo = async () => {
+        //const lastUserInfoSerialized = await AsyncStorage.getItem(this.lastUserInfo);
+        try {
+            let lastUserInfo = {
+                userId: "17841404340538520",
+                accessToken: "EAACFvZAOrOWUBAJYAw0qq2IASBPbZBcvPkKbZAJsSS8t87Yxe7eEbsxXWbpmFOHt7ChvCIzhybQb0j3uPJEaVA1fCOPWpBPX4FSsZC4GkZCcv8SwdvBaKRTffqqwZChehZBPPTtmkBynUiN1m68WMIXWaeB3g8Mew06VFvqXVDuR1Iv4kgtZBKFJwUmZC1LEhd0AmQqkwMmBrmFoNXsZBkQU72"
+            };
+            this.currentSession = lastUserInfo;
+        } catch (e) {
+            // invalid serialized info. we will just start as unconnected
         }
     };
+    
+    storeUserInfo = async () => {
+        let userInfoSerialized = JSON.stringify(his.currentSession);
+        await AsyncStorage.setItem(this.lastUserInfo, userInfoSerialized);
+    }
+
+    removeLastUserInfo = async () => {
+        await AsyncStorage.removeItem(this.lastUserInfo);
+    }
 }
 
 

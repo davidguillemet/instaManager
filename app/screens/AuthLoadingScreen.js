@@ -19,20 +19,18 @@ export default class AuthLoadingScreen extends React.Component {
     // Fetch the token from storage then navigate to our appropriate place
     _tryToOpenLastSession = async () => {
 
-      const lastAccessToken = await global.instaFacade.getLastUserInfo();
+      await global.instaFacade.restoreLastUserInfo();
 
       const initialStack = 'AuthStack';
 
-      if (lastAccessToken) {
-      
-        global.instaFacade.openSession(lastAccessToken, false /* same session than the registered one */);
+      if (global.instaFacade.isSessionOpen()) {
 
-        const userServiceDelegate = new UserService('self');
+        const userServiceDelegate = new UserService(global.instaFacade.getUserId());
         global.serviceManager.invoke(userServiceDelegate)
         .then((userInfo) => {
-          // FIXME: why forcing the context as this for _onGetUserInfo?
-          //        while this._onGetUserInfo is properly called????
           this._onGetUserInfo.call(this, userInfo);
+        }).catch((error) => {
+          this.props.navigation.navigate('AuthStack');
         });
 
       } else {

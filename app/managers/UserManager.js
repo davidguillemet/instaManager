@@ -32,21 +32,34 @@ export default class UserManagerClass {
         // Check if the user already exists:
         this.realm.write(() => {
             
-            // newUserInfo is fresh from instgram API
+            // newUserInfo is fresh from instgram Graph API
+            // Graph API
+            // {
+            //     "followers_count": 908,
+            //     "follows_count": 545,
+            //     "media_count": 109,
+            //     "username": "david.guillemet",
+            //     "name": "David Guillemet",
+            //     "profile_picture_url": "https://scontent.xx.fbcdn.net/v/t51.2885-9/15875659_158933067928808_3072234512495673344_a.jpg?_nc_cat=0&oh=92f4b715ff930673f525045e16eb3954&oe=5B7194DB",
+            //     "biography": "my bio",
+            //     "website": "http://www.davidphotosub.com/",
+            //     "id": "17841404340538520"
+            //   }
+
             // -> create/update realm object from this user info ref
             // -> field name are the same, except counts which arenot embedded in count object for realm
             let newUser = {
                 id: newUserInfo.id,
-                accessToken: global.instaFacade.getCurrentSession(),
+                accessToken: global.instaFacade.getAccessToken(),
                 username: newUserInfo.username,
-                full_name: newUserInfo.full_name,
-                profile_picture: newUserInfo.profile_picture,
-                bio: newUserInfo.bio,
+                full_name: newUserInfo.name,
+                profile_picture: newUserInfo.profile_picture_url,
+                bio: newUserInfo.biography,
                 website: newUserInfo.website,
-                is_business: newUserInfo.is_business,
-                media: newUserInfo.counts.media,
-                follows: newUserInfo.counts.follows,
-                followed_by: newUserInfo.counts.followed_by
+                is_business: true, // so far, only business accounts are accessible
+                media: newUserInfo.media_count,
+                follows: newUserInfo.follows_count,
+                followed_by: newUserInfo.followers_count
             };
 
             // Get the user from realm if it already exists
@@ -80,9 +93,9 @@ export default class UserManagerClass {
             const historyEntryForToday = {
                 userId: userInfo.id,
                 date: today,
-                media: userInfo.counts.media,
-                follows: userInfo.counts.follows,
-                followed_by: userInfo.counts.followed_by
+                media: userInfo.media_count,
+                follows: userInfo.follows_count,
+                followed_by: userInfo.followers_count
             };
 
             this.realm.create(historySchema, historyEntryForToday);
@@ -92,9 +105,9 @@ export default class UserManagerClass {
             // just Update the history for today
             // -> we shall have only one entry in the list (one entry per day)
             historyEntryForToday = historyEntriesForToday[0];
-            historyEntryForToday.media = userInfo.counts.media;
-            historyEntryForToday.follows = userInfo.counts.follows;
-            historyEntryForToday.followed_by = userInfo.counts.followed_by;
+            historyEntryForToday.media = userInfo.media_count;
+            historyEntryForToday.follows = userInfo.follows_count;
+            historyEntryForToday.followed_by = userInfo.followers_count;
         }            
     }
 
