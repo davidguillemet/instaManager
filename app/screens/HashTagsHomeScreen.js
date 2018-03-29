@@ -4,17 +4,38 @@ import {
   View,
   Text,
   ScrollView,
-  SectionList
+  FlatList,
+  SectionList,
+  TouchableOpacity,
+  Alert
 } from 'react-native';
 
+import Ionicons from 'react-native-vector-icons/Ionicons';
 import CustomButton from '../components/CustomButton';
+import SearchInput from '../components/Search';
 import LoadingIndicatorView from '../components/LoadingIndicator';
+
+import CommonStyles from '../styles/common'; 
+
+class ImportButton extends React.Component {
+
+    render() {
+        return (
+            <TouchableOpacity onPress={this._onImport}><Ionicons name={'ios-cloud-download'} style={CommonStyles.styles.navigationButtonIcon}/></TouchableOpacity>
+        );
+    }
+
+    _onImport() {
+
+    }
+}
 
 export default class HashTagsHomeScreen extends React.Component {
 
     static navigationOptions = {
-        title: 'Your Hashtags'
-      };
+        title: 'Your Hashtags',
+        headerRight: <ImportButton/>
+    };
 
     constructor(props) {
         super(props);
@@ -34,78 +55,89 @@ export default class HashTagsHomeScreen extends React.Component {
             this.sections = [];
             let previousSectionTitle = null;
             let currentSectionData;
-            for (let tagName of sortedHashtags) {
-
+            for (let hashtag of sortedHashtags) {
+                let tagName = hashtag.name;
                 let currentSectionTitle = tagName.charAt(0).toUpperCase();
 
                 if (currentSectionTitle != previousSectionTitle) {
                     // New section
+                    previousSectionTitle = currentSectionTitle;
                     currentSectionData = [];
                     this.sections.push({ title: currentSectionTitle, data: currentSectionData });
                 }
-                currentSectionData.push(tagName);
+                currentSectionData.push(hashtag);
             }
-
-            // DEBUG
-
-            this.sections.push({ title: 'A', data: ['arnaud', 'action'] });
-            this.sections.push({ title: 'B', data: ['bruno', 'benoit'] });
-            this.sections.push({ title: 'A', data: ['arnaud', 'action'] });
-            this.sections.push({ title: 'B', data: ['bruno', 'benoit'] });
-            this.sections.push({ title: 'A', data: ['arnaud', 'action'] });
-            this.sections.push({ title: 'B', data: ['bruno', 'benoit'] });
-            this.sections.push({ title: 'A', data: ['arnaud', 'action'] });
-            this.sections.push({ title: 'B', data: ['bruno', 'benoit'] });
-            this.sections.push({ title: 'A', data: ['arnaud', 'action'] });
-            this.sections.push({ title: 'B', data: ['bruno', 'benoit'] });
-            this.sections.push({ title: 'A', data: ['arnaud', 'action'] });
-            this.sections.push({ title: 'B', data: ['bruno', 'benoit'] });
-            this.sections.push({ title: 'A', data: ['arnaud', 'action'] });
-            this.sections.push({ title: 'B', data: ['bruno', 'benoit'] });
-            this.sections.push({ title: 'A', data: ['arnaud', 'action'] });
-            this.sections.push({ title: 'B', data: ['bruno', 'benoit'] });
-            this.sections.push({ title: 'A', data: ['arnaud', 'action'] });
-            this.sections.push({ title: 'B', data: ['bruno', 'benoit'] });
-            this.sections.push({ title: 'A', data: ['arnaud', 'action'] });
-            this.sections.push({ title: 'B', data: ['bruno', 'benoit'] });
-            this.sections.push({ title: 'A', data: ['arnaud', 'action'] });
-            this.sections.push({ title: 'B', data: ['bruno', 'benoit'] });
-            this.sections.push({ title: 'A', data: ['arnaud', 'action'] });
-            this.sections.push({ title: 'B', data: ['bruno', 'benoit'] });
-            this.sections.push({ title: 'A', data: ['arnaud', 'action'] });
-            this.sections.push({ title: 'B', data: ['bruno', 'benoit'] });
-
-            ///
 
             this.setState({ isLoading: false }); 
         });
     }
 
-    _onImportYourHashtags() {
+    shouldSearch(text) {
 
+        // Trigger search process only if at least 2 characters
+        if (text.length > 1) {
+            
+            this.setState({ isLoading: true });
+            this.processSearch(text)
+            .then((results) => {
+                this.setState({ searchResults: results, isLoading: false });
+            });
+        } else if (text.length == 0) {
+            this.setState({ searchResults: null });
+        }
     }
 
-    _onImportCompetitorsHashtags() {
+    processSearch(searchText) {
+        return new Promise(
 
+            function(resolve, reject) {
+
+                const sortedHashtags = global.hashtagManager.getHashtags();
+                let results = [];
+                const upperCaseSearch = searchText.toUpperCase();
+                for (let hashtag of sortedHashtags) {
+                    
+                    let tagName = hashtag.name;
+                    if (tagName.toUpperCase().includes(upperCaseSearch)) {
+                        results.push(hashtag);
+                    }
+                }
+                resolve(results);
+            }
+        );
     }
+
+    emptySearchResult() {
+        return (
+            <Text>No result...</Text>
+        );
+    }
+
+
   
     render() {
 
         return(
             <View style={CommonStyles.styles.standardPage}>
-                <CustomButton style={CommonStyles.styles.standardButton}
-                    title='Import your Hashtags'
-                    onPress={this._onImportYourHashtags.bind(this)}/>
-                <CustomButton style={CommonStyles.styles.standardButton}
-                    title='Import from competitors'
-                    onPress={this._onImportCompetitorsHashtags.bind(this)}/>
                 <View>
                     { this.state.isLoading ? <LoadingIndicatorView/> : null }
-                    <SectionList
-                        sections={this.sections} 
-                        renderItem={({item}) => <Text>{item}</Text>}
-                        renderSectionHeader={({section}) => <Text>{section.title}</Text>}
-                        keyExtractor={(item, index) => index} />
+                    <SearchInput
+                        onChangeText={this.shouldSearch.bind(this)}
+                        placeholder={'search hashtag'}
+                    />
+                    { this.state.searchResults ?
+                        <FlatList
+                            data={this.state.searchResults}
+                            keyExtractor={(item, index) => item.name}
+                            ListEmptyComponent={this.emptySearchResult}
+                            renderItem={({item}) => <Text>{item.name}</Text>} />
+                        :
+                        <SectionList
+                            sections={this.sections} 
+                            renderItem={({item}) => <Text>{item.name}</Text>}
+                            renderSectionHeader={({section}) => <Text>{section.title}</Text>}
+                            keyExtractor={(item, index) => index} />
+                    }
                 </View>
             </View>
         );

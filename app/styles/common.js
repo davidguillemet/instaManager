@@ -17,12 +17,14 @@ export default CommonStyles = {
   BIG_FONT_SIZE: 30,
   MEDIUM_FONT_SIZE: 20,
   SMALL_FONT_SIZE: 14,
+  NAV_ICON_SIZE: 25,
 
   // Fonts
   FONT_NORMAL: 'Arial',
   
   // Radius
   BORDER_RADIUS: 5,
+  SEARCH_INPUT_BORDER_RADIUS: 15,
 
   // Padding
   GLOBAL_PADDING: 10
@@ -54,6 +56,12 @@ CommonStyles.styles = StyleSheet.create(
     fontSize: CommonStyles.MEDIUM_FONT_SIZE,
     padding: 10,
     borderRadius: CommonStyles.BORDER_RADIUS
+  },
+  navigationButtonIcon: {
+    color: CommonStyles.TEXT_COLOR,
+    padding: 10,
+    paddingTop: 20,
+    fontSize: CommonStyles.NAV_ICON_SIZE
   }
 });
   
