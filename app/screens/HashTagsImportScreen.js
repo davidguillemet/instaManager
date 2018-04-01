@@ -5,6 +5,7 @@ import {
   View,
   Text,
   ProgressViewIOS,
+  TouchableOpacity,
   Alert
 } from 'react-native';
 
@@ -17,12 +18,20 @@ import CommonStyles from '../styles/common';
 import MediaListService from '../services/media/MediaListService';
 import MediaCommentsService from '../services/media/MediaCommentsService';
 
+function renderBackButton(params) {
+
+    return (
+        <TouchableOpacity onPress={params.onBack}><Ionicons name={'ios-arrow-back'} style={CommonStyles.styles.navigationButtonIcon}/></TouchableOpacity>
+    );
+}
+
 export default class HashTagsImportScreen extends React.Component {
 
     static navigationOptions = ({ navigation }) => {
         const params = navigation.state.params || {};
         return {
-            headerTitle: 'Import'
+            headerTitle: 'Import',
+            headerLeft: renderBackButton(params)
         }   
     };
 
@@ -44,6 +53,8 @@ export default class HashTagsImportScreen extends React.Component {
     
     componentDidMount() {
 
+        this.props.navigation.setParams({ onBack: this.onBack.bind(this) });
+
         this.startProcess();
     }
 
@@ -61,6 +72,25 @@ export default class HashTagsImportScreen extends React.Component {
                 isLoading: false,
                 importProgress: this.mediaCount
             });
+        }
+    }
+
+    onBack() {
+
+        if (this.importResults.size > 0) {
+
+            Alert.alert(
+                null,
+                "Some tags which have been imported from your media have not been saved. Would you like to continue?",
+                [
+                    {text: 'Cancel', onPress: null, style: 'cancel'},
+                    {text: 'OK', onPress: () => this.props.navigation.goBack() }
+                ]
+            );
+
+        } else {
+
+            this.props.navigation.goBack();
         }
     }
 
