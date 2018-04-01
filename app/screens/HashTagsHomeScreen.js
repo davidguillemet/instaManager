@@ -33,7 +33,7 @@ class ImportButton extends React.Component {
 export default class HashTagsHomeScreen extends React.Component {
 
     static navigationOptions = {
-        title: 'Your Hashtags',
+        title: 'My Hashtags',
         headerRight: <ImportButton/>
     };
 
@@ -136,7 +136,7 @@ export default class HashTagsHomeScreen extends React.Component {
                             sections={this.sections} 
                             renderItem={({item}) => <Text>{item.name}</Text>}
                             renderSectionHeader={({section}) => <Text>{section.title}</Text>}
-                            keyExtractor={(item, index) => index} />
+                            keyExtractor={(item, index) => item.name} />
                     }
                 </View>
             </View>

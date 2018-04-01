@@ -24,7 +24,8 @@ export default class SearchInput extends React.Component {
                     autoCorrect={false}
                     style={styles.searchInput}                
                     selectionColor={CommonStyles.TEXT_COLOR}
-                    clearButtonMode={'always'}>
+                    clearButtonMode={'always'}
+                    autoCapitalize='none'>
                 </TextInput>
             </View>
         );

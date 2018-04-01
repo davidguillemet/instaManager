@@ -39,6 +39,9 @@ export default class HomeScreen extends React.Component {
         .then((userInfo) => {
             global.userManager.setCurrentUser(userInfo);
             this.setState({refreshing: false});
+        })
+        .catch(error => {
+            this.setState({refreshing: false});
         });
     }
 

@@ -27,6 +27,16 @@ export default class UserManagerClass {
         this.realm = realm;
     }
 
+    getCurrentUser() {
+
+        return this.getUserInfo(this.currentUserId);
+    }
+
+    getUserInfo(userId) {
+
+        return this.realm.objectForPrimaryKey(userSchema, userId);
+    }
+
     setCurrentUser(newUserInfo) {
         
         // Check if the user already exists:
@@ -120,6 +130,7 @@ export default class UserManagerClass {
         return today;
     }
 
+    /*
     openRelatedRealm() {
 
         return Realm.open({
@@ -134,12 +145,13 @@ export default class UserManagerClass {
         }).then(realm => {
             this.relatedRealm = realm;
         });
-    }
+    }*/
 
     /**
      * Asynchronous method to update followers, including lost and new
      * Returns a Promise
      */
+    /*
     updateFollowers() {
 
         const followerService = new FollowerService('self');
@@ -153,8 +165,9 @@ export default class UserManagerClass {
             // And extract the difference:
             this.extractAndUpdateRelatedDifference(actualFollowers, prevFollowers, 'Followers', 'FollowersHistory');
         });
-    }
+    }*/
 
+    /*
     updateFollowings() {
 
         const followingService = new FollowingService('self');
@@ -168,13 +181,14 @@ export default class UserManagerClass {
             // And extract the difference:
             this.extractAndUpdateRelatedDifference(actualFollowings, prevFollowings, 'Followings', 'FollowingsHistory');
         });
-    }
+    }*/
     
     /**
      * 
      * @param {*} newRelated is alist of users from instagram api like { "username": "xx", "profile_picture": "xxx", "full_name": "xx", "id": "xx" }
      * @param {*} prevRelated is a realm object like { "id": "xxx", "users": [list of user identifiers] }
      */
+    /*
     extractAndUpdateRelatedDifference(actualRelatedList, prevRelatedList, relatedSchemaName, relatedHistorySchemaName) {
         
         // Build a hash set from the list of previous related identifiers
@@ -223,7 +237,7 @@ export default class UserManagerClass {
             };
             
             // TODO
-            //this.relatedRealm.create(relatedSchemaName, userRelatedEntry, true /* update */);
+            //this.relatedRealm.create(relatedSchemaName, userRelatedEntry, true);
 
             // add/update a new history entry in the related history schema
             const today = this.formatDate(new Date());
@@ -255,7 +269,7 @@ export default class UserManagerClass {
             for (let newRelatedUser of actualRelatedList) {
                 // The realm schema is the same as the object from the instagram API...
                 // TODO
-                //this.relatedRealm.create('RelatedUsersInfo', newRelatedUser, true /* Update possible */);
+                //this.relatedRealm.create('RelatedUsersInfo', newRelatedUser, true);
             }
         });
     }
@@ -316,16 +330,6 @@ export default class UserManagerClass {
         return dayAsString + monthValues[monthIndex] + year;
       }
 
-    getCurrentUser() {
-
-        return this.getUserInfo(this.currentUserId);
-    }
-
-    getUserInfo(userId) {
-
-        return this.realm.objectForPrimaryKey(userSchema, userId);
-    }
-
     getNewFollowersForToday() {
 
         const historyEntryForToday = this.relatedRealm.objectForPrimaryKey('FollowersHistory', this.formatDate(new Date()));
@@ -344,5 +348,5 @@ export default class UserManagerClass {
         }
 
         return 0;
-    }
+    }*/
 }
