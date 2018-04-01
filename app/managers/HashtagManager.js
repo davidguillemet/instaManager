@@ -3,6 +3,8 @@ import {
     HashtagSchema
 } from '../model/realmSchemas';
 
+const Realm = require('realm');
+
 const categorySchema = 'TagCategory';
 const hashtagSchema = 'Hashtag';
 
@@ -14,7 +16,7 @@ export default class HashtagManagerClass {
 
     open() {
         
-        if (this.relalm == null) {
+        if (this.realm == null) {
 
             return Realm.open({
                 schema: [

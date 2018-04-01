@@ -8,8 +8,9 @@ import {
 
 import { Alert } from 'react-native';
 
-import FollowerService from '../services/users/FollowerService';
-import FollowingService from '../services/users/FollowingService';
+// import FollowerService from '../services/users/FollowerService';
+// import FollowingService from '../services/users/FollowingService';
+import UserService from '../services/users/UserService';
 
 const userSchema = 'User';
 const historySchema = 'History';
@@ -35,6 +36,14 @@ export default class UserManagerClass {
     getUserInfo(userId) {
 
         return this.realm.objectForPrimaryKey(userSchema, userId);
+    }
+
+    getMediaCount() {
+        const userServiceDelegate = new UserService(global.instaFacade.getUserId());
+        return global.serviceManager.invoke(userServiceDelegate)
+        .then((userInfo) => {
+            return userInfo.media_count;
+        });
     }
 
     setCurrentUser(newUserInfo) {

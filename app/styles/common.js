@@ -46,15 +46,18 @@ CommonStyles.styles = StyleSheet.create(
       padding: CommonStyles.GLOBAL_PADDING,
   },
   mediumLabel: {
-    flex: 1,
     color: CommonStyles.TEXT_COLOR,
     fontSize: CommonStyles.MEDIUM_FONT_SIZE
+  },
+  smallLabel: {
+    color: CommonStyles.TEXT_COLOR,
+    fontSize: CommonStyles.SMALL_FONT_SIZE
   },
   standardButton: {
     backgroundColor: CommonStyles.GLOBAL_FOREGROUND,
     color: CommonStyles.TEXT_COLOR,
     fontSize: CommonStyles.MEDIUM_FONT_SIZE,
-    padding: 10,
+    padding: CommonStyles.GLOBAL_PADDING,
     borderRadius: CommonStyles.BORDER_RADIUS
   },
   navigationButtonIcon: {

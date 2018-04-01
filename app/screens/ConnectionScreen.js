@@ -61,7 +61,7 @@ export default class ConnectionScreen extends React.Component {
         // Client-side authentication (Implicit) -> for mobile app
         const accessToken = parameters.substr('access_token='.length);
 
-        global.instaFacade.openSession(accessToken, true /* new session */);
+        global.instaFacade.openSession(accessToken);
         
         this._getUserInformations();
         
@@ -81,8 +81,6 @@ export default class ConnectionScreen extends React.Component {
     const userServiceDelegate = new UserService('self');
     global.serviceManager.invoke(userServiceDelegate)
     .then((userInfo) => {
-      // FIXME: why forcing the context as this for _onGetUserInfo?
-      //        while this._onGetUserInfo is properly called????
       this._onGetUserInfo.call(this, userInfo);
     });
   }

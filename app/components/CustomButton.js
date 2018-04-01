@@ -14,22 +14,27 @@ export default class CustomButton extends React.Component {
     }
 
     render() {
+
         let globalStyle = StyleSheet.flatten(this.props.style);
-        const touchableStyle = {
-            backgroundColor: globalStyle.backgroundColor,
-            paddingVertical: globalStyle.padding,
-            paddingHorizontal: globalStyle.padding * 2,
-            borderRadius: globalStyle.borderRadius,
-            marginBottom: CommonStyles.GLOBAL_PADDING
+        let touchableStyle = {
+            backgroundColor: globalStyle && globalStyle.backgroundColor ? globalStyle.backgroundColor : CommonStyles.GLOBAL_FOREGROUND,
+            paddingVertical: globalStyle && globalStyle.padding ? globalStyle.padding : CommonStyles.GLOBAL_PADDING,
+            paddingHorizontal: globalStyle && globalStyle.padding ? globalStyle.padding * 2 : CommonStyles.GLOBAL_PADDING * 2,
+            borderRadius: globalStyle && globalStyle.borderRadius ? globalStyle.borderRadius : CommonStyles.BORDER_RADIUS,
+            marginBottom: CommonStyles.GLOBAL_PADDING,
         };
+
+        if (globalStyle && globalStyle.marginTop) {
+            touchableStyle = { ...touchableStyle, marginTop: globalStyle.marginTop };
+        }
+
         const textStyle = {
-            color: globalStyle.color,
-            fontSize: globalStyle.fontSize
+            color: globalStyle && globalStyle.color ? globalStyle.color : CommonStyles.TEXT_COLOR,
+            fontSize: globalStyle && globalStyle.fontSize ? globalStyle.fontSize : CommonStyles.MEDIUM_FONT_SIZE
         };
 
         return (
-            <TouchableOpacity style={touchableStyle} onPress={this.props.onPress}
-            >
+            <TouchableOpacity style={touchableStyle} onPress={this.props.onPress}>
                 <Text style={textStyle}>{this.props.title}</Text>
             </TouchableOpacity>
         );

@@ -5,7 +5,8 @@ import {
   RefreshControl,
   View,
   Text,
-  Image
+  Image,
+  Alert
 } from 'react-native';
 
 import UserService from '../services/users/UserService';
@@ -33,7 +34,7 @@ export default class HomeScreen extends React.Component {
 
         this.setState({refreshing: true});
 
-        const userServiceDelegate = new UserService('self');
+        const userServiceDelegate = new UserService(global.instaFacade.getUserId());
         
         global.serviceManager.invoke(userServiceDelegate)
         .then((userInfo) => {

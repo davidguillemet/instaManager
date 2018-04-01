@@ -47,7 +47,21 @@ export default class ServiceManagerClass  {
                             Alert.alert('Error',  error.message);
                             reject(error);
                         } else {
-                            resolve(result);
+                            let data = result.data ? result.data : result;
+                            if (result.paging) {
+                                
+                                let next = null;
+                                
+                                if (result.paging.next &&
+                                    result.paging.cursors &&
+                                    result.paging.cursors.after) {
+
+                                    next = result.paging.cursors.after;
+                                }
+                                
+                                data = { data: data, next: next };
+                            }
+                            resolve(data);
                         }
                     }
                   );
@@ -78,6 +92,7 @@ export default class ServiceManagerClass  {
     }
 
     getRequestParameters(serviceDelegate) {
+
         const parametersMap = serviceDelegate.getParameters();
         if (parametersMap == null || parametersMap.size == 0) {
             return null;

@@ -3,7 +3,6 @@ import {
   StyleSheet,
   View,
   Text,
-  ScrollView,
   FlatList,
   SectionList,
   TouchableOpacity,
@@ -11,51 +10,50 @@ import {
 } from 'react-native';
 
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import CustomButton from '../components/CustomButton';
 import SearchInput from '../components/Search';
 import LoadingIndicatorView from '../components/LoadingIndicator';
 
 import CommonStyles from '../styles/common'; 
 
-class ImportButton extends React.Component {
+function renderImportButton(params) {
 
-    render() {
-        return (
-            <TouchableOpacity onPress={this._onImport}><Ionicons name={'ios-cloud-download'} style={CommonStyles.styles.navigationButtonIcon}/></TouchableOpacity>
-        );
-    }
-
-    _onImport() {
-
-    }
+    return (
+        <TouchableOpacity onPress={params.onImport}><Ionicons name={'ios-cloud-download'} style={CommonStyles.styles.navigationButtonIcon}/></TouchableOpacity>
+    );
 }
 
 export default class HashTagsHomeScreen extends React.Component {
 
-    static navigationOptions = {
-        title: 'My Hashtags',
-        headerRight: <ImportButton/>
+    static navigationOptions = ({ navigation }) => {
+        const params = navigation.state.params || {};
+        return {
+            headerTitle: 'My Hashtags',
+            headerRight: renderImportButton(params)
+        }   
     };
 
     constructor(props) {
         super(props);
         this.state = { isLoading: true };
+        this.sortedHashtags = null;
         this.sections = [];
     }
     
     componentWillMount() {
 
+        this.props.navigation.setParams({ onImport: this.onImport.bind(this) });
+
         global.hashtagManager.open()
         .then(() => {
 
-            let sortedHashtags = global.hashtagManager.getHashtags();
+            this.sortedHashtags = global.hashtagManager.getHashtags();
             
             // Here we get a sorted list,
             // split into sections
             this.sections = [];
             let previousSectionTitle = null;
             let currentSectionData;
-            for (let hashtag of sortedHashtags) {
+            for (let hashtag of this.sortedHashtags) {
                 let tagName = hashtag.name;
                 let currentSectionTitle = tagName.charAt(0).toUpperCase();
 
@@ -113,7 +111,9 @@ export default class HashTagsHomeScreen extends React.Component {
         );
     }
 
-
+    onImport() {
+        this.props.navigation.navigate('HashTagsImport');
+    }
   
     render() {
 
