@@ -122,10 +122,18 @@ export default class HashTagsImportScreen extends React.Component {
             if (indexToScan < mediaList.length - 1) {
                 // scan next media from the current page
                 this.scanMediaList(mediaList, indexToScan + 1, cursorNext);
-            } else {
-                // fecth next media page
+            } else  if (cursorNext) {
+                // fecth possible next media page
                 this.fetchMediaList(cursorNext);
-            }    
+            } else {
+                // No more media page...scan completed
+                this.setState({
+                    completed: true,
+                    importStep: `Scanning process sompleted`,
+                    importProgress: this.mediaCount,
+                    importCount: this.importResults.size
+                });
+            }
         });
     }
 
@@ -140,7 +148,7 @@ export default class HashTagsImportScreen extends React.Component {
             }
 
             // scan comments
-            if (media.comments && media.Comments.data) {
+            if (media.comments && media.comments.data) {
                 this.scanComments(media.comments.data);
             }
            
@@ -219,7 +227,7 @@ export default class HashTagsImportScreen extends React.Component {
                 
                 <CustomButton
                     onPress={this.onStartCancel.bind(this)}
-                    title={this.state.canceled ? 'Restart scan process' : 'Cancel scan process'}
+                    title={(this.state.canceled || this.state.completed) ? 'Restart scan process' : 'Cancel scan process'}
                     style={{marginTop: CommonStyles.GLOBAL_PADDING}} />
                 
                 { (this.state.importCount > 0 && (this.state.completed || this.state.canceled)) ?
