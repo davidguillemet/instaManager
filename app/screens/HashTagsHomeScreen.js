@@ -5,8 +5,10 @@ import {
   Text,
   FlatList,
   SectionList,
+  SegmentedControlIOS,
   TouchableOpacity,
-  Alert
+  Alert,
+  AlertIOS
 } from 'react-native';
 
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -18,7 +20,10 @@ import CommonStyles from '../styles/common';
 function renderImportButton(params) {
 
     return (
-        <TouchableOpacity onPress={params.onImport}><Ionicons name={'ios-cloud-download'} style={CommonStyles.styles.navigationButtonIcon}/></TouchableOpacity>
+        <View style={{ flexDirection: 'row'}}>
+            <TouchableOpacity onPress={params.onAddTag}><Ionicons name={'ios-add'} style={CommonStyles.styles.navigationButtonIcon}/></TouchableOpacity>
+            <TouchableOpacity onPress={params.onImport}><Ionicons name={'ios-cloud-download'} style={CommonStyles.styles.navigationButtonIcon}/></TouchableOpacity>
+        </View>
     );
 }
 
@@ -41,7 +46,10 @@ export default class HashTagsHomeScreen extends React.Component {
     
     componentWillMount() {
 
-        this.props.navigation.setParams({ onImport: this.onImport.bind(this) });
+        this.props.navigation.setParams({ 
+            onImport: this.onImport.bind(this),
+            onAddTag: this.onAddTag.bind(this)
+        });
 
         global.hashtagManager.open()
         .then(() => {
@@ -114,6 +122,47 @@ export default class HashTagsHomeScreen extends React.Component {
     onImport() {
         this.props.navigation.navigate('HashTagsImport');
     }
+
+    onAddTag() {
+        AlertIOS.prompt(
+            "New hashtag",
+            "Enter a new hashtag",
+            (value) => this.addTag(value)
+        );
+    }
+
+    addTag(tagName) {
+        Alert.alert("new tag", tagName);
+    }
+
+    renderSeparator() {
+        return (
+            <View
+                style={{
+                    height: 1,
+                    width: "100%",
+                    backgroundColor: CommonStyles.SEPARATOR_COLOR,
+                    marginLeft: CommonStyles.GLOBAL_PADDING
+                }}
+            />
+        );
+    }
+
+    renderListFooter() {
+        return (
+            <View style={{height: 35}} />
+        );
+    }
+
+    renderEmptyComponent() {
+        return (
+            <View style={{ flex: 1, justifyContent: 'center', padding: CommonStyles.GLOBAL_PADDING}}>
+                <Text style={ [CommonStyles.styles.mediumLabel, { marginBottom: CommonStyles.GLOBAL_PADDING} ]}>You didn't defined any hashtag yet.</Text>
+                <Text style={ [CommonStyles.styles.mediumLabel, { marginBottom: CommonStyles.GLOBAL_PADDING} ]}>To add a single hashtag, just click on <Ionicons name={'ios-add'} style={CommonStyles.styles.mediumLabel}/> on the top of this screen.</Text>
+                <Text style={ [CommonStyles.styles.mediumLabel, { marginBottom: CommonStyles.GLOBAL_PADDING} ]}>By clicking on <Ionicons name={'ios-cloud-download'} style={CommonStyles.styles.mediumLabel}/>, you can also import all the hashtags you have already used in your instagram posts.</Text>
+            </View>
+        );
+    }
   
     render() {
 
@@ -130,12 +179,17 @@ export default class HashTagsHomeScreen extends React.Component {
                             data={this.state.searchResults}
                             keyExtractor={(item, index) => item.name}
                             ListEmptyComponent={this.emptySearchResult}
-                            renderItem={({item}) => <Text>{item.name}</Text>} />
+                            renderItem={({item}) => <Text style={[CommonStyles.styles.mediumLabel, styles.singleItem]}>{item.name}</Text>}
+                            ItemSeparatorComponent={this.renderSeparator} />
                         :
                         <SectionList
+                            style={{ marginTop: CommonStyles.GLOBAL_PADDING }}
                             sections={this.sections} 
-                            renderItem={({item}) => <Text>{item.name}</Text>}
-                            renderSectionHeader={({section}) => <Text>{section.title}</Text>}
+                            renderItem={({item}) => <Text style={[CommonStyles.styles.mediumLabel, styles.singleItem]}>{item.name}</Text>}
+                            renderSectionHeader={({section}) => <Text style={[CommonStyles.styles.mediumLabel, styles.sectionHeader]}>{section.title}</Text>}
+                            ItemSeparatorComponent={this.renderSeparator}
+                            ListFooterComponent={this.renderListFooter}
+                            ListEmptyComponent={this.renderEmptyComponent}
                             keyExtractor={(item, index) => item.name} />
                     }
                 </View>
@@ -143,3 +197,16 @@ export default class HashTagsHomeScreen extends React.Component {
         );
     }
 }
+
+const styles = StyleSheet.create(
+{
+    sectionHeader: {
+        paddingHorizontal: CommonStyles.GLOBAL_PADDING,
+        paddingVertical: 5,
+        backgroundColor: '#192b48'
+    },
+    singleItem:  {
+        paddingHorizontal: CommonStyles.GLOBAL_PADDING,
+        paddingVertical: 10
+    }, 
+});
