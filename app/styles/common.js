@@ -5,9 +5,14 @@ export default CommonStyles = {
   // Colors
   GLOBAL_BACKGROUND: '#223B62',
   GLOBAL_FOREGROUND: '#406eb7',
+  MEDIUM_BACKGROUND: '#2A4E85',
   KPI_COLOR: '#FFFFFF',
   TEXT_COLOR: '#CCCCCC',
   SEPARATOR_COLOR: '#666666',
+  DELETE_COLOR: '#E64545',
+  EDIT_COLOR: '#666666',
+  ARCHIVE_COLOR: '#96E645',
+  DEACTIVATED_SWIPE_ACTION_COLOR: '#666666',
   POSITIVE_DELTA_COLOR: 'green',
   NEGATIVE_DELTA_COLOR: 'red',
   PROFILE_PICTURE_BORDER_COLOR: 'white',
@@ -19,6 +24,7 @@ export default CommonStyles = {
   MEDIUM_FONT_SIZE: 20,
   SMALL_FONT_SIZE: 14,
   NAV_ICON_SIZE: 30,
+  SWIPE_ICON_SIZE: 25,
 
   // Fonts
   FONT_NORMAL: 'Arial',
@@ -66,6 +72,11 @@ CommonStyles.styles = StyleSheet.create(
     padding: 10,
     paddingTop: 20,
     fontSize: CommonStyles.NAV_ICON_SIZE
+  },
+  swipeButtonIcon: {
+    color: CommonStyles.TEXT_COLOR,
+    padding: 10,
+    fontSize: CommonStyles.SWIPE_ICON_SIZE
   }
 });
   

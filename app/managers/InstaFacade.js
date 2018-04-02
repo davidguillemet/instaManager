@@ -60,7 +60,7 @@ export default class InstaFacadeClass {
         try {
             let lastUserInfo = {
                 userId: "17841404340538520",
-                accessToken: "EAACFvZAOrOWUBAKd96PWIe27aewhNulruqCZC2OpEficUBjeRG8XIiyAdOqaDRwOkI0oB4q051hUBh98758sj1mZAmXsa703Q1Ab4chHLBILiJAm2ZAWFggicqJwJmBZBQ75VYeMVV9ANKGMaWosNBIp4D3Mj9uAstt0W2nYKefnhJBsKY3jZCWhp71cwiufyoP5EV6MN43eTIcvfiBODB"
+                accessToken: "EAACFvZAOrOWUBAFrO9ugcSUZAZCZCdn7xMVuFIBQ3UWVzUD8rJKknGrUJELi4WXdNnWpXVYqdYEezlnRBUH5Itz3HyExrPcuihK2Biv7x9VNwzxLc4YdAH68fW3uZBvu1ZAKCC1CpgYbXWRGhvPd1rgsGfCqe8ZCkRp0K683dRnt13LGYIg9hgVSBjZAg7YJu9DXFZAoDkyMqZAZAN1WK8aS27q"
             };
             this.currentSession = lastUserInfo;
         } catch (e) {

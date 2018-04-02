@@ -7,13 +7,14 @@ import {
   SectionList,
   SegmentedControlIOS,
   TouchableOpacity,
-  Alert,
-  AlertIOS
+  TouchableHighlight,
+  Alert
 } from 'react-native';
 
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import SearchInput from '../components/Search';
 import LoadingIndicatorView from '../components/LoadingIndicator';
+import SwipeableListViewItem from '../components/SwipeableListViewItem';
 
 import CommonStyles from '../styles/common'; 
 
@@ -124,17 +125,20 @@ export default class HashTagsHomeScreen extends React.Component {
     }
 
     onAddTag() {
-        AlertIOS.prompt(
-            "New hashtag",
-            "Enter a new hashtag",
-            (value) => this.addTag(value)
-        );
+        // TODO
+        Alert.alert("New Tag");
     }
 
-    addTag(tagName) {
-        Alert.alert("new tag", tagName);
+    onDeleteTag(item) {
+        // TODO
+        Alert.alert("delete", item.name);
     }
 
+    onArchiveTag(item) {
+        // TODO
+        Alert.alert("archive", item.name);
+    }
+    
     renderSeparator() {
         return (
             <View
@@ -150,7 +154,7 @@ export default class HashTagsHomeScreen extends React.Component {
 
     renderListFooter() {
         return (
-            <View style={{height: 35}} />
+            <View style={{height: 50}} />
         );
     }
 
@@ -163,30 +167,54 @@ export default class HashTagsHomeScreen extends React.Component {
             </View>
         );
     }
+
+    renderListItem(item) {
+        return (
+            <SwipeableListViewItem
+                item={item} 
+                rightAction={{ caption: 'Delete', icon: 'ios-trash', color: CommonStyles.DELETE_COLOR, callback: this.onDeleteTag.bind(this) }}
+                leftAction={{ caption: 'Archive', icon: 'ios-archive', color: CommonStyles.ARCHIVE_COLOR, callback: this.onArchiveTag.bind(this) }}
+                renderItem={this.renderInnerListItem}
+            />
+        );
+    }
+
+    renderInnerListItem(item) {
+        return (
+            <Text style={[CommonStyles.styles.mediumLabel, styles.singleItem]}>{item.name}</Text>
+        );
+    }
   
+    renderSectionHeader(section) {
+        return (
+            <Text style={[CommonStyles.styles.mediumLabel, styles.sectionHeader]}>{section.title}</Text>
+        );
+    }
+
     render() {
 
         return(
-            <View style={CommonStyles.styles.standardPage}>
+            <View style={[CommonStyles.styles.standardPage, {paddingHorizontal: 0, paddingTop: 0}]}>
                 <View>
                     { this.state.isLoading ? <LoadingIndicatorView/> : null }
-                    <SearchInput
-                        onChangeText={this.shouldSearch.bind(this)}
-                        placeholder={'search hashtag'}
-                    />
+                    <View style={{padding: CommonStyles.GLOBAL_PADDING, backgroundColor: CommonStyles.MEDIUM_BACKGROUND}}>
+                        <SearchInput
+                            onChangeText={this.shouldSearch.bind(this)}
+                            placeholder={'search hashtag'}
+                        />
+                    </View>
                     { this.state.searchResults ?
                         <FlatList
                             data={this.state.searchResults}
                             keyExtractor={(item, index) => item.name}
                             ListEmptyComponent={this.emptySearchResult}
-                            renderItem={({item}) => <Text style={[CommonStyles.styles.mediumLabel, styles.singleItem]}>{item.name}</Text>}
+                            renderItem={({item}) => this.renderListItem(item)}
                             ItemSeparatorComponent={this.renderSeparator} />
                         :
                         <SectionList
-                            style={{ marginTop: CommonStyles.GLOBAL_PADDING }}
                             sections={this.sections} 
-                            renderItem={({item}) => <Text style={[CommonStyles.styles.mediumLabel, styles.singleItem]}>{item.name}</Text>}
-                            renderSectionHeader={({section}) => <Text style={[CommonStyles.styles.mediumLabel, styles.sectionHeader]}>{section.title}</Text>}
+                            renderItem={({item}) => this.renderListItem(item)}
+                            renderSectionHeader={({section}) => this.renderSectionHeader(section)}
                             ItemSeparatorComponent={this.renderSeparator}
                             ListFooterComponent={this.renderListFooter}
                             ListEmptyComponent={this.renderEmptyComponent}
