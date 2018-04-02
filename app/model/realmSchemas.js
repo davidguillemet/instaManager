@@ -44,7 +44,8 @@ export const TagCategorySchema = {
     primaryKey: 'name',
     properties: {
         name: 'string',
-        parent: 'string?'
+        parent: 'string?',
+        archived: {type: 'bool',  default: false}
     }
 }
 
@@ -56,7 +57,8 @@ export const HashtagSchema = {
     primaryKey: 'name',
     properties: {
         name: 'string',
-        category: 'string?' 
+        category: 'string?',
+        archived: {type: 'bool',  default: false}
     }
 }
 

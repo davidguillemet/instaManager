@@ -21,6 +21,7 @@ export default CommonStyles = {
   PROFILE_PICTURE_SIZE: 60,
   PROFILE_PICTURE_BORDER_WIDTH: 3,
   BIG_FONT_SIZE: 30,
+  LARGE_FONT_SIZE: 25,
   MEDIUM_FONT_SIZE: 20,
   SMALL_FONT_SIZE: 14,
   NAV_ICON_SIZE: 30,
@@ -51,6 +52,10 @@ CommonStyles.styles = StyleSheet.create(
       borderRadius: CommonStyles.BORDER_RADIUS,
       marginBottom: CommonStyles.GLOBAL_PADDING,
       padding: CommonStyles.GLOBAL_PADDING,
+  },
+  largeLabel: {
+    color: CommonStyles.TEXT_COLOR,
+    fontSize: CommonStyles.LARGE_FONT_SIZE
   },
   mediumLabel: {
     color: CommonStyles.TEXT_COLOR,

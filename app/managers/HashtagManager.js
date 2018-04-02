@@ -23,7 +23,8 @@ export default class HashtagManagerClass {
                     TagCategorySchema,
                     HashtagSchema
                 ],
-                path: 'hashTagInfo.realm'
+                path: 'hashTagInfo.realm',
+                schemaVersion: 1
             }).then(realm => {
                 this.realm = realm;
             });
