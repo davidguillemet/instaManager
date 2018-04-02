@@ -73,6 +73,9 @@ export default class SwipeableListViewItem extends React.Component {
                 onLeftActionActivate={() => this.setState({leftActionActivated: true})}
                 onLeftActionDeactivate={() => this.setState({leftActionActivated: false})}
                 onLeftActionComplete={() => this.props.leftAction.callback(this.props.item)}
+
+                onSwipeStart={() => { if (this.props.onSwipeStart) this.props.onSwipeStart(); }}
+                onSwipeRelease={() => { if (this.props.onSwipeRelease) this.props.onSwipeRelease(); }}
             >
                 { this.props.renderItem(this.props.item) }
             </Swipeable>
