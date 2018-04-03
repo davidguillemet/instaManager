@@ -16,5 +16,6 @@ export default RootStack = SwitchNavigator(
     AuthStack: AuthenticationStack,
 },
 {
-    initialRouteName: 'AuthLoading',
+    //initialRouteName: 'AuthLoading',
+    initialRouteName: 'AppStack',
 });

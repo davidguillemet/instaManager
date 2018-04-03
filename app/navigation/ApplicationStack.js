@@ -35,6 +35,10 @@ export default ApplicationStack = TabNavigator(
     Settings: { screen: SettingsStack }
 },
 {
+    ////// TO REMOVE ONCE FACEBOOK CONNECTIO IS BACK ///
+    initialRouteName: 'HashTags',
+    ////////////////////////////////////////////////////
+
     navigationOptions: ({ navigation }) => ({
         tabBarIcon: ({ focused, tintColor }) => {
             const { routeName } = navigation.state;
