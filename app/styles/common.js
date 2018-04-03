@@ -80,6 +80,11 @@ CommonStyles.styles = StyleSheet.create(
     paddingTop: 20,
     fontSize: CommonStyles.NAV_ICON_SIZE
   },
+  textIcon: {
+    color: CommonStyles.TEXT_COLOR,
+    paddingHorizontal: CommonStyles.GLOBAL_PADDING,
+    fontSize: CommonStyles.NAV_ICON_SIZE
+  },
   swipeButtonIcon: {
     color: CommonStyles.TEXT_COLOR,
     padding: 10,

@@ -114,7 +114,7 @@ export default class HashtagCategoriesScreen extends React.Component {
     }
 
     onAddCategory() {
-        this.props.navigation.navigate('HashtagCategoryEdit', { onItemUpdated: this.onItemUpdated.bind(this) });
+        this.props.navigation.navigate('HashtagCategoryEdit', { onItemUpdated: this.onCategoryUpdated.bind(this) });
     }
 
     onEditCategory(category) {
