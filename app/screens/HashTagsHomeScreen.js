@@ -36,7 +36,7 @@ export default class HashTagsHomeScreen extends React.Component {
             target: 'ArchivedHashTags'
         });
         this.sections.push({
-            title: 'Manage your hashtags',
+            title: 'Manage hashtags',
             data: hashtagMenuItems
         });
 
@@ -47,7 +47,7 @@ export default class HashTagsHomeScreen extends React.Component {
             target: 'HashtagCategories'
         });        
         this.sections.push({
-            title: 'Manage your categories',
+            title: 'Manage categories',
             data: categoryMenuItems
         });
     }
@@ -90,7 +90,9 @@ export default class HashTagsHomeScreen extends React.Component {
   
     renderSectionHeader(section) {
         return (
-            <Text style={[CommonStyles.styles.largeLabel, styles.sectionHeader]}>{section.title}</Text>
+            <View style={{ borderLeftColor: CommonStyles.GLOBAL_FOREGROUND, borderLeftWidth: 4 }}>
+                <Text style={[CommonStyles.styles.largeLabel, styles.sectionHeader]}>{section.title}</Text>
+            </View>
         );
     }
 

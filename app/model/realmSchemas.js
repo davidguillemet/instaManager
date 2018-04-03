@@ -41,8 +41,9 @@ export const HistorySchema = {
  */
 export const TagCategorySchema = {
     name: 'TagCategory',
-    primaryKey: 'name',
+    primaryKey: 'id',
     properties: {
+        id: 'string',
         name: 'string',
         parent: 'string?',
         archived: {type: 'bool',  default: false}
@@ -57,7 +58,7 @@ export const HashtagSchema = {
     primaryKey: 'name',
     properties: {
         name: 'string',
-        category: 'string?',
+        categories: 'string?[]',
         archived: {type: 'bool',  default: false}
     }
 }

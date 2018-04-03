@@ -17,7 +17,7 @@ import SwipeableListViewItem from '../components/SwipeableListViewItem';
 
 import CommonStyles from '../styles/common'; 
 
-function renderImportButton(params) {
+function renderRightButtons(params) {
 
     return (
         <View style={{ flexDirection: 'row'}}>
@@ -33,7 +33,7 @@ export default class HashTagListScreen extends React.Component {
         const params = navigation.state.params || {};
         return {
             headerTitle: 'My Hashtags',
-            headerRight: renderImportButton(params)
+            headerRight: renderRightButtons(params)
         }   
     };
 
@@ -44,7 +44,7 @@ export default class HashTagListScreen extends React.Component {
         this.sections = [];
     }
     
-    componentWillMount() {
+    componentDidMount() {
 
         this.props.navigation.setParams({ 
             onImport: this.onImport.bind(this),
@@ -161,7 +161,7 @@ export default class HashTagListScreen extends React.Component {
         return (
             <View style={{ flex: 1, justifyContent: 'center', padding: CommonStyles.GLOBAL_PADDING}}>
                 <Text style={ [CommonStyles.styles.mediumLabel, { marginBottom: CommonStyles.GLOBAL_PADDING} ]}>You didn't defined any hashtag yet.</Text>
-                <Text style={ [CommonStyles.styles.mediumLabel, { marginBottom: CommonStyles.GLOBAL_PADDING} ]}>To add a single hashtag, just click on <Ionicons name={'ios-add'} style={CommonStyles.styles.mediumLabel}/> on the top of this screen.</Text>
+                <Text style={ [CommonStyles.styles.mediumLabel, { marginBottom: CommonStyles.GLOBAL_PADDING} ]}>To add a single hashtag, just click on <Ionicons name={'ios-add'} style={CommonStyles.styles.mediumLabel}/> on the top of the screen.</Text>
                 <Text style={ [CommonStyles.styles.mediumLabel, { marginBottom: CommonStyles.GLOBAL_PADDING} ]}>By clicking on <Ionicons name={'ios-cloud-download'} style={CommonStyles.styles.mediumLabel}/>, you can also import all the hashtags you have already used in your instagram posts.</Text>
             </View>
         );
@@ -182,13 +182,13 @@ export default class HashTagListScreen extends React.Component {
 
     renderInnerListItem(item) {
         return (
-            <Text style={[CommonStyles.styles.mediumLabel, styles.singleItem]}>{item.name}</Text>
+            <Text style={CommonStyles.styles.singleListItem}>{item.name}</Text>
         );
     }
   
     renderSectionHeader(section) {
         return (
-            <Text style={[CommonStyles.styles.mediumLabel, styles.sectionHeader]}>{section.title}</Text>
+            <Text style={CommonStyles.styles.sectionHeader}>{section.title}</Text>
         );
     }
 
@@ -228,16 +228,3 @@ export default class HashTagListScreen extends React.Component {
         );
     }
 }
-
-const styles = StyleSheet.create(
-{
-    sectionHeader: {
-        paddingHorizontal: CommonStyles.GLOBAL_PADDING,
-        paddingVertical: 5,
-        backgroundColor: '#192b48'
-    },
-    singleItem:  {
-        paddingHorizontal: CommonStyles.GLOBAL_PADDING,
-        paddingVertical: 10
-    }, 
-});

@@ -24,7 +24,18 @@ export default class HashtagManagerClass {
                     HashtagSchema
                 ],
                 path: 'hashTagInfo.realm',
-                schemaVersion: 1
+                schemaVersion: 5,
+                migration: (oldRealm, newRealm) => {
+                    // only apply this change if upgrading to schemaVersion 1
+                    if (oldRealm.schemaVersion < 5) {
+                          const newObjects = newRealm.objects('TagCategory');
+                
+                        // loop through all objects and set the name property in the new schema
+                        for (let i = 0; i < newObjects.length; i++) {
+                        newObjects[i].id = global.uniqueID();
+                        }
+                    }
+                }
             }).then(realm => {
                 this.realm = realm;
             });
@@ -39,6 +50,24 @@ export default class HashtagManagerClass {
             );
         }
 
+    }
+
+    getRootCategories() {
+        return this.realm.objects(categorySchema).filtered('parent = null').sorted('name');
+    }
+
+    getSubCategories(parentCategory) {
+        return this.realm.objects(categorySchema).filtered('parent = $0', parentCategory).sorted('name');
+    }
+
+    searchCategory(filter) {
+        return this.realm.objects(categorySchema).filtered('name like $0', filter);
+    }
+
+    saveCategory(category, update) {
+        this.realm.write(() => {
+            this.realm.create(categorySchema, { id: category.id, name: category.name, parent: category.parent }, update);
+        });
     }
 
     getHashtags() {
