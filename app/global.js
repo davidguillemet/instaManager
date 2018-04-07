@@ -12,6 +12,13 @@ global.hashtagManager = new HashtagManagerClass();
 global.CREATE_MODE = 'create';
 global.UPDATE_MODE = 'update';
 
+global.LIST_SELECTION_MODE = 'selection';
+global.LIST_EDITION_MODE = 'edition';
+
+global.SINGLE_SELECTION = 'singleSelection';
+global.MULTI_SELECTION = 'multiSelection';
+
+
 // Generate unique identifier as guid
 global.uniqueID = () => {
 

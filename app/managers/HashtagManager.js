@@ -52,12 +52,57 @@ export default class HashtagManagerClass {
 
     }
 
-    getRootCategories() {
+    getCategories() {
+        
+        return this.open()
+        .then(() => {
+
+            let rootCategories = this._getRootCategories();
+            let level = 0;
+            let categories = [];
+
+            for (let rootCategory of rootCategories) {
+
+                categories.push({
+                    id: rootCategory.id,
+                    name: rootCategory.name,
+                    parent: rootCategory.parent,
+                    level: level 
+                });
+
+                this._getSubCategories(rootCategory, level + 1, categories);
+            }
+
+            return categories;
+        });       
+    }
+
+    _getSubCategories(parentCategory, level, categories) {
+        
+        let subCategories = this.realm.objects(categorySchema).filtered('parent = $0', parentCategory.id).sorted('name');
+        if (subCategories.length == 0) {
+            return;
+        }
+
+        for (let subCategory of subCategories) {
+            
+            categories.push({
+                id: subCategory.id,
+                name: subCategory.name,
+                parent: subCategory.parent,
+                level: level
+            });
+
+            this._getSubCategories(subCategory, level + 1, categories);
+        }
+    }
+
+    _getRootCategories() {
         return this.realm.objects(categorySchema).filtered('parent = null').sorted('name');
     }
 
-    getSubCategories(parentCategory) {
-        return this.realm.objects(categorySchema).filtered('parent = $0', parentCategory).sorted('name');
+    getCategoryFromId(categoryId) {
+        return this.realm.objectForPrimaryKey(categorySchema, categoryId);
     }
 
     searchCategory(filter) {

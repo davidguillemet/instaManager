@@ -78,44 +78,17 @@ export default class HashTagListScreen extends React.Component {
         });
     }
 
-    shouldSearch(text) {
-
-        // Trigger search process only if at least 2 characters
-        if (text.length > 1) {
-            
-            this.setState({ isLoading: true });
-            this.processSearch(text)
-            .then((results) => {
-                this.setState({ searchResults: results, isLoading: false });
-            });
-        } else if (text.length == 0) {
-            this.setState({ searchResults: null });
-        }
+    getSearchDataSource() {
+        return global.hashtagManager.getHashtags();
     }
 
-    processSearch(searchText) {
-        return new Promise(
-
-            function(resolve, reject) {
-
-                const sortedHashtags = global.hashtagManager.getHashtags();
-                let results = [];
-                const upperCaseSearch = searchText.toUpperCase();
-                for (let hashtag of sortedHashtags) {
-                    
-                    let tagName = hashtag.name;
-                    if (tagName.toUpperCase().includes(upperCaseSearch)) {
-                        results.push(hashtag);
-                    }
-                }
-                resolve(results);
-            }
-        );
+    setSearchResults(results) {
+        this.setState({ searchResults: results, isLoading: false });
     }
 
     emptySearchResult() {
         return (
-            <Text>No result...</Text>
+            <Text style={CommonStyles.styles.singleListItem}>No results...</Text>
         );
     }
 
@@ -200,8 +173,10 @@ export default class HashTagListScreen extends React.Component {
                     { this.state.isLoading ? <LoadingIndicatorView/> : null }
                     <View style={{padding: CommonStyles.GLOBAL_PADDING, backgroundColor: CommonStyles.MEDIUM_BACKGROUND}}>
                         <SearchInput
-                            onChangeText={this.shouldSearch.bind(this)}
                             placeholder={'search hashtag'}
+                            dataSource={this.getSearchDataSource}
+                            resultsCallback={this.setSearchResults.bind(this)}
+                            filterProperty={'name'}
                         />
                     </View>
                     { this.state.searchResults ?

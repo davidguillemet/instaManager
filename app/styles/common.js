@@ -8,6 +8,7 @@ export default CommonStyles = {
   MEDIUM_BACKGROUND: '#2A4E85',
   KPI_COLOR: '#FFFFFF',
   TEXT_COLOR: '#CCCCCC',
+  DEACTIVATED_TEXT_COLOR: '#999999',
   PLACEHOLDER_COLOR: '#999999',
   SEPARATOR_COLOR: '#666666',
   DELETE_COLOR: '#E64545',
@@ -37,7 +38,7 @@ export default CommonStyles = {
 
   // Padding
   GLOBAL_PADDING: 10,
-  HIERARCHY_INDENT: 20
+  HIERARCHY_INDENT: 30
 }
 
   // Predifined StyleSheet:
@@ -103,5 +104,11 @@ CommonStyles.styles = StyleSheet.create(
     paddingHorizontal: CommonStyles.GLOBAL_PADDING,
     paddingVertical: 10
   },
+  deacivatedSingleListItem:  {
+    color: CommonStyles.DEACTIVATED_TEXT_COLOR,
+    fontSize: CommonStyles.MEDIUM_FONT_SIZE,
+    paddingHorizontal: CommonStyles.GLOBAL_PADDING,
+    paddingVertical: 10
+  }
 });
   
