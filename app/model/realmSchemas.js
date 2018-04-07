@@ -55,8 +55,9 @@ export const TagCategorySchema = {
  */
 export const HashtagSchema = {
     name: 'Hashtag',
-    primaryKey: 'name',
+    primaryKey: 'id',
     properties: {
+        id: 'string',
         name: 'string',
         categories: 'string?[]',
         archived: {type: 'bool',  default: false}

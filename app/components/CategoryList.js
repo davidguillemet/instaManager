@@ -32,6 +32,10 @@ class CategoryListItem extends React.PureComponent {
     };
     
     renderInnerItem() {
+        let inlineTextStyle = { flex: 1 };
+        if (this.props.deactivated) {
+            inlineTextStyle = { ...inlineTextStyle, textDecorationLine: 'line-through' }
+        }
         return (
             <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center' }}>
             <Ionicons style={{
@@ -42,13 +46,17 @@ class CategoryListItem extends React.PureComponent {
                 name='ios-folder-open-outline'
                 size={CommonStyles.LARGE_FONT_SIZE}
             />
-            <Text style={[this.props.deactivated ? CommonStyles.styles.deacivatedSingleListItem : CommonStyles.styles.singleListItem, { flex: 1 }]}>
+            <Text style={[
+                    this.props.deactivated ? CommonStyles.styles.deacivatedSingleListItem : CommonStyles.styles.singleListItem,
+                    inlineTextStyle]}
+            >
                 {this.props.name}
             </Text>
             {
                 this.props.selected ?
-                <Ionicons style={{ color: CommonStyles.TEXT_COLOR, paddingRight: 5 }} name='ios-checkmark-circle-outline' size={CommonStyles.LARGE_FONT_SIZE} />
-                :
+                <Ionicons style={{ color: CommonStyles.TEXT_COLOR, paddingRight: 5 }} name='ios-checkmark-circle-outline' size={CommonStyles.LARGE_FONT_SIZE} /> :
+                this.props.deactivated ?
+                <Ionicons style={{ color: CommonStyles.WARNING_COLOR, paddingRight: 5 }} name='ios-warning-outline' size={CommonStyles.LARGE_FONT_SIZE} /> :
                 null
             }
             </View>
@@ -119,8 +127,15 @@ export default class CategoryList extends React.PureComponent {
         return categories.reduce((map, cat) => { map.set(cat.id, cat); return map; }, new Map());
     }
 
+    getNavigationParams(categoryToEdit) {
+        return {
+            updateItem: categoryToEdit,
+            onItemUpdated: this.onCategoryUpdated.bind(this),
+            itemType: global.CATEGORY_ITEM
+        };
+    }
     onAddCategory() {
-        this.props.navigation.navigate('HashtagCategoryEdit', { onItemUpdated: this.onCategoryUpdated.bind(this) });
+        this.props.navigation.navigate('HashtagCategoryEdit', this.getNavigationParams(null));
     }
 
     onPressCategory(categoryId) {
@@ -128,10 +143,7 @@ export default class CategoryList extends React.PureComponent {
         if (this.props.mode === global.LIST_EDITION_MODE) {
 
             const category = this.state.categoriesMap.get(categoryId);
-            this.props.navigation.navigate('HashtagCategoryEdit', {
-                updateItem: category,
-                onItemUpdated: this.onCategoryUpdated.bind(this)
-            });
+            this.props.navigation.navigate('HashtagCategoryEdit', this.getNavigationParams(category));
 
         } else {
 

@@ -24,15 +24,22 @@ export default class HashtagManagerClass {
                     HashtagSchema
                 ],
                 path: 'hashTagInfo.realm',
-                schemaVersion: 5,
+                schemaVersion: 6,
                 migration: (oldRealm, newRealm) => {
                     // only apply this change if upgrading to schemaVersion 1
                     if (oldRealm.schemaVersion < 5) {
-                          const newObjects = newRealm.objects('TagCategory');
+                        const newCategories = newRealm.objects(categorySchema);
                 
                         // loop through all objects and set the name property in the new schema
-                        for (let i = 0; i < newObjects.length; i++) {
-                        newObjects[i].id = global.uniqueID();
+                        for (let i = 0; i < newCategories.length; i++) {
+                            newCategories[i].id = global.uniqueID();
+                        }
+
+                        const newTags = newRealm.objects(hashtagSchema);
+                
+                        // loop through all objects and set the name property in the new schema
+                        for (let i = 0; i < newTags.length; i++) {
+                            newTags[i].id = global.uniqueID();
                         }
                     }
                 }
@@ -101,12 +108,16 @@ export default class HashtagManagerClass {
         return this.realm.objects(categorySchema).filtered('parent = null').sorted('name');
     }
 
-    getCategoryFromId(categoryId) {
-        return this.realm.objectForPrimaryKey(categorySchema, categoryId);
+    _getRealmTypeFromItemType(itemType) {
+        return itemType === global.TAG_ITEM ? hashtagSchema : categorySchema;
     }
 
-    searchCategory(filter) {
-        return this.realm.objects(categorySchema).filtered('name like $0', filter);
+    searchItem(itemType, filter) {
+        return this.realm.objects(this._getRealmTypeFromItemType(itemType)).filtered('name like $0', filter);
+    }
+
+    getItemFromId(itemType, itemId) {
+        return this.realm.objectForPrimaryKey(this._getRealmTypeFromItemType(itemType), itemId);
     }
 
     saveCategory(category, update) {

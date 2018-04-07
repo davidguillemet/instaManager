@@ -17,7 +17,7 @@ function renderRightButtons(params) {
 
     return (
         <View style={{ flexDirection: 'row'}}>
-            <TouchableOpacity onPress={params.onSaveCategory}><Ionicons name={'ios-checkmark'} style={CommonStyles.styles.navigationButtonIcon}/></TouchableOpacity>
+            <TouchableOpacity onPress={params.onSaveItem}><Ionicons name={'ios-checkmark'} style={CommonStyles.styles.navigationButtonIcon}/></TouchableOpacity>
         </View>
     );
 }
@@ -37,8 +37,11 @@ export default class HashtagCategoryEditScreen extends React.Component {
 
         const { params } = this.props.navigation.state;
 
+        this.itemType = params.itemType;
+        this.itemTypeName = this.itemType === global.TAG_ITEM ? 'tag' : 'category';
+        
         const updateItem = params ? params.updateItem : null;
-        const parentCategory = updateItem && updateItem.parent ? global.hashtagManager.getCategoryFromId(updateItem.parent) : null;
+        const parentCategory = updateItem && updateItem.parent ? global.hashtagManager.getItemFromId(this.itemType, updateItem.parent) : null;
 
         this.onItemUpdated = params ? params.onItemUpdated : null;
         this.editorMode = updateItem ? global.UPDATE_MODE : global.CREATE_MODE;
@@ -46,8 +49,8 @@ export default class HashtagCategoryEditScreen extends React.Component {
         this.state = {
             selectingParent: false,
             categories: null,
-            categoryId: updateItem ? updateItem.id : global.uniqueID(),
-            categoryName: updateItem ? updateItem.name : null,
+            itemId: updateItem ? updateItem.id : global.uniqueID(),
+            itemName: updateItem ? updateItem.name : null,
             parentCategoryId: parentCategory ? parentCategory.id  : null,
             parentCategoryName: parentCategory ? parentCategory.name : null
         };
@@ -56,20 +59,23 @@ export default class HashtagCategoryEditScreen extends React.Component {
     componentDidMount() {
 
         this.props.navigation.setParams({ 
-            onSaveCategory: this.onSaveCategory.bind(this)
+            onSaveItem: this.onSaveItem.bind(this)
         });
     }
 
-    onSaveCategory() {
+    onSaveItem() {
 
-        if (this.validateCategory()) {
+        if (this.validateItem()) {
 
             const categoryToSave = {
-                id: this.state.categoryId,
-                name: this.state.categoryName,
+                id: this.state.itemId,
+                name: this.state.itemName,
                 parent: this.state.parentCategoryId
             };
 
+            ////////////////////////////////////////////
+            // TODO - generic (tag or category)
+            ////////////////////////////////////////////
             global.hashtagManager.saveCategory(categoryToSave, this.editorMode === global.UPDATE_MODE);
 
             this.onItemUpdated(categoryToSave);
@@ -77,26 +83,26 @@ export default class HashtagCategoryEditScreen extends React.Component {
         }
     }
 
-    validateCategory() {
+    validateItem() {
         
         // 1. Check the category name has been entered
-        if (this.state.categoryName == null || this.state.categoryName.length == 0) {
-            Alert.alert('', 'Please enter a category name.');
+        if (this.state.itemName == null || this.state.itemName.length == 0) {
+            Alert.alert('', `Please enter a ${this.itemTypeName} name.`);
             return false;
         }
         
         // 2. Check category does not already exist
-        const categoriesWithSameName = global.hashtagManager.searchCategory(this.state.categoryName);
+        const itemsWithSameName = global.hashtagManager.searchItem(this.itemType, this.state.itemName);
         let nameAlreadyExists = false;
-        if (categoriesWithSameName.length > 0) {
+        if (itemsWithSameName.length > 0) {
             
             if (this.editorMode == global.CREATE_MODE) {
                 // Create mode = error as son as a categiory exists with the same name in the database
                 nameAlreadyExists = true;
             } else {
                 // Edition mode = error as soon as a category with another id exists xwith the same name in the database
-                for (let category of categoriesWithSameName) {
-                    if (category.id !== this.state.categoryId) {
+                for (let item of itemsWithSameName) {
+                    if (item.id !== this.state.itemId) {
                         nameAlreadyExists = true;
                         break;
                     }
@@ -105,7 +111,7 @@ export default class HashtagCategoryEditScreen extends React.Component {
         }
         
         if (nameAlreadyExists === true) {
-            Alert.alert('', `The category '${this.state.categoryName}' already exists.`);
+            Alert.alert('', `The ${this.itemTypeName} '${this.state.itemName}' already exists.`);
             return false;
         }
 
@@ -113,10 +119,10 @@ export default class HashtagCategoryEditScreen extends React.Component {
     }
 
     onChangeText(text) {
-        this.state.categoryName = text;
+        this.state.itemName = text;
     }
 
-    onSelectCategory() {
+    onSelectParentCategory() {
 
         global.hashtagManager.getCategories()
         .then((categories) => {
@@ -125,6 +131,10 @@ export default class HashtagCategoryEditScreen extends React.Component {
     }
 
     onParentCategorySelected(selectedCategories) {
+
+        ////////////////////////////////////////////
+        // TODO manage multiple selection for tags
+        ////////////////////////////////////////////
         if (selectedCategories != null && selectedCategories.length > 0) {
             const selectedCategory = selectedCategories[0];
             this.setState( {
@@ -156,13 +166,13 @@ export default class HashtagCategoryEditScreen extends React.Component {
                     <Ionicons name={'ios-information-circle'} style={[CommonStyles.styles.textIcon, { paddingLeft: 0}]}/>
                     <Text style={CommonStyles.styles.mediumLabel}>Click on </Text>
                     <Ionicons name={'ios-checkmark'} style={CommonStyles.styles.textIcon}/>
-                    <Text style={CommonStyles.styles.mediumLabel}> to save the category.</Text>
+                    <Text style={CommonStyles.styles.mediumLabel}> to save the {this.itemTypeName}.</Text>
                 </View>
                 <View style={styles.parameterContainerView}>
                     <Text style={CommonStyles.styles.mediumLabel}>Name</Text>
                     <View style={{ width: 20 }}/>
                     <TextInput
-                        defaultValue={this.state.categoryName ? this.state.categoryName : null }
+                        defaultValue={this.state.itemName ? this.state.itemName : null }
                         keyboardType='default'
                         style={styles.parameterInput}
                         placeholder={'Enter a category name'}
@@ -173,11 +183,17 @@ export default class HashtagCategoryEditScreen extends React.Component {
                     />
                 </View>
                 <View style={styles.parameterContainerView}>
-                    <Text style={CommonStyles.styles.mediumLabel}>Parent</Text>
+                    <Text style={CommonStyles.styles.mediumLabel}>{this.itemType === global.TAG_ITEM ? 'Categories' : 'Parent'}</Text>
                     <View style={{ width: 20 }}/>
-                    <TouchableOpacity onPress={this.onSelectCategory.bind(this)} style={{ flex: 1, flexDirection: 'row', alignItems: 'center' }}>
+                    <TouchableOpacity onPress={this.onSelectParentCategory.bind(this)} style={{ flex: 1, flexDirection: 'row', alignItems: 'center' }}>
                         <Text style={this.state.parentCategoryId ? styles.parameterInput : styles.parentParameter }>
-                            {this.state.parentCategoryName ? this.state.parentCategoryName : 'Press to select a parent' }
+                            {
+                                this.state.parentCategoryName ? 
+                                this.state.parentCategoryName : 
+                                this.state.selectingParent ?
+                                'No selection' :
+                                'Press to select a parent'
+                            }
                         </Text>
                         <Ionicons name={'ios-arrow-forward'} style={[CommonStyles.styles.textIcon, styles.iconSelect]}/>
                     </TouchableOpacity>
@@ -187,12 +203,14 @@ export default class HashtagCategoryEditScreen extends React.Component {
                     <View style={styles.categoryList}>
                         <CategoryList
                             mode={global.LIST_SELECTION_MODE}
-                            selectionMode={global.SINGLE_SELECTION}
+                            selectionMode={this.itemType === global.TAG_ITEM ? global.MULTI_SELECTION : global.SINGLE_SELECTION}
                             categories= {this.state.categories}
                             renderEmptyComponent={this.renderNoCategories}
                             onSelectionChanged={this.onParentCategorySelected.bind(this)}
                             selection={ this.state.parentCategoryId != null ? [this.state.parentCategoryId] : null}
-                            hiddenCategories={ this.editorMode === global.UPDATE_MODE ? [ this.state.categoryId ] : null}
+                            hiddenCategories={
+                                this.itemType === global.TAG_ITEM ? null : 
+                                this.editorMode === global.UPDATE_MODE ? [ this.state.itemId ] : null }
                         />
                     </View>
                     : null

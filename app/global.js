@@ -12,6 +12,10 @@ global.hashtagManager = new HashtagManagerClass();
 global.CREATE_MODE = 'create';
 global.UPDATE_MODE = 'update';
 
+// The type of the item which is edited in HashtagCategoryEditScreen
+global.TAG_ITEM = 'tag';
+global.CATEGORY_ITEM = 'category';
+
 global.LIST_SELECTION_MODE = 'selection';
 global.LIST_EDITION_MODE = 'edition';
 
