@@ -61,11 +61,8 @@ export default class HashtagCategoriesScreen extends React.Component {
         });
     }
 
-    ////////////////////////////////////////////////////////
-    // TODO : should be called from CategoryList component
-    ////////////////////////////////////////////////////////
     onAddCategory() {
-        this.props.navigation.navigate('HashtagCategoryEdit', { onItemUpdated: this.onCategoryUpdated.bind(this) });
+        this._categoryList.onAddCategory();
     }
 
     renderEmptyComponent() {
@@ -84,6 +81,7 @@ export default class HashtagCategoriesScreen extends React.Component {
                     this.state.isLoading ?
                     <LoadingIndicatorView/> :
                     <CategoryList
+                        ref={component => this._categoryList = component}
                         mode={global.LIST_EDITION_MODE}
                         categories= {this.state.categories}
                         renderEmptyComponent={this.renderEmptyComponent}

@@ -72,9 +72,6 @@ export default class HashtagCategoryEditScreen extends React.Component {
 
             global.hashtagManager.saveCategory(categoryToSave, this.editorMode === global.UPDATE_MODE);
 
-            ////////////////////////////////////
-            // TODO: what about level????
-            ////////////////////////////////////
             this.onItemUpdated(categoryToSave);
             this.props.navigation.goBack();
         }
