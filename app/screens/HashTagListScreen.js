@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, PureComponent } from 'react';
 import {
   StyleSheet,
   View,
@@ -39,12 +39,11 @@ export default class HashTagListScreen extends React.Component {
 
     constructor(props) {
         super(props);
-        this.state = { isLoading: true , isSwiping: false };
-        this.sortedHashtags = null;
-        this.sections = [];
+        this.state = { isLoading: true , isSwiping: false, sections: null };
+        this.sectionsMap = new Map();
     }
     
-    componentDidMount() {
+    componentWillMount() {
 
         this.props.navigation.setParams({ 
             onImport: this.onImport.bind(this),
@@ -54,14 +53,15 @@ export default class HashTagListScreen extends React.Component {
         global.hashtagManager.open()
         .then(() => {
 
-            this.sortedHashtags = global.hashtagManager.getHashtags();
+            const sortedHashtags = global.hashtagManager.getHashtags();
             
             // Here we get a sorted list,
             // split into sections
-            this.sections = [];
+            let sections = [];
             let previousSectionTitle = null;
             let currentSectionData;
-            for (let hashtag of this.sortedHashtags) {
+            for (let hashtag of sortedHashtags) {
+
                 let tagName = hashtag.name;
                 let currentSectionTitle = tagName.charAt(0).toUpperCase();
 
@@ -69,12 +69,17 @@ export default class HashTagListScreen extends React.Component {
                     // New section
                     previousSectionTitle = currentSectionTitle;
                     currentSectionData = [];
-                    this.sections.push({ title: currentSectionTitle, data: currentSectionData });
+                    const newSection = {
+                        title: currentSectionTitle,
+                        data: currentSectionData
+                    };
+                    sections.push(newSection);
+                    this.sectionsMap.set(currentSectionTitle, newSection);
                 }
                 currentSectionData.push(hashtag);
             }
 
-            this.setState({ isLoading: false }); 
+            this.setState({ isLoading: false, sections: sections });
         });
     }
 
@@ -96,18 +101,115 @@ export default class HashTagListScreen extends React.Component {
         this.props.navigation.navigate('HashTagsImport');
     }
 
-    onAddTag() {
-        // TODO
-        Alert.alert("New Tag");
+    onTagUpdated(updatedItem, initialItem) {
+
+        const tagId = updatedItem.id;
+        const newSectionTitle = updatedItem.name.charAt(0).toUpperCase();
+        const initialSectionTitle = initialItem.name.charAt(0).toUpperCase();
+
+        if (newSectionTitle == initialSectionTitle) {
+            // Same section...
+            // -> just make sure to sort section data again and re-render item
+            let section = this.sectionsMap.get(initialSectionTitle);
+            section.data.sort((t1, t2) => t1.name < t2.name ? -1 : ( t1.name > t2.name ? 1 : 0));
+            this.setState({ sections: this.state.sections })
+            
+        } else {
+
+            // Remove initia item from initial section
+            let initialSection = this.sectionsMap.get(initialSectionTitle);
+            const initialTagIndex = initialSection.data.findIndex(tag => tag.id == tagId);
+            initialSection.data.splice(initialTagIndex, 1);
+            if (initialSection.data.length == 0) {
+                // Remove the section
+                this.sectionsMap.delete(initialSectionTitle);
+                const initialSectionIndex = this.state.sections.findIndex(section => section.title == initialSectionTitle);
+                this.state.sections.splice(initialSectionIndex, 1);
+            }
+
+            // Add the updated item in the proper section
+            this.onTagCreated(updatedItem);
+        }
     }
 
-    onDeleteTag(item) {
-        // TODO
-        Alert.alert("delete", item.name);
+    onTagCreated(createdTag) {
+
+        const sectionTitle = createdTag.name.charAt(0).toUpperCase();
+        let section = this.sectionsMap.get(sectionTitle);
+        if (section == null) {
+
+            const newSection = {
+                title: sectionTitle,
+                data: [createdTag]
+            };
+
+            this.sectionsMap.set(sectionTitle, newSection);
+            
+            this.setState((oldState) => {
+                let newSections = oldState.sections;
+                newSections.push(newSection);
+                newSections.sort((s1, s2) => s1.title < s2.title ? -1 : ( s1.title > s2.title ? 1 : 0));
+                return { sections: newSections };
+            });
+
+        } else {
+
+            section.data.push(createdTag);
+            section.data.sort((t1, t2) => t1.name < t2.name ? -1 : ( t1.name > t2.name ? 1 : 0));
+            this.setState({ sections: this.state.sections })
+        }
+    }
+
+    navigateToEditScreen(tagToEdit) {
+
+        const params = {
+            updateItem: tagToEdit,
+            onItemUpdated: tagToEdit ? this.onTagUpdated.bind(this) : this.onTagCreated.bind(this),
+            itemType: global.TAG_ITEM
+        };
+
+        this.props.navigation.navigate('HashtagCategoryEdit', params);
+    }
+
+    onAddTag() {
+        this.navigateToEditScreen(null);
+    }
+
+    onEditTag(tagItem) {
+        this.navigateToEditScreen(tagItem);
+    }
+
+    onDeleteTag(tagToDelete) {
+
+        Alert.alert('', `Are you sure you want to delete the tag '${tagToDelete.name}'?`,[
+            { 
+                text: 'Cancel',
+                style: 'cancel'
+            },
+            {
+                text: 'OK',
+                onPress: () => {
+                    const sectionTitle = tagToDelete.name.charAt(0).toUpperCase();
+                    const section = this.sectionsMap.get(sectionTitle);
+                    const tagIndex = section.data.findIndex(tag => tag.id == tagToDelete.id);
+                    section.data.splice(tagIndex, 1);
+                    if (section.data.length == 0) {
+                        // Remove the section
+                        this.sectionsMap.delete(sectionTitle);
+                        const sectionIndex = this.state.sections.findIndex(section => section.title == sectionTitle);
+                        this.state.sections.splice(sectionIndex, 1);
+                    }
+                    global.hashtagManager.deleteTag(tagToDelete.id);
+                    this.setState({ sections: this.state.sections })        
+                }
+            }
+        ]);
     }
 
     onArchiveTag(item) {
+        ///////////
         // TODO
+        ///////////
         Alert.alert("archive", item.name);
     }
     
@@ -146,16 +248,13 @@ export default class HashTagListScreen extends React.Component {
                 item={item} 
                 rightAction={{ caption: 'Delete', icon: 'ios-trash', color: CommonStyles.DELETE_COLOR, callback: this.onDeleteTag.bind(this) }}
                 leftAction={{ caption: 'Archive', icon: 'ios-archive', color: CommonStyles.ARCHIVE_COLOR, callback: this.onArchiveTag.bind(this) }}
-                renderItem={this.renderInnerListItem}
                 onSwipeStart={() => this.setState({isSwiping: true})}
                 onSwipeRelease={() => this.setState({isSwiping: false})}
-            />
-        );
-    }
-
-    renderInnerListItem(item) {
-        return (
-            <Text style={CommonStyles.styles.singleListItem}>{item.name}</Text>
+            >
+                <TouchableHighlight onPress={() => this.onEditTag(item)}>
+                    <Text style={CommonStyles.styles.singleListItem}>{item.name}</Text>
+                </TouchableHighlight>
+            </SwipeableListViewItem>
         );
     }
   
@@ -169,36 +268,45 @@ export default class HashTagListScreen extends React.Component {
 
         return(
             <View style={[CommonStyles.styles.standardPage, {paddingHorizontal: 0, paddingTop: 0}]}>
-                <View>
-                    { this.state.isLoading ? <LoadingIndicatorView/> : null }
-                    <View style={{padding: CommonStyles.GLOBAL_PADDING, backgroundColor: CommonStyles.MEDIUM_BACKGROUND}}>
-                        <SearchInput
-                            placeholder={'search hashtag'}
-                            dataSource={this.getSearchDataSource}
-                            resultsCallback={this.setSearchResults.bind(this)}
-                            filterProperty={'name'}
-                        />
-                    </View>
-                    { this.state.searchResults ?
-                        <FlatList
-                            scrollEnabled={!this.state.isSwiping}
-                            data={this.state.searchResults}
-                            keyExtractor={(item, index) => item.name}
-                            ListEmptyComponent={this.emptySearchResult}
-                            renderItem={({item}) => this.renderListItem(item)}
-                            ItemSeparatorComponent={this.renderSeparator} />
-                        :
-                        <SectionList
-                            scrollEnabled={!this.state.isSwiping}
-                            sections={this.sections} 
-                            renderItem={({item}) => this.renderListItem(item)}
-                            renderSectionHeader={({section}) => this.renderSectionHeader(section)}
-                            ItemSeparatorComponent={this.renderSeparator}
-                            ListFooterComponent={this.renderListFooter}
-                            ListEmptyComponent={this.renderEmptyComponent}
-                            keyExtractor={(item, index) => item.name} />
-                    }
-                </View>
+                {
+                    this.state.isLoading ? 
+                    <LoadingIndicatorView/> :
+                    (
+                        <View style={{ flex: 1 }}>
+                            <View style={{padding: CommonStyles.GLOBAL_PADDING, backgroundColor: CommonStyles.MEDIUM_BACKGROUND}}>
+                                <SearchInput
+                                    placeholder={'search hashtag'}
+                                    dataSource={this.getSearchDataSource}
+                                    resultsCallback={this.setSearchResults.bind(this)}
+                                    filterProperty={'name'}
+                                />
+                            </View>
+                            {
+                                this.state.searchResults ?
+                                <FlatList
+                                    style={{ flex: 1 }}
+                                    scrollEnabled={!this.state.isSwiping}
+                                    data={this.state.searchResults}
+                                    keyExtractor={(item, index) => item.name}
+                                    ListEmptyComponent={this.emptySearchResult}
+                                    renderItem={({item}) => this.renderListItem(item)}
+                                    ItemSeparatorComponent={this.renderSeparator} />
+                                :
+                                <SectionList
+                                    style={{ flex: 1 }}
+                                    scrollEnabled={!this.state.isSwiping}
+                                    sections={this.state.sections} 
+                                    extraData={this.state}
+                                    renderItem={({item}) => this.renderListItem(item)}
+                                    renderSectionHeader={({section}) => this.renderSectionHeader(section)}
+                                    ItemSeparatorComponent={this.renderSeparator}
+                                    ListFooterComponent={this.renderListFooter}
+                                    ListEmptyComponent={this.renderEmptyComponent}
+                                    keyExtractor={(item, index) => item.name} />
+                            }
+                        </View>
+                    )
+                }
             </View>
         );
     }

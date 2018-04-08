@@ -127,15 +127,17 @@ export default class CategoryList extends React.PureComponent {
         return categories.reduce((map, cat) => { map.set(cat.id, cat); return map; }, new Map());
     }
 
-    getNavigationParams(categoryToEdit) {
-        return {
+    navigateToEditScreen(categoryToEdit) {
+        const params = {
             updateItem: categoryToEdit,
             onItemUpdated: this.onCategoryUpdated.bind(this),
             itemType: global.CATEGORY_ITEM
         };
+        this.props.navigation.navigate('HashtagCategoryEdit', params);
     }
+    
     onAddCategory() {
-        this.props.navigation.navigate('HashtagCategoryEdit', this.getNavigationParams(null));
+        this.navigateToEditScreen(null);
     }
 
     onPressCategory(categoryId) {
@@ -143,7 +145,7 @@ export default class CategoryList extends React.PureComponent {
         if (this.props.mode === global.LIST_EDITION_MODE) {
 
             const category = this.state.categoriesMap.get(categoryId);
-            this.props.navigation.navigate('HashtagCategoryEdit', this.getNavigationParams(category));
+            this.navigateToEditScreen(category);
 
         } else {
 

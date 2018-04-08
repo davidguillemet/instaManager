@@ -22,10 +22,31 @@ export default class SwipeableListViewItem extends React.Component {
 
     constructor(props) {
         super(props);
+        this.swipeable = null;
+        this.mounted = false;
         this.state = {
             leftActionActivated: false,
             rightActionActivated: false
         };
+    }
+
+    componentDidMount() {
+        this.mounted = true;        
+    }
+
+    componentWillUnmount() {
+        this.mounted = false;
+        if (this.swipeable) {
+            // FIXME : seting spropsCallback does not work and does not prevent
+            //         the swipeable element calling the callbacks after it has been unmounted !!!
+            //         -> we must use this.mounted flag to manage the callback and do not call setState() if not mounted...
+            this.swipeable.props.onRightActionActivate = null;
+            this.swipeable.props.onRightActionDeactivate = null;
+            this.swipeable.props.onRightActionComplete = null;
+            this.swipeable.props.onLeftActionActivate = null;
+            this.swipeable.props.onLeftActionDeactivate = null;
+            this.swipeable.props.onLeftActionComplete = null;
+        }
     }
 
     getRightContent() {
@@ -57,27 +78,50 @@ export default class SwipeableListViewItem extends React.Component {
         );
     }
 
+    onRightActionActivate() {
+        if (this.mounted) {
+            this.setState({rightActionActivated: true});
+        }
+    }
+    onRightActionDeactivate() {
+        if (this.mounted) {
+            this.setState({rightActionActivated: false});
+        }
+    }
+    onLeftActionActivate() {
+        if (this.mounted) {
+            this.setState({leftActionActivated: true});
+        }
+    }
+    onLeftActionDeactivate() {
+        if (this.mounted) {
+            this.setState({leftActionActivated: false})
+        }
+    }
+
     render() {
+        console.log("render " + this.props.item.name);
         return (
             <Swipeable
+                onRef={ref => this.swipeable = ref}
                 rightContent={this.props.rightAction ? this.getRightContent() : null }
                 leftContent={this.props.leftAction ? this.getLeftContent() : null }
 
                 rightActionActivationDistance={70}
                 leftActionActivationDistance={70}
 
-                onRightActionActivate={() => this.setState({rightActionActivated: true})}
-                onRightActionDeactivate={() => this.setState({rightActionActivated: false})}
+                onRightActionActivate={this.onRightActionActivate.bind(this)}
+                onRightActionDeactivate={this.onRightActionDeactivate.bind(this)}
                 onRightActionComplete={() => this.props.rightAction.callback(this.props.item)}
 
-                onLeftActionActivate={() => this.setState({leftActionActivated: true})}
-                onLeftActionDeactivate={() => this.setState({leftActionActivated: false})}
+                onLeftActionActivate={this.onLeftActionActivate.bind(this)}
+                onLeftActionDeactivate={this.onLeftActionDeactivate.bind(this)}
                 onLeftActionComplete={() => this.props.leftAction.callback(this.props.item)}
 
-                onSwipeStart={() => { if (this.props.onSwipeStart) this.props.onSwipeStart(); }}
+                onSwipeStart={() => { if (this.props.onSwipeStart) this.props.onSwipeStart(); }} 
                 onSwipeRelease={() => { if (this.props.onSwipeRelease) this.props.onSwipeRelease(); }}
             >
-                { this.props.renderItem(this.props.item) }
+                { this.props.children }
             </Swipeable>
         );
     }

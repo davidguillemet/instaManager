@@ -120,15 +120,39 @@ export default class HashtagManagerClass {
         return this.realm.objectForPrimaryKey(this._getRealmTypeFromItemType(itemType), itemId);
     }
 
+    getItemsFromId(itemType, identifiers) {
+        let items = [];
+        const realmItemType = this._getRealmTypeFromItemType(itemType);
+        for (itemId of identifiers) {
+            items.push(this.realm.objectForPrimaryKey(realmItemType, itemId));
+        }
+        return items;
+    }
+
+    saveTag(tag, update) {
+    
+        this.realm.write(() => {
+            this.realm.create(hashtagSchema, { id: tag.id, name: tag.name, categories: tag.categories }, update);
+        });
+    }
+
+    deleteTag(tagId) {
+
+        this.realm.write(() => {
+            this.realm.delete(this.realm.objectForPrimaryKey(hashtagSchema, tagId));
+        });
+    }
+    
     saveCategory(category, update) {
+
         this.realm.write(() => {
             this.realm.create(categorySchema, { id: category.id, name: category.name, parent: category.parent }, update);
         });
     }
 
     getHashtags() {
-        //return this.realm.objects(hashtagSchema).sorted('name');
-        return [
+        return this.realm.objects(hashtagSchema).sorted('name');
+        /*return [
             { name: 'aquaticadigital' },
             { name: 'biganimals' },
             { name: 'camouflage' },
@@ -178,7 +202,7 @@ export default class HashtagManagerClass {
             { name: 'viesousmarine' },
             { name: 'wildlife' },
             { name: 'wildlifephotography' },
-        ];
+        ];*/
     }
 
 
