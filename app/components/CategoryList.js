@@ -5,6 +5,7 @@ import {
   Text,
   FlatList,
   SectionList,
+  SegmentedControlIOS,
   TouchableOpacity,
   TouchableHighlight,
   Alert
@@ -55,9 +56,9 @@ class CategoryListItem extends React.PureComponent {
             </Text>
             {
                 this.props.selected ?
-                <Ionicons style={{ color: CommonStyles.TEXT_COLOR, paddingRight: 5 }} name='ios-checkmark-circle-outline' size={CommonStyles.LARGE_FONT_SIZE} /> :
+                <Ionicons style={{ color: CommonStyles.ARCHIVE_COLOR, paddingRight: CommonStyles.GLOBAL_PADDING }} name='ios-checkmark-circle-outline' size={CommonStyles.LARGE_FONT_SIZE} /> :
                 this.props.deactivated ?
-                <Ionicons style={{ color: CommonStyles.WARNING_COLOR, paddingRight: 5 }} name='ios-warning-outline' size={CommonStyles.LARGE_FONT_SIZE} /> :
+                <Ionicons style={{ color: CommonStyles.WARNING_COLOR, paddingRight: CommonStyles.GLOBAL_PADDING }} name='ios-warning-outline' size={CommonStyles.LARGE_FONT_SIZE} /> :
                 null
             }
             </View>
@@ -72,6 +73,9 @@ class CategoryListItem extends React.PureComponent {
         );
     }
 }
+
+const DISPLAY_ALL = 0;
+const DISPLAY_SELECTED = 1;
 
 /**
  * props
@@ -93,11 +97,19 @@ export default class CategoryList extends React.PureComponent {
 
         this.state = {
             isSwiping: false,
+            isLoading: false,
             categories: this.props.categories,
+            selectedCategories: null,            
             categoriesMap: this.getMapFromCategories(this.props.categories),
             selection: new Set(this.props.selection),
-            hiddenCategories: hiddenCategories
+            hiddenCategories: hiddenCategories,
+            displayType: DISPLAY_ALL
         };
+        
+        if (this.props.selection != null && this.props.selection.length > 0) {
+            this.state.displayType = DISPLAY_SELECTED;
+            this.state.selectedCategories = this.getSelectedCategories(this.props.categories);
+        }
     }
 
     deactivateHiddenCategoriesChildren(categories, hiddenSet) {
@@ -161,7 +173,13 @@ export default class CategoryList extends React.PureComponent {
                     newSelection.add(categoryId);
                 }
             } else { // LIST_SELECTION_MODE && MULTI_SELECTION
-                
+
+                /////////////////////////////////////////////////////////
+                // TODO
+                // We should make sure we cannot select a node and a child
+                // --> As soon as a node is selected, we should deactivate all descendants
+                /////////////////////////////////////////////////////////
+
                 newSelection = new Set(this.state.selection);
                 
                 if (newSelection.has(categoryId)) {
@@ -171,7 +189,14 @@ export default class CategoryList extends React.PureComponent {
                 }
             }
 
-            this.setState( { selection: newSelection} );
+            if (this.state.displayType == DISPLAY_SELECTED) {
+                // In case we display only selected items
+                // populate again the selected categories
+                this.state.selection = newSelection;
+                this.state.selectedCategories = this.getSelectedCategories();
+            }
+
+            this.setState( { selection: newSelection } );
             
             if (this.props.onSelectionChanged) {
                 let selectedCategories = [...newSelection].reduce((array, catId) => {array.push(this.state.categoriesMap.get(catId)); return array; }, new Array());
@@ -209,6 +234,7 @@ export default class CategoryList extends React.PureComponent {
     }
 
     renderEmptyComponent() {
+
         if (this.state.searchResults == null) {
             if (this.props.renderEmptyComponent) {
 
@@ -217,7 +243,13 @@ export default class CategoryList extends React.PureComponent {
             } else {
                 return (
                     <View style={{ flex: 1, justifyContent: 'center', padding: CommonStyles.GLOBAL_PADDING}}>
-                        <Text style={ [CommonStyles.styles.mediumLabel, { marginBottom: CommonStyles.GLOBAL_PADDING} ]}>You didn't defined any category yet.</Text>
+                        <Text style={ [CommonStyles.styles.mediumLabel, { marginBottom: CommonStyles.GLOBAL_PADDING} ]}>
+                            {
+                                this.state.displayType == DISPLAY_SELECTED ?
+                                'No selected items...' :
+                                'You didn\t defined any category yet.'
+                            }
+                        </Text>
                     </View>
                 );
             }
@@ -246,18 +278,79 @@ export default class CategoryList extends React.PureComponent {
     }
 
     getSearchDataSource() {
+
         return this.state.categories;
     }
 
     setSearchResults(results) {
+
         this.setState({
             searchResults: results
+        });
+    }
+
+    getSelectedCategories() {
+
+        /////////////////////////////////////////////////////////
+        // TODO
+        // we should display the ancestors for the selected items
+        /////////////////////////////////////////////////////////
+        if (this.state.categories == null) {
+            return [];
+        }
+        let selectedCategories = [];
+        for (let category of this.state.categories) {
+            if (this.state.selection.has(category.id)) {
+                selectedCategories.push(category);
+            }
+        }
+        return selectedCategories;
+    }
+
+    applyDisplayType(displayType) {
+
+        return new Promise((resolve, reject) => {
+            let selectedCategories =
+                displayType == DISPLAY_SELECTED ?
+                this.getSelectedCategories(this.state.categories) :
+                null;
+            resolve(selectedCategories);
+        });
+    }
+
+    setDisplayType(displayType) {
+        
+        this.setState({
+            isLoading: true
+        });
+
+        this.applyDisplayType(displayType)
+        .then((selectedCategories) => {
+
+            this.setState({
+                selectedCategories: selectedCategories,
+                displayType: displayType,
+                isLoading: false
+            });
         });
     }
 
     render() {
         return (
             <View style={{ flex: 1 }}>
+                {   
+                    this.props.mode == global.LIST_SELECTION_MODE ?
+                    <SegmentedControlIOS
+                        values={['All items', 'Selected items']}
+                        selectedIndex={this.state.displayType}
+                        onChange={(event) => {
+                            this.setDisplayType(event.nativeEvent.selectedSegmentIndex);
+                        }}
+                        tintColor={CommonStyles.GLOBAL_FOREGROUND}
+                    />
+                    :
+                    null
+                }
                 <View style={{padding: CommonStyles.GLOBAL_PADDING, backgroundColor: CommonStyles.MEDIUM_BACKGROUND}}>
                     <SearchInput
                         placeholder={'search category'}
@@ -266,15 +359,26 @@ export default class CategoryList extends React.PureComponent {
                         filterProperty={'name'}
                     />
                 </View>
-                <FlatList
-                    scrollEnabled={!this.state.isSwiping}
-                    data={this.state.searchResults != null ? this.state.searchResults : this.state.categories}
-                    extraData={this.state}
-                    keyExtractor={(item, index) => item.id}
-                    ListEmptyComponent={this.renderEmptyComponent.bind(this)}
-                    renderItem={({item}) => this.renderCategory(item)}
-                    ItemSeparatorComponent={this.renderSeparator}
-                />
+                <View style={{flex: 1}}>
+                    {
+                        this.state.isLoading ?
+                        <LoadingIndicatorView/> :
+                        <FlatList
+                            scrollEnabled={!this.state.isSwiping}
+                            data={
+                                this.state.searchResults != null ?
+                                this.state.searchResults :
+                                this.state.displayType == DISPLAY_SELECTED ?
+                                this.state.selectedCategories :
+                                this.state.categories}
+                            extraData={this.state}
+                            keyExtractor={(item, index) => item.id}
+                            ListEmptyComponent={this.renderEmptyComponent.bind(this)}
+                            renderItem={({item}) => this.renderCategory(item)}
+                            ItemSeparatorComponent={this.renderSeparator}
+                        />
+                    }
+                </View>
             </View>
         );
     }

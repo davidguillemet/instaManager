@@ -40,7 +40,7 @@ export default class HashtagCategoryEditScreen extends React.Component {
         const { params } = this.props.navigation.state;
 
         this.itemType = params.itemType;
-        this.itemTypeName = this.itemType === global.TAG_ITEM ? 'tag' : 'category';
+        this.itemTypeName = this.itemType == global.TAG_ITEM ? 'tag' : 'category';
         
         const updateItem = params ? params.updateItem : null;
         
@@ -49,12 +49,12 @@ export default class HashtagCategoryEditScreen extends React.Component {
 
         if (updateItem != null) {
 
-            if (this.itemType === global.TAG_ITEM && updateItem.categories != null) {
+            if (this.itemType == global.TAG_ITEM && updateItem.categories != null) {
                 
                 parentCategories = updateItem.categories;
                 parentCategoriesCaption = this.getCaptionFromCategories(global.hashtagManager.getItemsFromId(global.CATEGORY_ITEM, updateItem.categories));
 
-            } else if (this.itemType === global.CATEGORY_ITEM && updateItem.parent != null) {
+            } else if (this.itemType == global.CATEGORY_ITEM && updateItem.parent != null) {
 
                 const parentCategory = global.hashtagManager.getItemFromId(global.CATEGORY_ITEM, updateItem.parent);
                 parentCategories = [updateItem.parent];
@@ -241,14 +241,6 @@ export default class HashtagCategoryEditScreen extends React.Component {
         });
     }
 
-    renderNoCategories() {
-        return (
-            <View style={{ flex: 1, justifyContent: 'center', padding: CommonStyles.GLOBAL_PADDING}}>
-                <Text style={ [CommonStyles.styles.mediumLabel, { marginBottom: CommonStyles.GLOBAL_PADDING} ]}>You didn't defined any category yet.</Text>
-            </View>
-        );        
-    }
-
     render() {
         return (
             <View style={CommonStyles.styles.standardPage}>
@@ -292,8 +284,12 @@ export default class HashtagCategoryEditScreen extends React.Component {
                         </Text>
                         <Ionicons name={'ios-arrow-forward'} style={[CommonStyles.styles.textIcon, styles.iconSelect]}/>
                         {
-                            this.state.parentCategories.length <= 1 ?
+                            this.itemType == global.CATEGORY_ITEM ||
+                            this.state.parentCategories == null ||
+                            this.state.parentCategories.length == 0 ?
+
                             null :
+
                             <View style={{
                                 position: 'absolute',
                                 right: 30,
@@ -317,7 +313,6 @@ export default class HashtagCategoryEditScreen extends React.Component {
                             mode={global.LIST_SELECTION_MODE}
                             selectionMode={this.itemType === global.TAG_ITEM ? global.MULTI_SELECTION : global.SINGLE_SELECTION}
                             categories= {this.state.categories}
-                            renderEmptyComponent={this.renderNoCategories}
                             onSelectionChanged={this.onParentCategorySelected.bind(this)}
                             selection={ this.state.parentCategories }
                             hiddenCategories={
@@ -361,6 +356,10 @@ const styles = StyleSheet.create(
     },
     categoryList: {
         flex: 1,
-        margin: CommonStyles.GLOBAL_PADDING
+        margin: CommonStyles.GLOBAL_PADDING,
+        marginBottom: 5,
+        borderColor: CommonStyles.SEPARATOR_COLOR,
+        borderWidth: 1,
+        borderRadius: 6
     }
 });
