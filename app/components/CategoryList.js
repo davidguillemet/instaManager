@@ -49,6 +49,7 @@ class CategoryListItem extends React.PureComponent {
             <Text style={[
                     this.props.deactivated ? CommonStyles.styles.deacivatedSingleListItem : CommonStyles.styles.singleListItem,
                     inlineTextStyle]}
+                    numberOfLines={1}
             >
                 {this.props.name}
             </Text>

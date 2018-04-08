@@ -91,7 +91,7 @@ export default class HashtagCategoryEditScreen extends React.Component {
         let parentIndex = 0;
         for (let parentCategory of categories) {
             if (parentIndex > 0) {
-                parentCategoriesCaption += '\n';
+                parentCategoriesCaption += ', ';
             }
             parentCategoriesCaption += parentCategory.name;
             parentIndex++;
@@ -302,12 +302,10 @@ export default class HashtagCategoryEditScreen extends React.Component {
                                 height: 24,
                                 alignItems: 'center',
                                 justifyContent: 'center',
-                                backgroundColor: 'red',
+                                backgroundColor: CommonStyles.ARCHIVE_COLOR,
                                 borderRadius: 12,
-                                borderWidth: 1,
-                                borderColor: 'red' 
                             }}>
-                                <Text style={{ color: CommonStyles.TEXT_COLOR, fontSize: CommonStyles.SMALL_FONT_SIZE }}>{this.state.parentCategories.length}</Text>
+                                <Text style={{ fontSize: CommonStyles.SMALL_FONT_SIZE }}>{this.state.parentCategories.length}</Text>
                             </View>            
                         }
                     </TouchableOpacity>
