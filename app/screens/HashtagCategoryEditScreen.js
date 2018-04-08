@@ -291,21 +291,25 @@ export default class HashtagCategoryEditScreen extends React.Component {
                             }
                         </Text>
                         <Ionicons name={'ios-arrow-forward'} style={[CommonStyles.styles.textIcon, styles.iconSelect]}/>
-                        <View style={{
-                            position: 'absolute',
-                            right: 30,
-                            top: -3,
-                            width: 24,
-                            height: 24,
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            backgroundColor: 'red',
-                            borderRadius: 12,
-                            borderWidth: 1,
-                            borderColor: 'red' 
-                        }}>
-                            <Text style={{ color: CommonStyles.TEXT_COLOR, fontSize: CommonStyles.SMALL_FONT_SIZE }}>{this.state.parentCategories.length}</Text>
-                        </View>            
+                        {
+                            this.state.parentCategories.length <= 1 ?
+                            null :
+                            <View style={{
+                                position: 'absolute',
+                                right: 30,
+                                top: -3,
+                                width: 24,
+                                height: 24,
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                backgroundColor: 'red',
+                                borderRadius: 12,
+                                borderWidth: 1,
+                                borderColor: 'red' 
+                            }}>
+                                <Text style={{ color: CommonStyles.TEXT_COLOR, fontSize: CommonStyles.SMALL_FONT_SIZE }}>{this.state.parentCategories.length}</Text>
+                            </View>            
+                        }
                     </TouchableOpacity>
                 </View>
                 { 
