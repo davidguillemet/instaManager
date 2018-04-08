@@ -276,7 +276,10 @@ export default class HashtagCategoryEditScreen extends React.Component {
                     <Text style={CommonStyles.styles.mediumLabel}>{this.itemType === global.TAG_ITEM ? 'Categories' : 'Parent'}</Text>
                     <View style={{ width: 20 }}/>
                     <TouchableOpacity onPress={this.onSelectParentCategory.bind(this)} style={{ flex: 1, flexDirection: 'row', alignItems: 'center' }}>
-                        <Text style={this.state.parentCategories ? styles.parameterInput : styles.parentParameter }>
+                        <Text
+                            style={this.state.parentCategories ? styles.parameterInput : styles.parentParameter }
+                            numberOfLines={1}
+                        >
                             {
                                 this.state.parentCategoriesCaption ? 
                                 this.state.parentCategoriesCaption : 
@@ -288,6 +291,21 @@ export default class HashtagCategoryEditScreen extends React.Component {
                             }
                         </Text>
                         <Ionicons name={'ios-arrow-forward'} style={[CommonStyles.styles.textIcon, styles.iconSelect]}/>
+                        <View style={{
+                            position: 'absolute',
+                            right: 30,
+                            top: -3,
+                            width: 24,
+                            height: 24,
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            backgroundColor: 'red',
+                            borderRadius: 12,
+                            borderWidth: 1,
+                            borderColor: 'red' 
+                        }}>
+                            <Text style={{ color: CommonStyles.TEXT_COLOR, fontSize: CommonStyles.SMALL_FONT_SIZE }}>{this.state.parentCategories.length}</Text>
+                        </View>            
                     </TouchableOpacity>
                 </View>
                 { 
@@ -307,7 +325,6 @@ export default class HashtagCategoryEditScreen extends React.Component {
                     </View>
                     : null
                 }
-
             </View>
         );
     }
