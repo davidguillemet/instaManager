@@ -7,7 +7,6 @@ import {
   SectionList,
   SegmentedControlIOS,
   TouchableOpacity,
-  TouchableHighlight,
   Alert
 } from 'react-native';
 
@@ -25,12 +24,26 @@ import CommonStyles from '../styles/common';
  * - level
  * - selected
  * - onSelectionChanged (identifier Set)
+ * - mode = global.LIST_EDITION_MODE or LIST_EDITION_MODE
+ * - setParentState = callback to set parent state
  */
 class CategoryListItem extends React.PureComponent {
 
     _onPress = () => {
         this.props.onPress(this.props.id);
     };
+
+    _onRightAction = () => {
+        ///////////
+        // TODO
+        //////////
+    }
+
+    _onLefttAction = () => {
+        //////////
+        // TODO
+        //////////
+    }
     
     renderInnerItem() {
         let inlineTextStyle = { flex: 1 };
@@ -65,12 +78,34 @@ class CategoryListItem extends React.PureComponent {
         );
     }
 
-    render() {
+    renderTouchableContent() {
         return (
-            <TouchableHighlight onPress={this.props.deactivated ? null : this._onPress}>
-                { this.renderInnerItem() }
-            </TouchableHighlight>
+            <TouchableOpacity onPress={this.props.deactivated ? null : this._onPress}>
+            { this.renderInnerItem() }
+            </TouchableOpacity>
         );
+    }
+
+    renderSwipeableContent() {
+        return (
+            <SwipeableListViewItem
+                itemId={this.props.id} 
+                rightAction={{ caption: 'Delete', icon: 'ios-trash', color: CommonStyles.DELETE_COLOR, callback: this._onRightAction }}
+                leftAction={{ caption: 'Archive', icon: 'ios-archive', color: CommonStyles.ARCHIVE_COLOR, callback: this._onRightAction }}
+                onSwipeStart={() => this.props.setParentState({isSwiping: true})}
+                onSwipeRelease={() => this.props.setParentState({isSwiping: false})}
+            >
+                { this.renderTouchableContent() }
+            </SwipeableListViewItem>
+        );
+    }
+
+    render() {
+        if (this.props.mode == global.LIST_EDITION_MODE) {
+            return this.renderSwipeableContent();
+        } else {
+            return this.renderTouchableContent();
+        }
     }
 }
 
@@ -223,7 +258,9 @@ export default class CategoryList extends React.PureComponent {
 
         return (
             <CategoryListItem
+                mode={this.props.mode}
                 onPress={this.onPressCategory.bind(this)}
+                setParentState={this.setState.bind(this)}
                 id={category.id}
                 name={category.name}
                 level={category.level ? category.level : 0}
@@ -346,7 +383,8 @@ export default class CategoryList extends React.PureComponent {
                         onChange={(event) => {
                             this.setDisplayType(event.nativeEvent.selectedSegmentIndex);
                         }}
-                        tintColor={CommonStyles.GLOBAL_FOREGROUND}
+                        tintColor={CommonStyles.TEXT_COLOR}
+                        style={{ marginBottom: 5 }}
                     />
                     :
                     null
@@ -376,6 +414,7 @@ export default class CategoryList extends React.PureComponent {
                             ListEmptyComponent={this.renderEmptyComponent.bind(this)}
                             renderItem={({item}) => this.renderCategory(item)}
                             ItemSeparatorComponent={this.renderSeparator}
+                            style={ this.props.mode == global.LIST_SELECTION_MODE ? styles.categoryListWithBorder : null }
                         />
                     }
                 </View>
@@ -383,3 +422,11 @@ export default class CategoryList extends React.PureComponent {
         );
     }
 }
+
+const styles = StyleSheet.create(
+{
+    categoryListWithBorder: {
+        borderWidth: 1,
+        borderColor: CommonStyles.MEDIUM_BACKGROUND
+    }
+});
