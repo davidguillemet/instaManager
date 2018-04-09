@@ -113,7 +113,7 @@ export default class HashTagListScreen extends React.Component {
             let section = this.sectionsMap.get(initialSectionTitle);
             section.data.sort((t1, t2) => t1.name < t2.name ? -1 : ( t1.name > t2.name ? 1 : 0));
             this.setState({ sections: this.state.sections })
-            
+
         } else {
 
             // Remove initia item from initial section
@@ -179,8 +179,10 @@ export default class HashTagListScreen extends React.Component {
         this.navigateToEditScreen(tagItem);
     }
 
-    onDeleteTag(tagToDelete) {
+    onDeleteTag(itemId) {
 
+        const tagToDelete = global.hashtagManager.getItemFromId(global.TAG_ITEM, itemId);
+        
         Alert.alert('', `Are you sure you want to delete the tag '${tagToDelete.name}'?`,[
             { 
                 text: 'Cancel',
@@ -206,11 +208,12 @@ export default class HashTagListScreen extends React.Component {
         ]);
     }
 
-    onArchiveTag(item) {
+    onArchiveTag(itemId) {
         ///////////
         // TODO
         ///////////
-        Alert.alert("archive", item.name);
+        const tag = global.hashtagManager.getItemFromId(global.TAG_ITEM, itemId);
+        Alert.alert("archive", tag.name);
     }
     
     renderSeparator() {
@@ -245,7 +248,7 @@ export default class HashTagListScreen extends React.Component {
     renderListItem(item) {
         return (
             <SwipeableListViewItem
-                item={item} 
+                itemId={item.id} 
                 rightAction={{ caption: 'Delete', icon: 'ios-trash', color: CommonStyles.DELETE_COLOR, callback: this.onDeleteTag.bind(this) }}
                 leftAction={{ caption: 'Archive', icon: 'ios-archive', color: CommonStyles.ARCHIVE_COLOR, callback: this.onArchiveTag.bind(this) }}
                 onSwipeStart={() => this.setState({isSwiping: true})}

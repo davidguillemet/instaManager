@@ -251,7 +251,7 @@ export default class HashtagCategoryEditScreen extends React.Component {
                     <Text style={CommonStyles.styles.mediumLabel}> to save the {this.itemTypeName}.</Text>
                 </View>
                 <View style={styles.parameterContainerView}>
-                    <Text style={CommonStyles.styles.mediumLabel}>Name</Text>
+                    <Text style={CommonStyles.styles.smallLabel}>Name</Text>
                     <View style={{ width: 20 }}/>
                     <TextInput
                         defaultValue={this.state.itemName ? this.state.itemName : null }
@@ -265,7 +265,7 @@ export default class HashtagCategoryEditScreen extends React.Component {
                     />
                 </View>
                 <View style={styles.parameterContainerView}>
-                    <Text style={CommonStyles.styles.mediumLabel}>{this.itemType === global.TAG_ITEM ? 'Categories' : 'Parent'}</Text>
+                    <Text style={CommonStyles.styles.smallLabel}>{this.itemType === global.TAG_ITEM ? 'Categories' : 'Parent'}</Text>
                     <View style={{ width: 20 }}/>
                     <TouchableOpacity onPress={this.onSelectParentCategory.bind(this)} style={{ flex: 1, flexDirection: 'row', alignItems: 'center' }}>
                         <Text
@@ -357,9 +357,6 @@ const styles = StyleSheet.create(
     categoryList: {
         flex: 1,
         margin: CommonStyles.GLOBAL_PADDING,
-        marginBottom: 5,
-        borderColor: CommonStyles.SEPARATOR_COLOR,
-        borderWidth: 1,
-        borderRadius: 6
+        marginBottom: 5
     }
 });

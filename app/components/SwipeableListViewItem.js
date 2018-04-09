@@ -13,7 +13,7 @@ import CommonStyles from '../styles/common';
 
 /**
  * expected properties:
- * - item = the item to render
+ * - itemId = the identifier of the item to render
  * - rightAction = { caption, icon, callback } label, icon name and callback for right action
  * - leftAction = { caption, icon, callback } label, icon name and callback for left action
  * - renderItem = function to render the item inside the swipeable wrapper
@@ -100,7 +100,6 @@ export default class SwipeableListViewItem extends React.Component {
     }
 
     render() {
-        console.log("render " + this.props.item.name);
         return (
             <Swipeable
                 onRef={ref => this.swipeable = ref}
@@ -112,11 +111,11 @@ export default class SwipeableListViewItem extends React.Component {
 
                 onRightActionActivate={this.onRightActionActivate.bind(this)}
                 onRightActionDeactivate={this.onRightActionDeactivate.bind(this)}
-                onRightActionComplete={() => this.props.rightAction.callback(this.props.item)}
+                onRightActionComplete={() => this.props.rightAction.callback(this.props.itemId)}
 
                 onLeftActionActivate={this.onLeftActionActivate.bind(this)}
                 onLeftActionDeactivate={this.onLeftActionDeactivate.bind(this)}
-                onLeftActionComplete={() => this.props.leftAction.callback(this.props.item)}
+                onLeftActionComplete={() => this.props.leftAction.callback(this.props.itemId)}
 
                 onSwipeStart={() => { if (this.props.onSwipeStart) this.props.onSwipeStart(); }} 
                 onSwipeRelease={() => { if (this.props.onSwipeRelease) this.props.onSwipeRelease(); }}
