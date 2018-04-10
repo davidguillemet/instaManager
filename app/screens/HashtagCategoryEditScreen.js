@@ -73,7 +73,7 @@ export default class HashtagCategoryEditScreen extends React.Component {
             categories: null,
             itemId: updateItem ? updateItem.id : global.uniqueID(),
             itemName: updateItem ? updateItem.name : null,
-            parentCategories: parentCategories,
+            parentCategories: parentCategories, // List of identifiers
             parentCategoriesCaption: parentCategoriesCaption
         };
     }
@@ -124,7 +124,7 @@ export default class HashtagCategoryEditScreen extends React.Component {
     saveTag() {
 
         let tagCategories = this.state.parentCategories;
-        if (tagCategories === null) {
+        if (tagCategories == null) {
 
             tagCategories = [];
         }
@@ -224,14 +224,14 @@ export default class HashtagCategoryEditScreen extends React.Component {
 
             if (this.itemType === global.TAG_ITEM) { // Multi selection
 
-                parentCategories = selectedCategories.map(cat => cat.id),
-                parentCategoriesCaption = this.getCaptionFromCategories(selectedCategories)
+                parentCategories = selectedCategories.map(cat => cat.id);
+                parentCategoriesCaption = this.getCaptionFromCategories(selectedCategories);
 
             } else { // Single selection
 
                 const selectedCategory = selectedCategories[0];
-                    parentCategories = [selectedCategory.id],
-                    parentCategoriesCaption = selectedCategory.name
+                parentCategories = [selectedCategory.id];
+                parentCategoriesCaption = selectedCategory.name;
             }
         }
 
@@ -255,6 +255,7 @@ export default class HashtagCategoryEditScreen extends React.Component {
                     <View style={{ width: 20 }}/>
                     <TextInput
                         defaultValue={this.state.itemName ? this.state.itemName : null }
+                        autoFocus={true}
                         keyboardType='default'
                         style={styles.parameterInput}
                         placeholder={`Enter a ${this.itemTypeName} name`}
@@ -269,7 +270,7 @@ export default class HashtagCategoryEditScreen extends React.Component {
                     <View style={{ width: 20 }}/>
                     <TouchableOpacity onPress={this.onSelectParentCategory.bind(this)} style={{ flex: 1, flexDirection: 'row', alignItems: 'center' }}>
                         <Text
-                            style={this.state.parentCategories ? styles.parameterInput : styles.parentParameter }
+                            style={this.state.parentCategories && this.state.parentCategories.length > 0 ? styles.parameterInput : styles.parentParameter }
                             numberOfLines={1}
                         >
                             {

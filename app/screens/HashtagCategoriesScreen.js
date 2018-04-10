@@ -44,7 +44,6 @@ export default class HashtagCategoriesScreen extends React.Component {
             isLoading: true,
             isSwiping: false,
             searchResults: null,
-            selection: [],
             categories: []
         };
     }
@@ -55,10 +54,20 @@ export default class HashtagCategoriesScreen extends React.Component {
             onAddCategory: this.onAddCategory.bind(this)
         });
 
+        this.updateCategories();
+    }
+
+    updateCategories() {
+
         global.hashtagManager.getCategories()
         .then((categories) => {           
             this.setState({ isLoading: false, categories: categories }); 
         });
+    }
+
+    onCategoriesModified() {
+        this.setState({ isLoading: true }); 
+        this.updateCategories();
     }
 
     onAddCategory() {

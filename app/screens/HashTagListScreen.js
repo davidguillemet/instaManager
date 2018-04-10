@@ -109,8 +109,10 @@ export default class HashTagListScreen extends React.Component {
 
         if (newSectionTitle == initialSectionTitle) {
             // Same section...
-            // -> just make sure to sort section data again and re-render item
+            // -> Replace initial item and make sure to sort section data again and re-render item
             let section = this.sectionsMap.get(initialSectionTitle);
+            const itemIndex = section.data.findIndex(item => item.id == initialItem.id);
+            section.data.splice(itemIndex, 1, updatedItem);
             section.data.sort((t1, t2) => t1.name < t2.name ? -1 : ( t1.name > t2.name ? 1 : 0));
             this.setState({ sections: this.state.sections })
 

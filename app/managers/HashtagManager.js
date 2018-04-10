@@ -24,25 +24,7 @@ export default class HashtagManagerClass {
                     HashtagSchema
                 ],
                 path: 'hashTagInfo.realm',
-                schemaVersion: 6,
-                migration: (oldRealm, newRealm) => {
-                    // only apply this change if upgrading to schemaVersion 1
-                    if (oldRealm.schemaVersion < 5) {
-                        const newCategories = newRealm.objects(categorySchema);
-                
-                        // loop through all objects and set the name property in the new schema
-                        for (let i = 0; i < newCategories.length; i++) {
-                            newCategories[i].id = global.uniqueID();
-                        }
-
-                        const newTags = newRealm.objects(hashtagSchema);
-                
-                        // loop through all objects and set the name property in the new schema
-                        for (let i = 0; i < newTags.length; i++) {
-                            newTags[i].id = global.uniqueID();
-                        }
-                    }
-                }
+                schemaVersion: 1
             }).then(realm => {
                 this.realm = realm;
             });
@@ -73,11 +55,11 @@ export default class HashtagManagerClass {
                 categories.push({
                     id: rootCategory.id,
                     name: rootCategory.name,
-                    parent: rootCategory.parent,
-                    level: level 
+                    parent: null,
+                    level: 0
                 });
 
-                this._getSubCategories(rootCategory, level + 1, categories);
+                this._getSubCategories(rootCategory, 1, categories);
             }
 
             return categories;
@@ -86,7 +68,7 @@ export default class HashtagManagerClass {
 
     _getSubCategories(parentCategory, level, categories) {
         
-        let subCategories = this.realm.objects(categorySchema).filtered('parent = $0', parentCategory.id).sorted('name');
+        let subCategories = parentCategory.children.sorted('name');
         if (subCategories.length == 0) {
             return;
         }
@@ -96,7 +78,7 @@ export default class HashtagManagerClass {
             categories.push({
                 id: subCategory.id,
                 name: subCategory.name,
-                parent: subCategory.parent,
+                parent: parentCategory.id,
                 level: level
             });
 
@@ -113,7 +95,7 @@ export default class HashtagManagerClass {
     }
 
     searchItem(itemType, filter) {
-        return this.realm.objects(this._getRealmTypeFromItemType(itemType)).filtered('name like $0', filter);
+        return this.realm.objects(this._getRealmTypeFromItemType(itemType)).filtered('name like[c] $0', filter);
     }
 
     getItemFromId(itemType, itemId) {
@@ -132,7 +114,8 @@ export default class HashtagManagerClass {
     saveTag(tag, update) {
     
         this.realm.write(() => {
-            this.realm.create(hashtagSchema, { id: tag.id, name: tag.name, categories: tag.categories }, update);
+            const parentCategories = tag.categories.map(catId => this.realm.objectForPrimaryKey(categorySchema, catId));
+            this.realm.create(hashtagSchema, { id: tag.id, name: tag.name, categories: parentCategories }, update);
         });
     }
 
@@ -146,12 +129,36 @@ export default class HashtagManagerClass {
     saveCategory(category, update) {
 
         this.realm.write(() => {
-            this.realm.create(categorySchema, { id: category.id, name: category.name, parent: category.parent }, update);
+            let parent = null; 
+            if (category.parent) {
+                parent = this.realm.objectForPrimaryKey(categorySchema, category.parent);
+            }
+            this.realm.create(categorySchema, { id: category.id, name: category.name, parent: parent }, update);
         });
     }
 
+    deleteCategory(categoryId) {
+        
+        this.realm.write(() => {
+            let categoryToDelete = this.realm.objectForPrimaryKey(categorySchema, categoryId);
+            this._internalDeleteCategory(categoryToDelete);
+        });
+        
+    }
+
+    _internalDeleteCategory(categoryToDelete) {
+        // TODO : should we remove children categories ??
+        this.realm.delete(categoryToDelete);
+    }
+
     getHashtags() {
-        return this.realm.objects(hashtagSchema).sorted('name');
+        return this.realm.objects(hashtagSchema).sorted('name').map((item, index, array) => {
+            return {
+                id: item.id,
+                name: item.name,
+                categories: item.categories.map((cat, index, array) => cat.id)
+            }
+        });
         /*return [
             { name: 'aquaticadigital' },
             { name: 'biganimals' },

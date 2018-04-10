@@ -26,6 +26,7 @@ import CommonStyles from '../styles/common';
  * - onSelectionChanged (identifier Set)
  * - mode = global.LIST_EDITION_MODE or LIST_EDITION_MODE
  * - setParentState = callback to set parent state
+ * - onDeleteCategory = callback when a category should be deleted (category id as parameter)
  */
 class CategoryListItem extends React.PureComponent {
 
@@ -33,13 +34,26 @@ class CategoryListItem extends React.PureComponent {
         this.props.onPress(this.props.id);
     };
 
-    _onRightAction = () => {
-        ///////////
-        // TODO
-        //////////
+    _onDeleteCategory = (catId) => {
+
+        const catToDelete = global.hashtagManager.getItemFromId(global.CATEGORY_ITEM, catId);
+        
+        Alert.alert('', `Are you sure you want to delete the category '${catToDelete.name}'?`,
+        [
+            { 
+                text: 'Cancel',
+                style: 'cancel'
+            },
+            {
+                text: 'OK',
+                onPress: () => {
+                    this.props.onDeleteCategory(this.props.id);
+                }
+            }
+        ]);
     }
 
-    _onLefttAction = () => {
+    _onArchiveCategory = (catId) => {
         //////////
         // TODO
         //////////
@@ -90,8 +104,8 @@ class CategoryListItem extends React.PureComponent {
         return (
             <SwipeableListViewItem
                 itemId={this.props.id} 
-                rightAction={{ caption: 'Delete', icon: 'ios-trash', color: CommonStyles.DELETE_COLOR, callback: this._onRightAction }}
-                leftAction={{ caption: 'Archive', icon: 'ios-archive', color: CommonStyles.ARCHIVE_COLOR, callback: this._onRightAction }}
+                rightAction={{ caption: 'Delete', icon: 'ios-trash', color: CommonStyles.DELETE_COLOR, callback: this._onDeleteCategory.bind(this) }}
+                leftAction={{ caption: 'Archive', icon: 'ios-archive', color: CommonStyles.ARCHIVE_COLOR, callback: this._onArchiveCategory.bind(this) }}
                 onSwipeStart={() => this.props.setParentState({isSwiping: true})}
                 onSwipeRelease={() => this.props.setParentState({isSwiping: false})}
             >
@@ -240,12 +254,23 @@ export default class CategoryList extends React.PureComponent {
         }
     }
 
-    onCategoryUpdated(updatedCategory) {
+    onDeleteCategory(categoryId) {
 
+        this.setState({ isLoading: false });
+        global.hashtagManager.deleteCategory(categoryId);
+        this.onCategoryUpdated(null, false);
+    }
+
+    onCategoryUpdated(updatedCategory, initiateLoading) {
+
+        if (initiateLoading) {
+            this.setState({ isLoading: false });
+        }
         global.hashtagManager.getCategories()
         .then((categories) => {
 
             this.setState( {
+                isLoading: false,
                 categories: categories,
                 categoriesMap: this.getMapFromCategories(categories)
             });
@@ -260,6 +285,7 @@ export default class CategoryList extends React.PureComponent {
             <CategoryListItem
                 mode={this.props.mode}
                 onPress={this.onPressCategory.bind(this)}
+                onDeleteCategory={this.onDeleteCategory.bind(this)}
                 setParentState={this.setState.bind(this)}
                 id={category.id}
                 name={category.name}

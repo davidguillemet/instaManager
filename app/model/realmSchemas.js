@@ -45,7 +45,9 @@ export const TagCategorySchema = {
     properties: {
         id: 'string',
         name: 'string',
-        parent: 'string?',
+        parent: 'TagCategory?',
+        children: { type: 'linkingObjects', objectType: 'TagCategory', property: 'parent' },
+        hashtags: { type: 'linkingObjects', objectType: 'Hashtag', property: 'categories' },
         archived: {type: 'bool',  default: false}
     }
 }
@@ -59,7 +61,7 @@ export const HashtagSchema = {
     properties: {
         id: 'string',
         name: 'string',
-        categories: 'string?[]',
+        categories: 'TagCategory[]',
         archived: {type: 'bool',  default: false}
     }
 }
