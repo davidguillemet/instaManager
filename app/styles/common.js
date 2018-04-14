@@ -30,6 +30,10 @@ export default CommonStyles = {
   NAV_ICON_SIZE: 30,
   SWIPE_ICON_SIZE: 25,
 
+  LIST_ITEM_HEIGHT: 40,
+  LIST_SEPARATOR_HEIGHT: 1,
+  SECTION_HEADER_HEIGHT: 30,
+
   // Fonts
   FONT_NORMAL: 'Arial',
   
@@ -92,18 +96,24 @@ CommonStyles.styles = StyleSheet.create(
     padding: 10,
     fontSize: CommonStyles.SWIPE_ICON_SIZE
   },
+  sectionHeaderContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    height: CommonStyles.SECTION_HEADER_HEIGHT,
+    backgroundColor: '#192b48'
+  },
   sectionHeader: {
     color: CommonStyles.TEXT_COLOR,
     fontSize: CommonStyles.MEDIUM_FONT_SIZE,
-    paddingHorizontal: CommonStyles.GLOBAL_PADDING,
-    paddingVertical: 5,
-    backgroundColor: '#192b48'
+    paddingHorizontal: CommonStyles.GLOBAL_PADDING
+  },
+  singleListItemContainer: {
+    height: CommonStyles.LIST_ITEM_HEIGHT,
   },
   singleListItem:  {
     color: CommonStyles.TEXT_COLOR,
     fontSize: CommonStyles.MEDIUM_FONT_SIZE,
-    paddingHorizontal: CommonStyles.GLOBAL_PADDING,
-    paddingVertical: 10
+    paddingHorizontal: CommonStyles.GLOBAL_PADDING
   },
   deacivatedSingleListItem:  {
     color: CommonStyles.DEACTIVATED_TEXT_COLOR,

@@ -6,7 +6,6 @@ import {
   FlatList,
   SectionList,
   TouchableOpacity,
-  TouchableHighlight,
   Alert
 } from 'react-native';
 
@@ -14,6 +13,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import SearchInput from '../components/Search';
 import LoadingIndicatorView from '../components/LoadingIndicator';
 import SwipeableListViewItem from '../components/SwipeableListViewItem';
+import SectionListIndex from '../components/SectionListIndex';
 
 import CommonStyles from '../styles/common'; 
 
@@ -41,6 +41,7 @@ export default class HashTagListScreen extends React.Component {
         super(props);
         this.state = { isLoading: true , isSwiping: false, sections: null };
         this.sectionsMap = new Map();
+        this.sectionListRef = null;
     }
     
     componentWillMount() {
@@ -79,7 +80,7 @@ export default class HashTagListScreen extends React.Component {
                 currentSectionData.push(hashtag);
             }
 
-            this.setState({ isLoading: false, sections: sections });
+            this.updateSections(sections);
         });
     }
 
@@ -114,11 +115,11 @@ export default class HashTagListScreen extends React.Component {
             const itemIndex = section.data.findIndex(item => item.id == initialItem.id);
             section.data.splice(itemIndex, 1, updatedItem);
             section.data.sort((t1, t2) => t1.name < t2.name ? -1 : ( t1.name > t2.name ? 1 : 0));
-            this.setState({ sections: this.state.sections })
+            this.updateSections(this.state.sections);
 
         } else {
 
-            // Remove initia item from initial section
+            // Remove initial item from initial section
             let initialSection = this.sectionsMap.get(initialSectionTitle);
             const initialTagIndex = initialSection.data.findIndex(tag => tag.id == tagId);
             initialSection.data.splice(initialTagIndex, 1);
@@ -147,19 +148,22 @@ export default class HashTagListScreen extends React.Component {
 
             this.sectionsMap.set(sectionTitle, newSection);
             
-            this.setState((oldState) => {
-                let newSections = oldState.sections;
-                newSections.push(newSection);
-                newSections.sort((s1, s2) => s1.title < s2.title ? -1 : ( s1.title > s2.title ? 1 : 0));
-                return { sections: newSections };
-            });
+            this.state.sections.push(newSection);
+            this.state.sections.sort((s1, s2) => s1.title < s2.title ? -1 : ( s1.title > s2.title ? 1 : 0));
+            let newSections = [...this.state.sections];
+            this.updateSections(newSections);
 
         } else {
 
             section.data.push(createdTag);
             section.data.sort((t1, t2) => t1.name < t2.name ? -1 : ( t1.name > t2.name ? 1 : 0));
-            this.setState({ sections: this.state.sections })
+            this.updateSections(this.state.sections);
         }
+    }
+
+    updateSections(sections) {
+
+        this.setState({ isLoading: false, sections: sections });
     }
 
     navigateToEditScreen(tagToEdit) {
@@ -217,23 +221,77 @@ export default class HashTagListScreen extends React.Component {
         const tag = global.hashtagManager.getItemFromId(global.TAG_ITEM, itemId);
         Alert.alert("archive", tag.name);
     }
+
+    onPressSectionIndex(sectionTitle) {
+
+        if (this.sectionListRef == null) {
+            return;
+        }
+
+        const sectionIndex = this.state.sections.findIndex((section, sectionIndex, array) => section.title == sectionTitle);
+
+        this.sectionListRef.scrollToLocation({
+            animated: true,
+            itemIndex: 0, // First item of the section
+            sectionIndex: sectionIndex,
+            viewOffset: CommonStyles.SECTION_HEADER_HEIGHT
+        });
+    }
+
+    // LIST_ITEM_HEIGHT: 40,
+    // LIST_SEPARATOR_HEIGHT: 1,
+    // SECTION_HEADER_HEIGHT: 30,
+    getItemLayout(data, index) {
+
+        let offset = 0;
+        let globalIndex = 0;
+        let height = 0;
+
+        for (let sectionIndex = 0; sectionIndex < data.length && globalIndex < index; sectionIndex++) {
+
+            offset += CommonStyles.SECTION_HEADER_HEIGHT;
+            const currentSection = data[sectionIndex];
+
+            globalIndex += 1; // an item for the header
+            if (globalIndex == index) {
+                height = 0;
+            }
+            globalIndex += 1; // next item for the first data in section            
+
+            for (let itemIndex = 0; itemIndex < currentSection.data.length && globalIndex < index; itemIndex++, globalIndex++) {
+                
+                if (globalIndex == index) {
+                    height = CommonStyles.LIST_ITEM_HEIGHT;
+                }
+                
+                offset += CommonStyles.LIST_ITEM_HEIGHT;
+                if (itemIndex < currentSection.data.length - 1) {
+                    offset += CommonStyles.LIST_SEPARATOR_HEIGHT;
+                }
+            }
+        }
+
+        return {
+            index: index,
+            length: height,
+            offset: offset
+        };
+    }
+
+    getItemHeight(index) {
+        return this.sectionIndexes.has(index) ? CommonStyles.SECTION_HEADER_HEIGHT : CommonStyles.LIST_ITEM_HEIGHT;
+    }
     
     renderSeparator() {
         return (
             <View
                 style={{
-                    height: 1,
+                    height: CommonStyles.LIST_SEPARATOR_HEIGHT,
                     width: "100%",
                     backgroundColor: CommonStyles.SEPARATOR_COLOR,
                     marginLeft: CommonStyles.GLOBAL_PADDING
                 }}
             />
-        );
-    }
-
-    renderListFooter() {
-        return (
-            <View style={{height: 50}} />
         );
     }
 
@@ -256,23 +314,26 @@ export default class HashTagListScreen extends React.Component {
                 onSwipeStart={() => this.setState({isSwiping: true})}
                 onSwipeRelease={() => this.setState({isSwiping: false})}
             >
-                <TouchableHighlight onPress={() => this.onEditTag(item)}>
-                    <Text style={CommonStyles.styles.singleListItem}>{item.name}</Text>
-                </TouchableHighlight>
+                <TouchableOpacity onPress={() => this.onEditTag(item)}>
+                        <Text style={CommonStyles.styles.singleListItem}>{item.name}</Text>
+                </TouchableOpacity>
             </SwipeableListViewItem>
         );
     }
   
     renderSectionHeader(section) {
         return (
-            <Text style={CommonStyles.styles.sectionHeader}>{section.title}</Text>
+            <View style={CommonStyles.styles.sectionHeaderContainer}>
+                <Text style={CommonStyles.styles.sectionHeader}>{section.title}</Text>
+            </View>
         );
     }
 
     render() {
+        console.log("render section list " + this.state.sections != null ? "full" : 'null');
 
         return(
-            <View style={[CommonStyles.styles.standardPage, {paddingHorizontal: 0, paddingTop: 0}]}>
+            <View style={[CommonStyles.styles.standardPage, {padding: 0}]}>
                 {
                     this.state.isLoading ? 
                     <LoadingIndicatorView/> :
@@ -297,17 +358,25 @@ export default class HashTagListScreen extends React.Component {
                                     renderItem={({item}) => this.renderListItem(item)}
                                     ItemSeparatorComponent={this.renderSeparator} />
                                 :
-                                <SectionList
-                                    style={{ flex: 1 }}
-                                    scrollEnabled={!this.state.isSwiping}
-                                    sections={this.state.sections} 
-                                    extraData={this.state}
-                                    renderItem={({item}) => this.renderListItem(item)}
-                                    renderSectionHeader={({section}) => this.renderSectionHeader(section)}
-                                    ItemSeparatorComponent={this.renderSeparator}
-                                    ListFooterComponent={this.renderListFooter}
-                                    ListEmptyComponent={this.renderEmptyComponent}
-                                    keyExtractor={(item, index) => item.name} />
+                                <View style={{ flex: 1 }}>
+                                    <SectionList
+                                        ref={ref => this.sectionListRef = ref}
+                                        style={{ flex: 1 }}
+                                        scrollEnabled={!this.state.isSwiping}
+                                        sections={this.state.sections} 
+                                        extraData={this.state}
+                                        renderItem={({item}) => this.renderListItem(item)}
+                                        renderSectionHeader={({section}) => this.renderSectionHeader(section)}
+                                        ItemSeparatorComponent={this.renderSeparator}
+                                        ListEmptyComponent={this.renderEmptyComponent}
+                                        keyExtractor={(item, index) => item.name}
+                                        getItemLayout={this.getItemLayout}
+                                    />
+                                    <SectionListIndex
+                                        sections={this.state.sections} extraData={this.state}
+                                        onPressIndex={this.onPressSectionIndex.bind(this)}
+                                    />
+                                </View>
                             }
                         </View>
                     )

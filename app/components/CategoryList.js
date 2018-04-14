@@ -65,7 +65,11 @@ class CategoryListItem extends React.PureComponent {
             inlineTextStyle = { ...inlineTextStyle, textDecorationLine: 'line-through' }
         }
         return (
-            <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center' }}>
+            <View style={[
+                        CommonStyles.styles.singleListItemContainer, 
+                        { flex: 1, flexDirection: 'row', alignItems: 'center' }
+                    ]}
+                >
             <Ionicons style={{
                     color: this.props.deactivated ? CommonStyles.DEACTIVATED_TEXT_COLOR : CommonStyles.TEXT_COLOR,
                     paddingLeft: CommonStyles.GLOBAL_PADDING,

@@ -4,7 +4,7 @@ import {
   View,
   Text,
   SectionList,
-  TouchableHighlight,
+  TouchableOpacity,
   Alert
 } from 'react-native';
 
@@ -79,12 +79,12 @@ export default class HashTagsHomeScreen extends React.Component {
 
     renderListItem(item) {
         return (
-            <TouchableHighlight onPress={() => this.props.navigation.navigate(item.target)}>
+            <TouchableOpacity onPress={() => this.props.navigation.navigate(item.target)}>
                 <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center' }}>
                     <Text style={[CommonStyles.styles.mediumLabel, styles.singleItem]}>{item.caption}</Text>
                     <Ionicons style={{ color: CommonStyles.TEXT_COLOR, paddingRight: 5 }} name='ios-arrow-forward' size={CommonStyles.MEDIUM_FONT_SIZE} />
                 </View>
-            </TouchableHighlight>
+            </TouchableOpacity>
         );
     }
   

@@ -63,10 +63,15 @@ export default class SwipeableListViewItem extends React.Component {
 
     getSwipeContent(activated, caption, icon, color) {
         return (
-            <View style={[styles.swipeAction, { backgroundColor: activated ? color : CommonStyles.DEACTIVATED_SWIPE_ACTION_COLOR }] }>
+            <View style={[
+                    styles.swipeAction,
+                    CommonStyles.styles.singleListItemContainer,
+                    { backgroundColor: activated ? color : CommonStyles.DEACTIVATED_SWIPE_ACTION_COLOR, overflow: 'hidden' }
+                ]}
+            >
                 {   
                     icon ?
-                    <Ionicons name={icon} style={CommonStyles.styles.swipeButtonIcon} /> :
+                    <Ionicons name={icon} style={[CommonStyles.styles.swipeButtonIcon]} /> :
                     null
                 }
                 { 
@@ -102,6 +107,7 @@ export default class SwipeableListViewItem extends React.Component {
     render() {
         return (
             <Swipeable
+                style={CommonStyles.styles.singleListItemContainer}
                 onRef={ref => this.swipeable = ref}
                 rightContent={this.props.rightAction ? this.getRightContent() : null }
                 leftContent={this.props.leftAction ? this.getLeftContent() : null }
@@ -120,7 +126,9 @@ export default class SwipeableListViewItem extends React.Component {
                 onSwipeStart={() => { if (this.props.onSwipeStart) this.props.onSwipeStart(); }} 
                 onSwipeRelease={() => { if (this.props.onSwipeRelease) this.props.onSwipeRelease(); }}
             >
-                { this.props.children }
+                <View style={{flex: 1, justifyContent: 'center'}}>
+                    { this.props.children }
+                </View>
             </Swipeable>
         );
     }
