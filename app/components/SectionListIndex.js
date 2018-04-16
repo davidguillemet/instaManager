@@ -62,7 +62,7 @@ export default class SectionListIndex extends React.PureComponent {
             positionX >= 0 &&
             positionX < CommonStyles.INDEX_LIST_WIDTH &&
             positionY >= 0 &&
-            positionY <= CommonStyles.INDEX_ITEM_HEIGHT*this.props.sections.length
+            positionY < CommonStyles.INDEX_ITEM_HEIGHT*this.props.sections.length
         );
     }
 
