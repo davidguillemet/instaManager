@@ -358,20 +358,34 @@ export default class CategoryList extends React.PureComponent {
 
     getSelectedCategories() {
 
-        /////////////////////////////////////////////////////////
-        // TODO
-        // we should display the ancestors for the selected items
-        /////////////////////////////////////////////////////////
         if (this.state.categories == null) {
             return [];
         }
-        let selectedCategories = [];
+        const displayedCategories = new Set(); 
+        const selectedCategories = [];
         for (let category of this.state.categories) {
             if (this.state.selection.has(category.id)) {
                 selectedCategories.push(category);
+                displayedCategories.add(category.id);
+                this.addParentCategories(category, selectedCategories.length - 1, selectedCategories, displayedCategories);
             }
         }
         return selectedCategories;
+    }
+
+    addParentCategories(category, categoryIndex, selectedCategoriesList, selectedCategoriesSet) {
+        if (category.parent && !selectedCategoriesSet.has(category.parent)) {
+            const realmParentCategory = global.hashtagManager.getItemFromId(global.CATEGORY_ITEM, category.parent);
+            const parentCategory = {
+                id: realmParentCategory.id,
+                name: realmParentCategory.name,
+                parent: realmParentCategory.parent ? realmParentCategory.parent.id : null,
+                level: category.level - 1
+            };
+            selectedCategoriesList.splice(categoryIndex, 0, parentCategory);
+            selectedCategoriesSet.add(parentCategory.id);
+            this.addParentCategories(parentCategory, categoryIndex, selectedCategoriesList, selectedCategoriesSet);
+        }
     }
 
     applyDisplayType(displayType) {
