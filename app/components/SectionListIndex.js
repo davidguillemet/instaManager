@@ -8,15 +8,36 @@ import {
  } from 'react-native';
 import CommonStyles from '../styles/common';
 
+import FocusedListIndex from './FocusedListIndex';
+
 export default class SectionListIndex extends React.PureComponent {
 
     constructor(props) {
         super(props);
+        this.focusedIndexRef = null;
     }
 
-    renderItem(item) {
+    onPressIndex(indexTitle, index) {
+        if (indexTitle) {
+            this.props.onPressIndex(indexTitle);
+            if (this.focusedIndexRef) {
+                const positionY = index * CommonStyles.INDEX_ITEM_HEIGHT + CommonStyles.INDEX_ITEM_HEIGHT / 2;
+                this.focusedIndexRef.onIndexChanged(indexTitle, positionY);
+            }
+        } else {
+            if (this.focusedIndexRef) {
+                this.focusedIndexRef.onIndexChanged(null, null);
+            }            
+        }
+    }
+
+    renderItem(item, index) {
         return (
-            <TouchableOpacity onPress={() => this.props.onPressIndex(item.title)} >
+            <TouchableOpacity
+                    onPressIn={() => this.onPressIndex(item.title, index)}
+                    onPressOut={() => this.onPressIndex(null, null)}
+                    delayPressOut={500}
+            >
                 <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
                     <Text style={styles.indexTitleStyle}>{item.title}</Text>
                 </View>
@@ -32,14 +53,14 @@ export default class SectionListIndex extends React.PureComponent {
 
         return (
             <View style={styles.indexContainerStyle}>
-                <View style={styles.indexStyle}>
-                    <FlatList
-                        scrollEnabled={false}
-                        data={this.props.sections}
-                        keyExtractor={(item, index) => item.title}
-                        renderItem={({item}) => this.renderItem(item)}
-                    />
-                </View>
+                <FlatList
+                    scrollEnabled={false}
+                    data={this.props.sections}
+                    keyExtractor={(item, index) => item.title}
+                    renderItem={({item, index}) => this.renderItem(item, index)}
+                    
+                />
+                <FocusedListIndex ref={ref => this.focusedIndexRef = ref}/>
             </View>
         );
     }
@@ -48,15 +69,10 @@ export default class SectionListIndex extends React.PureComponent {
 const styles = StyleSheet.create(
 {
     indexContainerStyle: {
-        flex: 1,
         justifyContent: 'center',
         position: 'absolute',
         width: 20,
-        top: 0,
-        bottom: 0,
         right: 0,
-    },
-    indexStyle: {
         borderRadius: 3,
         backgroundColor: CommonStyles.KPI_COLOR,
         opacity: 0.5
@@ -64,7 +80,9 @@ const styles = StyleSheet.create(
     indexTitleStyle: {
         color: CommonStyles.GLOBAL_FOREGROUND,
         fontWeight: "800",
-        fontSize: CommonStyles.SMALL_FONT_SIZE
+        fontStyle: 'italic',
+        fontSize: CommonStyles.SMALL_FONT_SIZE,
+        height: CommonStyles.INDEX_ITEM_HEIGHT
     }
 });
     

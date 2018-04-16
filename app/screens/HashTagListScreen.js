@@ -358,7 +358,7 @@ export default class HashTagListScreen extends React.Component {
                                     renderItem={({item}) => this.renderListItem(item)}
                                     ItemSeparatorComponent={this.renderSeparator} />
                                 :
-                                <View style={{ flex: 1 }}>
+                                <View style={{ flex: 1, justifyContent: 'center'}}>
                                     <SectionList
                                         ref={ref => this.sectionListRef = ref}
                                         style={{ flex: 1 }}

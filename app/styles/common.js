@@ -33,6 +33,8 @@ export default CommonStyles = {
   LIST_ITEM_HEIGHT: 40,
   LIST_SEPARATOR_HEIGHT: 1,
   SECTION_HEADER_HEIGHT: 30,
+  INDEX_ITEM_HEIGHT: 16,
+  FOCUSED_ITEM_SIZE: 50,
 
   // Fonts
   FONT_NORMAL: 'Arial',
