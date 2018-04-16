@@ -122,7 +122,6 @@ CommonStyles.styles = StyleSheet.create(
     color: CommonStyles.DEACTIVATED_TEXT_COLOR,
     fontSize: CommonStyles.MEDIUM_FONT_SIZE,
     paddingHorizontal: CommonStyles.GLOBAL_PADDING,
-    paddingVertical: 10
   }
 });
   
