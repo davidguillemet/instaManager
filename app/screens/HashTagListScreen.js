@@ -330,8 +330,6 @@ export default class HashTagListScreen extends React.Component {
     }
 
     render() {
-        console.log("render section list " + this.state.sections != null ? "full" : 'null');
-
         return(
             <View style={[CommonStyles.styles.standardPage, {padding: 0}]}>
                 {
