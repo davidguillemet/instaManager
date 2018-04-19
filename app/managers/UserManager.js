@@ -245,7 +245,6 @@ export default class UserManagerClass {
                 users: [...actualRelatedSet]
             };
             
-            // TODO
             //this.relatedRealm.create(relatedSchemaName, userRelatedEntry, true);
 
             // add/update a new history entry in the related history schema
@@ -261,7 +260,6 @@ export default class UserManagerClass {
                     date: today
                 };
 
-                // TODO
                 //this.relatedRealm.create(relatedHistorySchemaName, historyEntryForToday);
 
             } else {
@@ -277,7 +275,6 @@ export default class UserManagerClass {
             // Make sure to add short info about new users in the related user info schema
             for (let newRelatedUser of actualRelatedList) {
                 // The realm schema is the same as the object from the instagram API...
-                // TODO
                 //this.relatedRealm.create('RelatedUsersInfo', newRelatedUser, true);
             }
         });

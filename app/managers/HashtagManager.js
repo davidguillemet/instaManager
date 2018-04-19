@@ -148,6 +148,9 @@ export default class HashtagManagerClass {
 
     _internalDeleteCategory(categoryToDelete) {
         // TODO : should we remove children categories ??
+        // SO far, if we remove a category which contains children, these children
+        // will move to hierarchy root... Why not?
+        // -> or shouyld we introduce an option?
         this.realm.delete(categoryToDelete);
     }
 
