@@ -39,9 +39,21 @@ export default class HashTagListScreen extends React.Component {
 
     constructor(props) {
         super(props);
+        
         this.state = { isLoading: true , isSwiping: false, sections: null };
         this.sectionsMap = new Map();
         this.sectionListRef = null;
+
+        this.renderListItem = this.renderListItem.bind(this);
+        this.setSearchResults = this.setSearchResults.bind(this);
+
+        this.onDeleteTag = this.onDeleteTag.bind(this);
+        this.onArchiveTag = this.onArchiveTag.bind(this);
+
+        this.onSwipeStart = this.onSwipeStart.bind(this);
+        this.onSwipeRelease = this.onSwipeRelease.bind(this);
+
+        this.onPressSectionIndex = this.onPressSectionIndex.bind(this);
     }
     
     componentWillMount() {
@@ -281,6 +293,14 @@ export default class HashTagListScreen extends React.Component {
     getItemHeight(index) {
         return this.sectionIndexes.has(index) ? CommonStyles.SECTION_HEADER_HEIGHT : CommonStyles.LIST_ITEM_HEIGHT;
     }
+
+    onSwipeStart() {
+        this.setState({isSwiping: true});
+    }
+
+    onSwipeRelease() {
+        this.setState({isSwiping: false});
+    }
     
     renderSeparator() {
         return (
@@ -305,14 +325,14 @@ export default class HashTagListScreen extends React.Component {
         );
     }
 
-    renderListItem(item) {
+    renderListItem({item}) {
         return (
             <SwipeableListViewItem
                 itemId={item.id} 
-                rightAction={{ caption: 'Delete', icon: 'ios-trash', color: CommonStyles.DELETE_COLOR, callback: this.onDeleteTag.bind(this) }}
-                leftAction={{ caption: 'Archive', icon: 'ios-archive', color: CommonStyles.ARCHIVE_COLOR, callback: this.onArchiveTag.bind(this) }}
-                onSwipeStart={() => this.setState({isSwiping: true})}
-                onSwipeRelease={() => this.setState({isSwiping: false})}
+                rightAction={{ caption: 'Delete', icon: 'ios-trash', color: CommonStyles.DELETE_COLOR, callback: this.onDeleteTag }}
+                leftAction={{ caption: 'Archive', icon: 'ios-archive', color: CommonStyles.ARCHIVE_COLOR, callback: this.onArchiveTag }}
+                onSwipeStart={this.onSwipeStart}
+                onSwipeRelease={this.onSwipeRelease}
             >
                 <TouchableOpacity onPress={() => this.onEditTag(item)}>
                         <Text style={CommonStyles.styles.singleListItem}>{item.name}</Text>
@@ -321,7 +341,7 @@ export default class HashTagListScreen extends React.Component {
         );
     }
   
-    renderSectionHeader(section) {
+    renderSectionHeader({section}) {
         return (
             <View style={CommonStyles.styles.sectionHeaderContainer}>
                 <Text style={CommonStyles.styles.sectionHeader}>{section.title}</Text>
@@ -341,7 +361,7 @@ export default class HashTagListScreen extends React.Component {
                                 <SearchInput
                                     placeholder={'search hashtag'}
                                     dataSource={this.getSearchDataSource}
-                                    resultsCallback={this.setSearchResults.bind(this)}
+                                    resultsCallback={this.setSearchResults}
                                     filterProperty={'name'}
                                 />
                             </View>
@@ -353,7 +373,7 @@ export default class HashTagListScreen extends React.Component {
                                     data={this.state.searchResults}
                                     keyExtractor={(item, index) => item.name}
                                     ListEmptyComponent={this.emptySearchResult}
-                                    renderItem={({item}) => this.renderListItem(item)}
+                                    renderItem={this.renderListItem}
                                     ItemSeparatorComponent={this.renderSeparator} />
                                 :
                                 <View style={{ flex: 1, justifyContent: 'center'}}>
@@ -363,8 +383,8 @@ export default class HashTagListScreen extends React.Component {
                                         scrollEnabled={!this.state.isSwiping}
                                         sections={this.state.sections} 
                                         extraData={this.state}
-                                        renderItem={({item}) => this.renderListItem(item)}
-                                        renderSectionHeader={({section}) => this.renderSectionHeader(section)}
+                                        renderItem={this.renderListItem}
+                                        renderSectionHeader={this.renderSectionHeader}
                                         ItemSeparatorComponent={this.renderSeparator}
                                         ListEmptyComponent={this.renderEmptyComponent}
                                         keyExtractor={(item, index) => item.name}
@@ -372,7 +392,7 @@ export default class HashTagListScreen extends React.Component {
                                     />
                                     <SectionListIndex
                                         sections={this.state.sections} extraData={this.state}
-                                        onPressIndex={this.onPressSectionIndex.bind(this)}
+                                        onPressIndex={this.onPressSectionIndex}
                                     />
                                 </View>
                             }
