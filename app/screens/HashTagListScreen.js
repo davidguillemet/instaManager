@@ -39,12 +39,13 @@ export default class HashTagListScreen extends React.Component {
 
     constructor(props) {
         super(props);
-        
+
         this.state = { isLoading: true , isSwiping: false, sections: null };
         this.sectionsMap = new Map();
         this.sectionListRef = null;
 
         this.renderListItem = this.renderListItem.bind(this);
+        this.keyExtractor = this.keyExtractor.bind(this);
         this.setSearchResults = this.setSearchResults.bind(this);
 
         this.onDeleteTag = this.onDeleteTag.bind(this);
@@ -349,6 +350,10 @@ export default class HashTagListScreen extends React.Component {
         );
     }
 
+    keyExtractor(item, index) {
+        return item.name;
+    }
+
     render() {
         return(
             <View style={[CommonStyles.styles.standardPage, {padding: 0}]}>
@@ -371,7 +376,7 @@ export default class HashTagListScreen extends React.Component {
                                     style={{ flex: 1 }}
                                     scrollEnabled={!this.state.isSwiping}
                                     data={this.state.searchResults}
-                                    keyExtractor={(item, index) => item.name}
+                                    keyExtractor={this.keyExtractor}
                                     ListEmptyComponent={this.emptySearchResult}
                                     renderItem={this.renderListItem}
                                     ItemSeparatorComponent={this.renderSeparator} />
@@ -387,7 +392,7 @@ export default class HashTagListScreen extends React.Component {
                                         renderSectionHeader={this.renderSectionHeader}
                                         ItemSeparatorComponent={this.renderSeparator}
                                         ListEmptyComponent={this.renderEmptyComponent}
-                                        keyExtractor={(item, index) => item.name}
+                                        keyExtractor={this.keyExtractor}
                                         getItemLayout={this.getItemLayout}
                                     />
                                     <SectionListIndex

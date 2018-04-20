@@ -101,7 +101,7 @@ export default class HashTagsHomeScreen extends React.Component {
         return(
             <View style={CommonStyles.styles.standardPage}>
                 <View style={CommonStyles.styles.standardTile}>
-                    <Text style={CommonStyles.styles.mediumLabel}>Here you can manage your hashtags and organize them using categories to quickly get all the tags you need for each of your publications.</Text>
+                    <Text style={CommonStyles.styles.mediumLabel}>You can manage and organize your hashtags in categories to quickly select all the tags you need for each of your publications.</Text>
                 </View>
                 <View style={{ height: 10}}></View>
                 <SectionList

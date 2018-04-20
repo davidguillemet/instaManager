@@ -99,7 +99,7 @@ class CategoryListItem extends React.PureComponent {
     renderTouchableContent() {
         return (
             <TouchableOpacity onPress={this.props.deactivated ? null : this._onPress}>
-            { this.renderInnerItem() }
+                { this.renderInnerItem() }
             </TouchableOpacity>
         );
     }
@@ -163,6 +163,18 @@ export default class CategoryList extends React.PureComponent {
             this.state.displayType = DISPLAY_SELECTED;
             this.state.selectedCategories = this.getSelectedCategories(this.props.categories);
         }
+
+        this.renderCategory = this.renderCategory.bind(this);
+        this.renderEmptyComponent = this.renderEmptyComponent.bind(this);
+        this.keyExtractor = this.keyExtractor.bind(this);
+        this.getSearchDataSource = this.getSearchDataSource.bind(this);
+        this.setSearchResults = this.setSearchResults.bind(this);
+
+        this.onPressCategory = this.onPressCategory.bind(this);
+        this.onDeleteCategory = this.onDeleteCategory.bind(this);
+        this.setStateProxy = this.setStateProxy.bind(this);
+
+        this.onCategoryUpdated = this.onCategoryUpdated.bind(this);
     }
 
     deactivateHiddenCategoriesChildren(categories, hiddenSet) {
@@ -196,7 +208,7 @@ export default class CategoryList extends React.PureComponent {
     navigateToEditScreen(categoryToEdit) {
         const params = {
             updateItem: categoryToEdit,
-            onItemUpdated: this.onCategoryUpdated.bind(this),
+            onItemUpdated: this.onCategoryUpdated,
             itemType: global.CATEGORY_ITEM
         };
         this.props.navigation.navigate('HashtagCategoryEdit', params);
@@ -281,20 +293,23 @@ export default class CategoryList extends React.PureComponent {
         });
     }
 
-    renderCategory(category) {
+    setStateProxy(state) {
+        this.setState(state);
+    }
 
-        const deactivated = this.state.hiddenCategories.has(category.id);
+    renderCategory({item}) {
+        const deactivated = this.state.hiddenCategories.has(item.id);
 
         return (
             <CategoryListItem
                 mode={this.props.mode}
-                onPress={this.onPressCategory.bind(this)}
-                onDeleteCategory={this.onDeleteCategory.bind(this)}
-                setParentState={this.setState.bind(this)}
-                id={category.id}
-                name={category.name}
-                level={category.level ? category.level : 0}
-                selected={this.state.selection.has(category.id)}
+                onPress={this.onPressCategory}
+                onDeleteCategory={this.onDeleteCategory}
+                setParentState={this.setStateProxy}
+                id={item.id}
+                name={item.name}
+                level={item.level ? item.level : 0}
+                selected={this.state.selection.has(item.id)}
                 deactivated={deactivated}
             />
         );
@@ -416,6 +431,10 @@ export default class CategoryList extends React.PureComponent {
         });
     }
 
+    keyExtractor(item, index) {
+        return item.name;
+    }
+
     render() {
         return (
             <View style={{ flex: 1 }}>
@@ -436,8 +455,8 @@ export default class CategoryList extends React.PureComponent {
                 <View style={{padding: CommonStyles.GLOBAL_PADDING, backgroundColor: CommonStyles.MEDIUM_BACKGROUND}}>
                     <SearchInput
                         placeholder={'search category'}
-                        dataSource={this.getSearchDataSource.bind(this)}
-                        resultsCallback={this.setSearchResults.bind(this)}
+                        dataSource={this.getSearchDataSource}
+                        resultsCallback={this.setSearchResults}
                         filterProperty={'name'}
                     />
                 </View>
@@ -454,9 +473,9 @@ export default class CategoryList extends React.PureComponent {
                                 this.state.selectedCategories :
                                 this.state.categories}
                             extraData={this.state}
-                            keyExtractor={(item, index) => item.id}
-                            ListEmptyComponent={this.renderEmptyComponent.bind(this)}
-                            renderItem={({item}) => this.renderCategory(item)}
+                            keyExtractor={this.keyExtractor}
+                            ListEmptyComponent={this.renderEmptyComponent}
+                            renderItem={this.renderCategory}
                             ItemSeparatorComponent={this.renderSeparator}
                             style={ this.props.mode == global.LIST_SELECTION_MODE ? styles.categoryListWithBorder : null }
                         />
