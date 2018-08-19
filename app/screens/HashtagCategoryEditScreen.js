@@ -26,8 +26,11 @@ export default class HashtagCategoryEditScreen extends React.Component {
 
     static navigationOptions = ({ navigation }) => {
         const params = navigation.state.params || {};
+        let headerTitle = params.updateItem ? 'Edit' : 'New';
+        headerTitle += ' ';
+        headerTitle += params.itemType == global.CATEGORY_ITEM ? 'Category' : 'Tag';
         return {
-            headerTitle: 'New Category',
+            headerTitle: headerTitle,
             headerRight: renderRightButtons(params)
         }   
     };
@@ -52,14 +55,14 @@ export default class HashtagCategoryEditScreen extends React.Component {
             if (this.itemType == global.TAG_ITEM && updateItem.categories != null) {
                 
                 parentCategories = updateItem.categories;
-                parentCategoriesCaption = this.getCaptionFromCategories(global.hashtagManager.getItemsFromId(global.CATEGORY_ITEM, updateItem.categories));
 
             } else if (this.itemType == global.CATEGORY_ITEM && updateItem.parent != null) {
 
                 const parentCategory = global.hashtagManager.getItemFromId(global.CATEGORY_ITEM, updateItem.parent);
                 parentCategories = [updateItem.parent];
-                parentCategoriesCaption = parentCategory.name;
             }
+
+            parentCategoriesCaption = this.getCaptionFromCategories(parentCategories);
         }
 
         // Note: updateItem is a realm object. It will be updated automaticcaly when saving the new item
@@ -69,13 +72,13 @@ export default class HashtagCategoryEditScreen extends React.Component {
         this.editorMode = updateItem ? global.UPDATE_MODE : global.CREATE_MODE;
         
         this.state = {
-            selectingParent: false,
-            categories: null,
             itemId: updateItem ? updateItem.id : global.uniqueID(),
             itemName: updateItem ? updateItem.name : null,
             parentCategories: parentCategories, // List of identifiers
             parentCategoriesCaption: parentCategoriesCaption
         };
+
+        this.onCategoriesSelected = this.onCategoriesSelected.bind(this);
     }
     
     componentDidMount() {
@@ -87,9 +90,16 @@ export default class HashtagCategoryEditScreen extends React.Component {
 
     getCaptionFromCategories(categories) {
 
+        if (categories == null || categories.length == 0)
+        {
+            return '';
+        }
+
+        let realmCategories = global.hashtagManager.getItemsFromId(global.CATEGORY_ITEM, categories);
+
         let parentCategoriesCaption = '';
         let parentIndex = 0;
-        for (let parentCategory of categories) {
+        for (let parentCategory of realmCategories) {
             if (parentIndex > 0) {
                 parentCategoriesCaption += ', ';
             }
@@ -180,12 +190,12 @@ export default class HashtagCategoryEditScreen extends React.Component {
             
             if (this.editorMode == global.CREATE_MODE) {
 
-                // Create mode = error as son as a categiory exists with the same name in the database
+                // Create mode = error as soon as a categiory exists with the same name in the database
                 nameAlreadyExists = true;
 
             } else {
 
-                // Edition mode = error as soon as a category with another id exists xwith the same name in the database
+                // Edition mode = error as soon as a category with another id exists with the same name in the database
                 for (let item of itemsWithSameName) {
                     if (item.id !== this.state.itemId) {
                         nameAlreadyExists = true;
@@ -207,38 +217,23 @@ export default class HashtagCategoryEditScreen extends React.Component {
         this.state.itemName = text;
     }
 
-    onSelectParentCategory() {
-
-        global.hashtagManager.getCategories()
-        .then((categories) => {
-            this.setState({ selectingParent: true, categories: categories }); 
+    onCategoriesSelected(categories) {
+        this.setState( {
+            parentCategories: categories,
+            parentCategoriesCaption: this.getCaptionFromCategories(categories)
         });
     }
 
-    onParentCategorySelected(selectedCategories) {
+    onSelectParentCategory() {
 
-        let parentCategories = null;
-        let parentCategoriesCaption = null;
+        const params = {
+            onCategoriesSelected: this.onCategoriesSelected,
+            selectedCategories: this.state.parentCategories,
+            itemId: this.state.itemId,
+            itemType: this.itemType
+        };
 
-        if (selectedCategories != null && selectedCategories.length > 0) {
-
-            if (this.itemType === global.TAG_ITEM) { // Multi selection
-
-                parentCategories = selectedCategories.map(cat => cat.id);
-                parentCategoriesCaption = this.getCaptionFromCategories(selectedCategories);
-
-            } else { // Single selection
-
-                const selectedCategory = selectedCategories[0];
-                parentCategories = [selectedCategory.id];
-                parentCategoriesCaption = selectedCategory.name;
-            }
-        }
-
-        this.setState( {
-            parentCategories: parentCategories,
-            parentCategoriesCaption: parentCategoriesCaption
-        });
+        this.props.navigation.navigate('CategorySelection', params);
     }
 
     render() {
@@ -274,10 +269,8 @@ export default class HashtagCategoryEditScreen extends React.Component {
                             numberOfLines={1}
                         >
                             {
-                                this.state.parentCategoriesCaption ? 
+                                this.state.parentCategoriesCaption && this.state.parentCategoriesCaption.length > 0 ? 
                                 this.state.parentCategoriesCaption : 
-                                this.state.selectingParent ?
-                                'No selection' :
                                 this.itemType === global.TAG_ITEM ?
                                 'Press to select categories' :
                                 'Press to select a parent'
@@ -307,22 +300,6 @@ export default class HashtagCategoryEditScreen extends React.Component {
                         }
                     </TouchableOpacity>
                 </View>
-                { 
-                    this.state.selectingParent ? 
-                    <View style={styles.categoryList}>
-                        <CategoryList
-                            mode={global.LIST_SELECTION_MODE}
-                            selectionMode={this.itemType === global.TAG_ITEM ? global.MULTI_SELECTION : global.SINGLE_SELECTION}
-                            categories= {this.state.categories}
-                            onSelectionChanged={this.onParentCategorySelected.bind(this)}
-                            selection={ this.state.parentCategories }
-                            hiddenCategories={
-                                this.itemType === global.TAG_ITEM ? null : 
-                                this.editorMode === global.UPDATE_MODE ? [ this.state.itemId ] : null }
-                        />
-                    </View>
-                    : null
-                }
             </View>
         );
     }

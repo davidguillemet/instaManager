@@ -161,7 +161,7 @@ export default class CategoryList extends React.PureComponent {
         
         if (this.props.selection != null && this.props.selection.length > 0) {
             this.state.displayType = DISPLAY_SELECTED;
-            this.state.selectedCategories = this.getSelectedCategories(this.props.categories);
+            this.state.selectedCategories = this.getSelectedCategories();
         }
 
         this.renderCategory = this.renderCategory.bind(this);
@@ -257,8 +257,7 @@ export default class CategoryList extends React.PureComponent {
             if (this.state.displayType == DISPLAY_SELECTED) {
                 // In case we display only selected items
                 // populate again the selected categories
-                this.state.selection = newSelection;
-                this.state.selectedCategories = this.getSelectedCategories();
+                this.state.selectedCategories = this.getSelectedCategories(newSelection);
             }
 
             this.setState( { selection: newSelection } );
@@ -371,15 +370,16 @@ export default class CategoryList extends React.PureComponent {
         });
     }
 
-    getSelectedCategories() {
+    getSelectedCategories(selection) {
 
+        let _selection = selection ? selection : this.state.selection;
         if (this.state.categories == null) {
             return [];
         }
         const displayedCategories = new Set(); 
         const selectedCategories = [];
         for (let category of this.state.categories) {
-            if (this.state.selection.has(category.id)) {
+            if (_selection.has(category.id)) {
                 selectedCategories.push(category);
                 displayedCategories.add(category.id);
                 this.addParentCategories(category, selectedCategories.length - 1, selectedCategories, displayedCategories);
@@ -408,7 +408,7 @@ export default class CategoryList extends React.PureComponent {
         return new Promise((resolve, reject) => {
             let selectedCategories =
                 displayType == DISPLAY_SELECTED ?
-                this.getSelectedCategories(this.state.categories) :
+                this.getSelectedCategories() :
                 null;
             resolve(selectedCategories);
         });
@@ -447,7 +447,7 @@ export default class CategoryList extends React.PureComponent {
                             this.setDisplayType(event.nativeEvent.selectedSegmentIndex);
                         }}
                         tintColor={CommonStyles.TEXT_COLOR}
-                        style={{ marginBottom: 5 }}
+                        style={{ marginBottom: 0 }}
                     />
                     :
                     null
@@ -489,7 +489,6 @@ export default class CategoryList extends React.PureComponent {
 const styles = StyleSheet.create(
 {
     categoryListWithBorder: {
-        borderWidth: 1,
         borderColor: CommonStyles.MEDIUM_BACKGROUND
     }
 });
