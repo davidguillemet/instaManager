@@ -10,6 +10,7 @@ import {
 
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import CategoryList from '../components/CategoryList';
+import TagContainer from '../components/TagContainer';
 
 import CommonStyles from '../styles/common'; 
 
@@ -49,7 +50,7 @@ export default class HashtagCategoryEditScreen extends React.Component {
         
         let parentCategories = null;
         let parentCategoriesCaption = null;
-        let childrenTags = null;
+        let childrenTags = [];
         let childrenTagsCaption = null;
 
         if (updateItem != null) {
@@ -87,6 +88,7 @@ export default class HashtagCategoryEditScreen extends React.Component {
         this.onSelectParentCategory = this.onSelectParentCategory.bind(this);
         this.onSelectCategoryTags = this.onSelectCategoryTags.bind(this);
         this.onTagSelectionValidated = this.onTagSelectionValidated.bind(this);
+        this.onDeleteTag = this.onDeleteTag.bind(this);
     }
     
     componentDidMount() {
@@ -183,7 +185,7 @@ export default class HashtagCategoryEditScreen extends React.Component {
         let newHashtags = new Set(this.state.childrenTags);
         for (let newHashtag of this.state.childrenTags) {
             let realmHashtag = global.hashtagManager.getItemFromId(global.TAG_ITEM, newHashtag);
-            let newHashtagCategories = realmHashtag.categories.reduce((set, cat) => set.add(cat.id), new Set());
+            let newHashtagCategories = realmHashtag.categories.reduce((set, cat) => { set.add(cat.id); return set; }, new Set());
             if (!newHashtagCategories.has(categoryToSave.id)) {
                 // add the updated category in the categories list for the current tag
                 global.hashtagManager.saveTag({ id: newHashtag, name: realmHashtag.name, categories: [...newHashtagCategories, categoryToSave.id]}, true /* update */);
@@ -195,7 +197,7 @@ export default class HashtagCategoryEditScreen extends React.Component {
             if (!newHashtags.has(prevHashtag)) {
                 // This hashtag has been removed from the updated category
                 let realmHashtag = global.hashtagManager.getItemFromId(global.TAG_ITEM, prevHashtag);
-                let prevHashtagCategories = realmHashtag.categories.reduce((set, cat) => set.add(cat.id), new Set());
+                let prevHashtagCategories = realmHashtag.categories.reduce((set, cat) => { set.add(cat.id); return set; }, new Set());
                 if (prevHashtagCategories.has(categoryToSave.id)) {
                     prevHashtagCategories.delete(categoryToSave.id);
                     global.hashtagManager.saveTag({ id: prevHashtag, name: realmHashtag.name, categories: [...prevHashtagCategories]}, true /* update */);
@@ -292,6 +294,15 @@ export default class HashtagCategoryEditScreen extends React.Component {
         this.props.navigation.navigate('HashTagList', params);
     }
 
+    onDeleteTag(tagId) {
+
+        let newSelection = this.state.childrenTags.filter(id => id != tagId);
+        this.setState( {
+            childrenTags: newSelection,
+            childrenTagsCaption: this.getCaptionFromItems(newSelection, global.TAG_ITEM)
+        });
+    }
+
     render() {
         return (
             <View style={CommonStyles.styles.standardPage}>
@@ -360,42 +371,21 @@ export default class HashtagCategoryEditScreen extends React.Component {
                     this.itemType == global.TAG_ITEM ?
                     null :
                     // Selection des tags de la catégorie
-                    <View style={styles.parameterContainerView}>
-                        <Text style={CommonStyles.styles.smallLabel}>Tags</Text>
-                        <View style={{ width: 20 }}/>
-                        <TouchableOpacity onPress={this.onSelectCategoryTags} style={{ flex: 1, flexDirection: 'row', alignItems: 'center' }}>
-                            <Text
-                                style={this.state.childrenTags && this.state.childrenTags.length > 0 ? styles.parameterInput : styles.parentParameter }
-                                numberOfLines={1}
-                            >
-                                {
-                                    this.state.childrenTags && this.state.childrenTags.length > 0 ? 
-                                    this.state.childrenTagsCaption : 
-                                    'Press to select tags'
-                                }
-                            </Text>
-                            <Ionicons name={'ios-arrow-forward'} style={[CommonStyles.styles.textIcon, styles.iconSelect]}/>
-                            {
-                                this.state.childrenTags == null || this.state.childrenTags.length == 0 ?
-
-                                null :
-
-                                <View style={{
-                                    position: 'absolute',
-                                    right: 30,
-                                    top: -3,
-                                    width: 24,
-                                    height: 24,
-                                    alignItems: 'center',
-                                    justifyContent: 'center',
-                                    backgroundColor: CommonStyles.ARCHIVE_COLOR,
-                                    borderRadius: 12,
-                                }}>
-                                    <Text style={{ fontSize: CommonStyles.SMALL_FONT_SIZE }}>{this.state.childrenTags.length}</Text>
-                                </View>            
-                            }
-                        </TouchableOpacity>
+                    <View style={[styles.parameterContainerView, { borderBottomWidth: 0, marginBottom: 5, marginTop: 10 }]}>
+                        <Text style={CommonStyles.styles.mediumLabel}>{this.state.childrenTags.length} Tag(s) in this category:</Text>
                     </View>
+                }
+                {
+                    // Affichage de tous les tags
+                    this.itemType == global.CATEGORY_ITEM ?
+                    <TagContainer
+                        tags={this.state.childrenTags}
+                        itemType={global.TAG_ITEM}
+                        onDelete={this.onDeleteTag}
+                        onAdd={this.onSelectCategoryTags}
+                        readOnly={false}
+                        addSharp={true} />
+                    : null
                 }
             </View>
         );
