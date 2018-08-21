@@ -47,18 +47,12 @@ export default class HashtagManagerClass {
         .then(() => {
 
             let rootCategories = this._getRootCategories();
-            let level = 0;
             let categories = [];
 
             for (let rootCategory of rootCategories) {
 
-                categories.push({
-                    id: rootCategory.id,
-                    name: rootCategory.name,
-                    parent: null,
-                    level: 0
-                });
-
+                let catProxy = this._getCatProxyFromRealm(rootCategory, null, 0);
+                categories.push(catProxy);
                 this._getSubCategories(rootCategory, 1, categories);
             }
 
@@ -75,14 +69,20 @@ export default class HashtagManagerClass {
 
         for (let subCategory of subCategories) {
             
-            categories.push({
-                id: subCategory.id,
-                name: subCategory.name,
-                parent: parentCategory.id,
-                level: level
-            });
-
+            let catProxy = this._getCatProxyFromRealm(subCategory, parentCategory.id, level);
+            categories.push(catProxy);
             this._getSubCategories(subCategory, level + 1, categories);
+        }
+    }
+
+    _getCatProxyFromRealm(realmCat, parentId, level)
+    {
+        return {
+            id: realmCat.id,
+            name: realmCat.name,
+            parent: parentId,
+            level: level,
+            hashtags: realmCat.hashtags.map((tag, index, array) => tag.id)
         }
     }
 
@@ -133,7 +133,9 @@ export default class HashtagManagerClass {
             if (category.parent) {
                 parent = this.realm.objectForPrimaryKey(categorySchema, category.parent);
             }
-            this.realm.create(categorySchema, { id: category.id, name: category.name, parent: parent }, update);
+
+            // We cannot update hashtags here since this property is of type LinkingObjects
+            let updatedCategory = this.realm.create(categorySchema, { id: category.id, name: category.name, parent: parent }, update);
         });
     }
 
@@ -154,8 +156,14 @@ export default class HashtagManagerClass {
         this.realm.delete(categoryToDelete);
     }
 
-    getHashtags() {
-        return this.realm.objects(hashtagSchema).sorted('name').map((item, index, array) => {
+    getHashtags(categoryId) {
+
+        let tags =
+            categoryId ?
+            this.realm.objectForPrimaryKey(categorySchema, categoryId).hashtags :
+            this.realm.objects(hashtagSchema).sorted('name');
+
+        return tags.map((item, index, array) => {
             return {
                 id: item.id,
                 name: item.name,

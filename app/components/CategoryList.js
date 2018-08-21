@@ -23,10 +23,10 @@ import CommonStyles from '../styles/common';
  * - name
  * - level
  * - selected
- * - onSelectionChanged (identifier Set)
- * - mode = global.LIST_EDITION_MODE or LIST_EDITION_MODE
+ * - mode = global.LIST_EDITION_MODE or LIST_SELECTION_MODE
  * - setParentState = callback to set parent state
  * - onDeleteCategory = callback when a category should be deleted (category id as parameter)
+ * - onPress = callback when a category is pressed
  */
 class CategoryListItem extends React.PureComponent {
 
@@ -69,29 +69,29 @@ class CategoryListItem extends React.PureComponent {
                         CommonStyles.styles.singleListItemContainer, 
                         { flex: 1, flexDirection: 'row', alignItems: 'center' }
                     ]}
-                >
-            <Ionicons style={{
-                    color: this.props.deactivated ? CommonStyles.DEACTIVATED_TEXT_COLOR : CommonStyles.TEXT_COLOR,
-                    paddingLeft: CommonStyles.GLOBAL_PADDING,
-                    marginLeft: CommonStyles.HIERARCHY_INDENT * this.props.level
-                }}
-                name='ios-folder-open-outline'
-                size={CommonStyles.LARGE_FONT_SIZE}
-            />
-            <Text style={[
-                    this.props.deactivated ? CommonStyles.styles.deacivatedSingleListItem : CommonStyles.styles.singleListItem,
-                    inlineTextStyle]}
-                    numberOfLines={1}
             >
-                {this.props.name}
-            </Text>
-            {
-                this.props.selected ?
-                <Ionicons style={{ color: CommonStyles.ARCHIVE_COLOR, paddingRight: CommonStyles.GLOBAL_PADDING }} name='ios-checkmark-circle-outline' size={CommonStyles.LARGE_FONT_SIZE} /> :
-                this.props.deactivated ?
-                <Ionicons style={{ color: CommonStyles.WARNING_COLOR, paddingRight: CommonStyles.GLOBAL_PADDING }} name='ios-warning-outline' size={CommonStyles.LARGE_FONT_SIZE} /> :
-                null
-            }
+                <Ionicons style={{
+                        color: this.props.deactivated ? CommonStyles.DEACTIVATED_TEXT_COLOR : CommonStyles.TEXT_COLOR,
+                        paddingLeft: CommonStyles.GLOBAL_PADDING,
+                        marginLeft: CommonStyles.HIERARCHY_INDENT * this.props.level
+                    }}
+                    name='ios-folder-open-outline'
+                    size={CommonStyles.LARGE_FONT_SIZE}
+                />
+                <Text style={[
+                        this.props.deactivated ? CommonStyles.styles.deacivatedSingleListItem : CommonStyles.styles.singleListItem,
+                        inlineTextStyle]}
+                        numberOfLines={1}
+                >
+                    {this.props.name}
+                </Text>
+                {
+                    this.props.selected ?
+                    <Ionicons style={{ color: CommonStyles.ARCHIVE_COLOR, paddingRight: CommonStyles.GLOBAL_PADDING }} name='ios-checkmark-circle-outline' size={CommonStyles.LARGE_FONT_SIZE} /> :
+                    this.props.deactivated ?
+                    <Ionicons style={{ color: CommonStyles.WARNING_COLOR, paddingRight: CommonStyles.GLOBAL_PADDING }} name='ios-warning-outline' size={CommonStyles.LARGE_FONT_SIZE} /> :
+                    null
+                }
             </View>
         );
     }
@@ -279,7 +279,7 @@ export default class CategoryList extends React.PureComponent {
     onCategoryUpdated(updatedCategory, initiateLoading) {
 
         if (initiateLoading) {
-            this.setState({ isLoading: false });
+            this.setState({ isLoading: true });
         }
         global.hashtagManager.getCategories()
         .then((categories) => {

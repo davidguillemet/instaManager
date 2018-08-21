@@ -49,6 +49,8 @@ export default class HashtagCategoryEditScreen extends React.Component {
         
         let parentCategories = null;
         let parentCategoriesCaption = null;
+        let childrenTags = null;
+        let childrenTagsCaption = null;
 
         if (updateItem != null) {
 
@@ -58,11 +60,12 @@ export default class HashtagCategoryEditScreen extends React.Component {
 
             } else if (this.itemType == global.CATEGORY_ITEM && updateItem.parent != null) {
 
-                const parentCategory = global.hashtagManager.getItemFromId(global.CATEGORY_ITEM, updateItem.parent);
                 parentCategories = [updateItem.parent];
+                childrenTags = global.hashtagManager.getHashtags(updateItem.id).map(tag => tag.id);
+                childrenTagsCaption = this.getCaptionFromItems(childrenTags, global.TAG_ITEM);
             }
 
-            parentCategoriesCaption = this.getCaptionFromCategories(parentCategories);
+            parentCategoriesCaption = this.getCaptionFromItems(parentCategories, global.CATEGORY_ITEM);
         }
 
         // Note: updateItem is a realm object. It will be updated automaticcaly when saving the new item
@@ -75,10 +78,15 @@ export default class HashtagCategoryEditScreen extends React.Component {
             itemId: updateItem ? updateItem.id : global.uniqueID(),
             itemName: updateItem ? updateItem.name : null,
             parentCategories: parentCategories, // List of identifiers
-            parentCategoriesCaption: parentCategoriesCaption
+            parentCategoriesCaption: parentCategoriesCaption,
+            childrenTags: childrenTags,
+            childrenTagsCaption: childrenTagsCaption
         };
 
         this.onCategoriesSelected = this.onCategoriesSelected.bind(this);
+        this.onSelectParentCategory = this.onSelectParentCategory.bind(this);
+        this.onSelectCategoryTags = this.onSelectCategoryTags.bind(this);
+        this.onTagSelectionValidated = this.onTagSelectionValidated.bind(this);
     }
     
     componentDidMount() {
@@ -88,25 +96,25 @@ export default class HashtagCategoryEditScreen extends React.Component {
         });
     }
 
-    getCaptionFromCategories(categories) {
+    getCaptionFromItems(items, itemType) {
 
-        if (categories == null || categories.length == 0)
+        if (items == null || items.length == 0)
         {
             return '';
         }
 
-        let realmCategories = global.hashtagManager.getItemsFromId(global.CATEGORY_ITEM, categories);
+        let realmItems = global.hashtagManager.getItemsFromId(itemType, items);
 
-        let parentCategoriesCaption = '';
-        let parentIndex = 0;
-        for (let parentCategory of realmCategories) {
-            if (parentIndex > 0) {
-                parentCategoriesCaption += ', ';
+        let itemsCaption = '';
+        let itemIndex = 0;
+        for (let realmItem of realmItems) {
+            if (itemIndex > 0) {
+                itemsCaption += ', ';
             }
-            parentCategoriesCaption += parentCategory.name;
-            parentIndex++;
+            itemsCaption += realmItem.name;
+            itemIndex++;
         }
-        return parentCategoriesCaption;
+        return itemsCaption;
     }
 
     onSaveItem() {
@@ -160,10 +168,40 @@ export default class HashtagCategoryEditScreen extends React.Component {
         const categoryToSave = {
             id: this.state.itemId,
             name: this.state.itemName,
-            parent: parent
+            parent: parent,
+            hashtags: this.state.childrenTags // useless...cannot be updated directly (type is "LinkingObjects")
         };
 
         global.hashtagManager.saveCategory(categoryToSave, this.editorMode === global.UPDATE_MODE);
+
+        // Update hashtags (we cannot manipulate linkingObjects directly...)
+        // 1. Get the previous hashtags directly from the category itself since LinkingObjects cannot be updated directly
+        let realmCat = global.hashtagManager.getItemFromId(global.CATEGORY_ITEM, this.state.itemId);
+        let prevHashTags = realmCat.hashtags.map(tag => tag.id);
+
+        // 1. Make sure all tags from the updated category includes this category in the categories array property
+        let newHashtags = new Set(this.state.childrenTags);
+        for (let newHashtag of this.state.childrenTags) {
+            let realmHashtag = global.hashtagManager.getItemFromId(global.TAG_ITEM, newHashtag);
+            let newHashtagCategories = realmHashtag.categories.reduce((set, cat) => set.add(cat.id), new Set());
+            if (!newHashtagCategories.has(categoryToSave.id)) {
+                // add the updated category in the categories list for the current tag
+                global.hashtagManager.saveTag({ id: newHashtag, name: realmHashtag.name, categories: [...newHashtagCategories, categoryToSave.id]}, true /* update */);
+            }
+        }
+
+        // 2. Make sure that previous tags of the updated category doon't contain this category in the categories array property 
+        for (let prevHashtag of prevHashTags) {
+            if (!newHashtags.has(prevHashtag)) {
+                // This hashtag has been removed from the updated category
+                let realmHashtag = global.hashtagManager.getItemFromId(global.TAG_ITEM, prevHashtag);
+                let prevHashtagCategories = realmHashtag.categories.reduce((set, cat) => set.add(cat.id), new Set());
+                if (prevHashtagCategories.has(categoryToSave.id)) {
+                    prevHashtagCategories.delete(categoryToSave.id);
+                    global.hashtagManager.saveTag({ id: prevHashtag, name: realmHashtag.name, categories: [...prevHashtagCategories]}, true /* update */);
+                }
+            }
+        }
 
         return categoryToSave;
     }
@@ -220,7 +258,7 @@ export default class HashtagCategoryEditScreen extends React.Component {
     onCategoriesSelected(categories) {
         this.setState( {
             parentCategories: categories,
-            parentCategoriesCaption: this.getCaptionFromCategories(categories)
+            parentCategoriesCaption: this.getCaptionFromItems(categories, global.CATEGORY_ITEM)
         });
     }
 
@@ -234,6 +272,24 @@ export default class HashtagCategoryEditScreen extends React.Component {
         };
 
         this.props.navigation.navigate('CategorySelection', params);
+    }
+
+    onTagSelectionValidated(selection) {
+        this.setState( {
+            childrenTags: selection,
+            childrenTagsCaption: this.getCaptionFromItems(selection, global.TAG_ITEM)
+        });
+    }
+
+    onSelectCategoryTags() {
+
+        const params = {
+            mode: global.LIST_SELECTION_MODE,
+            selection: this.state.childrenTags,
+            onSelectionValidated: this.onTagSelectionValidated
+        };
+
+        this.props.navigation.navigate('HashTagList', params);
     }
 
     render() {
@@ -263,7 +319,7 @@ export default class HashtagCategoryEditScreen extends React.Component {
                 <View style={styles.parameterContainerView}>
                     <Text style={CommonStyles.styles.smallLabel}>{this.itemType === global.TAG_ITEM ? 'Categories' : 'Parent'}</Text>
                     <View style={{ width: 20 }}/>
-                    <TouchableOpacity onPress={this.onSelectParentCategory.bind(this)} style={{ flex: 1, flexDirection: 'row', alignItems: 'center' }}>
+                    <TouchableOpacity onPress={this.onSelectParentCategory} style={{ flex: 1, flexDirection: 'row', alignItems: 'center' }}>
                         <Text
                             style={this.state.parentCategories && this.state.parentCategories.length > 0 ? styles.parameterInput : styles.parentParameter }
                             numberOfLines={1}
@@ -300,6 +356,47 @@ export default class HashtagCategoryEditScreen extends React.Component {
                         }
                     </TouchableOpacity>
                 </View>
+                {
+                    this.itemType == global.TAG_ITEM ?
+                    null :
+                    // Selection des tags de la catégorie
+                    <View style={styles.parameterContainerView}>
+                        <Text style={CommonStyles.styles.smallLabel}>Tags</Text>
+                        <View style={{ width: 20 }}/>
+                        <TouchableOpacity onPress={this.onSelectCategoryTags} style={{ flex: 1, flexDirection: 'row', alignItems: 'center' }}>
+                            <Text
+                                style={this.state.childrenTags && this.state.childrenTags.length > 0 ? styles.parameterInput : styles.parentParameter }
+                                numberOfLines={1}
+                            >
+                                {
+                                    this.state.childrenTags && this.state.childrenTags.length > 0 ? 
+                                    this.state.childrenTagsCaption : 
+                                    'Press to select tags'
+                                }
+                            </Text>
+                            <Ionicons name={'ios-arrow-forward'} style={[CommonStyles.styles.textIcon, styles.iconSelect]}/>
+                            {
+                                this.state.childrenTags == null || this.state.childrenTags.length == 0 ?
+
+                                null :
+
+                                <View style={{
+                                    position: 'absolute',
+                                    right: 30,
+                                    top: -3,
+                                    width: 24,
+                                    height: 24,
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    backgroundColor: CommonStyles.ARCHIVE_COLOR,
+                                    borderRadius: 12,
+                                }}>
+                                    <Text style={{ fontSize: CommonStyles.SMALL_FONT_SIZE }}>{this.state.childrenTags.length}</Text>
+                                </View>            
+                            }
+                        </TouchableOpacity>
+                    </View>
+                }
             </View>
         );
     }
