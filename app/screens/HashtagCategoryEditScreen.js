@@ -48,7 +48,7 @@ export default class HashtagCategoryEditScreen extends React.Component {
         
         const updateItem = params ? params.updateItem : null;
         
-        let parentCategories = null;
+        let parentCategories = [];
         let parentCategoriesCaption = null;
         let childrenTags = [];
         let childrenTagsCaption = null;
@@ -59,9 +59,12 @@ export default class HashtagCategoryEditScreen extends React.Component {
                 
                 parentCategories = updateItem.categories;
 
-            } else if (this.itemType == global.CATEGORY_ITEM && updateItem.parent != null) {
+            } else if (this.itemType == global.CATEGORY_ITEM) {
 
-                parentCategories = [updateItem.parent];
+                if (updateItem.parent != null) {
+                    parentCategories = [updateItem.parent];
+                }
+                
                 childrenTags = global.hashtagManager.getHashtags(updateItem.id).map(tag => tag.id);
                 childrenTagsCaption = this.getCaptionFromItems(childrenTags, global.TAG_ITEM);
             }
@@ -304,6 +307,13 @@ export default class HashtagCategoryEditScreen extends React.Component {
     }
 
     render() {
+
+        // In case of a category item, get the countof tags from ancestor categories
+        let ancestorCategoriesTagCount =
+            this.itemType == global.CATEGORY_ITEM && this.state.parentCategories != null && this.state.parentCategories.length > 0 ?
+            global.hashtagManager.getAncestorCategoriesTagCount(this.state.parentCategories[0]) :
+            0;
+
         return (
             <View style={CommonStyles.styles.standardPage}>
                 <View style={[CommonStyles.styles.standardTile, { alignItems: 'center'} ]}>
@@ -371,8 +381,10 @@ export default class HashtagCategoryEditScreen extends React.Component {
                     this.itemType == global.TAG_ITEM ?
                     null :
                     // Selection des tags de la catégorie
-                    <View style={[styles.parameterContainerView, { borderBottomWidth: 0, marginBottom: 5, marginTop: 10 }]}>
-                        <Text style={CommonStyles.styles.mediumLabel}>{this.state.childrenTags.length} Tag(s) in this category:</Text>
+                    <View style={[styles.parameterContainerColView, { borderBottomWidth: 0, marginBottom: 5, marginTop: 10 }]}>
+                        <Text style={CommonStyles.styles.mediumLabel}>{ancestorCategoriesTagCount + this.state.childrenTags.length} Tag(s) in this category</Text>
+                        <Text style={[CommonStyles.styles.smallLabel, { paddingLeft: 10 }]}>- {this.state.childrenTags.length} Tag(s) in this category itself</Text>
+                        <Text style={[CommonStyles.styles.smallLabel, { paddingLeft: 10 }]}>- {ancestorCategoriesTagCount} Tag(s) from ancestor categories</Text>
                     </View>
                 }
                 {
@@ -397,6 +409,12 @@ const styles = StyleSheet.create(
     parameterContainerView: {
         flexDirection: 'row',
         alignItems: 'center',
+        borderBottomColor: CommonStyles.SEPARATOR_COLOR,
+        borderBottomWidth: 1,
+        paddingTop: CommonStyles.GLOBAL_PADDING,
+        paddingLeft: CommonStyles.GLOBAL_PADDING
+    },
+    parameterContainerColView: {
         borderBottomColor: CommonStyles.SEPARATOR_COLOR,
         borderBottomWidth: 1,
         paddingTop: CommonStyles.GLOBAL_PADDING,

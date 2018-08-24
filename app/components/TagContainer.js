@@ -30,31 +30,31 @@ export default class TagContainer extends React.PureComponent {
         let tagList = this.props.tags.reduce((arr, id) => { arr.push(global.hashtagManager.getItemFromId(this.props.itemType, id)); return arr; }, new Array());
 
         return (
-            <ScrollView style={styles.scrollViewer}>
-                <View style={styles.tagCcontainer}>
-                    <Tag
-                        style={[styles.tag, { backgroundColor: '#2DCF59' }]}
-                        id={'addnew'}
-                        name={'Add new...'}
-                        onPress={this.props.onAdd}
-                        iconName={'ios-add-circle-outline'}
-                    />
-                    {
-                        tagList.sort((t1, t2) => t1.name.localeCompare(t2.name)).map(tag => {
-                            return (
-                                <Tag
-                                    style={styles.tag}
-                                    key={tag.id}
-                                    id={tag.id}
-                                    name={(this.props.addSharp ? '#' : '') + tag.name}
-                                    onPress={this.props.onDelete}
-                                    iconName={'ios-close-circle-outline'}
-                                />
-                            );
-                        })
-                    }
+            <View style={{flex: 1}}>
+                <ScrollView style={styles.scrollViewer}>
+                    <View style={styles.tagCcontainer}>
+                        {
+                            tagList.sort((t1, t2) => t1.name.localeCompare(t2.name)).map(tag => {
+                                return (
+                                    <Tag
+                                        style={styles.tag}
+                                        key={tag.id}
+                                        id={tag.id}
+                                        name={(this.props.addSharp ? '#' : '') + tag.name}
+                                        onPress={this.props.onDelete}
+                                        iconName={'ios-close-circle-outline'}
+                                    />
+                                );
+                            })
+                        }
+                    </View>
+                </ScrollView>
+                <View style={styles.addTagButton}>
+                    <TouchableOpacity onPress={this.props.onAdd}>
+                        <Ionicons style={{color: '#2DCF59'}} name={'ios-add-circle'} size={30} />
+                    </TouchableOpacity>
                 </View>
-            </ScrollView>
+            </View>
         );
     }
 }
@@ -66,9 +66,10 @@ const styles = StyleSheet.create(
         alignItems: 'center',
         backgroundColor: CommonStyles.GLOBAL_FOREGROUND,
         borderColor: CommonStyles.SEPARATOR_COLOR,
-        borderRadius: 15,
+        borderRadius: 8,
         borderWidth: 1,
-        paddingHorizontal: 10,
+        paddingLeft: 10,
+        paddingRight: 5,
         paddingVertical: 3,
     },
     tagCcontainer: {
@@ -82,7 +83,16 @@ const styles = StyleSheet.create(
     scrollViewer: {
         flex: 1,
         borderColor: CommonStyles.SEPARATOR_COLOR,
-        borderRadius: 5,
+        borderRadius: CommonStyles.BORDER_RADIUS,
         borderWidth: 1
+    },
+    addTagButton: {
+        justifyContent: 'center',
+        alignItems: 'center',
+        position: 'absolute',
+        right: -10,
+        top: -10,
+        width: 26,
+        height: 26
     }
 });

@@ -223,5 +223,19 @@ export default class HashtagManagerClass {
         ];*/
     }
 
+    getAncestorCategoriesTagCount(catId) {
+
+        let tagCount = 0;
+        let parentCategory = this.realm.objectForPrimaryKey(categorySchema, catId);
+
+        while (parentCategory != null) {
+            
+            tagCount += parentCategory.hashtags.length;
+            parentCategory = parentCategory.parent;
+        }
+
+        return tagCount;
+    }
+
 
 }

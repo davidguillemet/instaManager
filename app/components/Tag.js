@@ -36,8 +36,8 @@ export default class Tag extends React.PureComponent {
                   style={tagStyle}
                   onPress={this.onPress}
                 >
-                    <Ionicons style={{color: '#FFF'}} name={this.props.iconName} size={16} />
                     <Text style={styles.title}>{this.props.name}</Text>
+                    <Ionicons style={{color: '#FFF'}} name={this.props.iconName} size={20} />
                 </TouchableOpacity>
             </View>
         );
@@ -54,6 +54,6 @@ const styles = {
       fontFamily: 'Avenir',
       fontSize: 15,
       fontWeight: 'normal',
-      paddingLeft: 5
+      paddingRight: 5
     },
 };
