@@ -1,8 +1,11 @@
 import { connect } from 'react-redux';
+import { createSelector } from 'reselect';
 import { createMultiUpdateAction } from '../../actions';
 import HashTagListScreenUi from './HashTagListScreenUi';
 
-function _buildSections(sortedHashtags) {
+function _buildSections(immutableSortedHashtags) {
+
+    const sortedHashtags = immutableSortedHashtags.values();
 
     let sections = [];
     let previousSectionTitle = null;
@@ -29,12 +32,14 @@ function _buildSections(sortedHashtags) {
     return sections;
 }
 
+const tagsSelector = state => state.get('tags');
+const sectionsSelector = createSelector(tagsSelector, _buildSections);
+
 const mapStateToProps = state => {
-    // TODO : use react-reselect
     const tags = state.get('tags');
     return {
         tags: tags,
-        sections: _buildSections(tags.values())
+        sections: sectionsSelector(state)
     }
 }
 

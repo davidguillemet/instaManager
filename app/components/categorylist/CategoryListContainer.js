@@ -1,4 +1,5 @@
 import { connect } from 'react-redux';
+import { createSelector } from 'reselect';
 import CategorylistUi from './CategoryListUi';
 
 /**
@@ -74,11 +75,14 @@ function _deactivateHiddenCategoriesChildren(categories, hiddenSet) {
     }
 }
 
+const categoriesSelector = (state, props) => state.get('categories');
+const hiddenCategoriesSelector = (state, props) => props.hiddenCategories;
+const hierarchicalCategoriesSelector = createSelector([categoriesSelector, hiddenCategoriesSelector], _buildCategoryHierarchy);
+
 const mapStateToProps = (state, ownProps) => {
-    // TODO : use react-reselect
     const rawCategories = state.get('categories');
     return {
-      categories: _buildCategoryHierarchy(rawCategories, ownProps.hiddenCategories),
+      categories: hierarchicalCategoriesSelector(state, ownProps),
       rawCategories: rawCategories
     }
 }
