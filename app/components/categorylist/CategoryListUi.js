@@ -1,131 +1,19 @@
-import React, { Component, PureComponent } from 'react';
+import React, { PureComponent } from 'react';
 import {
   StyleSheet,
   View,
   Text,
   FlatList,
-  SectionList,
   SegmentedControlIOS,
-  TouchableOpacity,
-  Alert
 } from 'react-native';
 
-import Ionicons from 'react-native-vector-icons/Ionicons';
-import LoadingIndicatorView from '../components/LoadingIndicator';
-import SearchInput from '../components/Search';
-import SwipeableListViewItem from '../components/SwipeableListViewItem';
+import { createMultiUpdateAction } from '../../actions';
 
-import CommonStyles from '../styles/common'; 
+import CategoryListItem from './CategoryListItem';
+import LoadingIndicatorView from '../LoadingIndicator';
+import SearchInput from '../Search';
 
-/**
- * props:
- * - id
- * - name
- * - level
- * - selected
- * - mode = global.LIST_EDITION_MODE or LIST_SELECTION_MODE
- * - setParentState = callback to set parent state
- * - onDeleteCategory = callback when a category should be deleted (category id as parameter)
- * - onPress = callback when a category is pressed
- */
-class CategoryListItem extends React.PureComponent {
-
-    _onPress = () => {
-        this.props.onPress(this.props.id);
-    };
-
-    _onDeleteCategory = (catId) => {
-
-        const catToDelete = global.hashtagManager.getItemFromId(global.CATEGORY_ITEM, catId);
-        
-        Alert.alert('', `Are you sure you want to delete the category '${catToDelete.name}'?`,
-        [
-            { 
-                text: 'Cancel',
-                style: 'cancel'
-            },
-            {
-                text: 'OK',
-                onPress: () => {
-                    this.props.onDeleteCategory(this.props.id);
-                }
-            }
-        ]);
-    }
-
-    _onArchiveCategory = (catId) => {
-        //////////
-        // TODO
-        //////////
-    }
-    
-    renderInnerItem() {
-        let inlineTextStyle = { flex: 1 };
-        if (this.props.deactivated) {
-            inlineTextStyle = { ...inlineTextStyle, textDecorationLine: 'line-through' }
-        }
-        return (
-            <View style={[
-                        CommonStyles.styles.singleListItemContainer, 
-                        { flex: 1, flexDirection: 'row', alignItems: 'center' }
-                    ]}
-            >
-                <Ionicons style={{
-                        color: this.props.deactivated ? CommonStyles.DEACTIVATED_TEXT_COLOR : CommonStyles.TEXT_COLOR,
-                        paddingLeft: CommonStyles.GLOBAL_PADDING,
-                        marginLeft: CommonStyles.HIERARCHY_INDENT * this.props.level
-                    }}
-                    name='ios-folder-open-outline'
-                    size={CommonStyles.LARGE_FONT_SIZE}
-                />
-                <Text style={[
-                        this.props.deactivated ? CommonStyles.styles.deacivatedSingleListItem : CommonStyles.styles.singleListItem,
-                        inlineTextStyle]}
-                        numberOfLines={1}
-                >
-                    {this.props.name}
-                </Text>
-                {
-                    this.props.selected ?
-                    <Ionicons style={{ color: CommonStyles.ARCHIVE_COLOR, paddingRight: CommonStyles.GLOBAL_PADDING }} name='ios-checkmark-circle-outline' size={CommonStyles.LARGE_FONT_SIZE} /> :
-                    this.props.deactivated ?
-                    <Ionicons style={{ color: CommonStyles.WARNING_COLOR, paddingRight: CommonStyles.GLOBAL_PADDING }} name='ios-warning-outline' size={CommonStyles.LARGE_FONT_SIZE} /> :
-                    null
-                }
-            </View>
-        );
-    }
-
-    renderTouchableContent() {
-        return (
-            <TouchableOpacity onPress={this.props.deactivated ? null : this._onPress}>
-                { this.renderInnerItem() }
-            </TouchableOpacity>
-        );
-    }
-
-    renderSwipeableContent() {
-        return (
-            <SwipeableListViewItem
-                itemId={this.props.id} 
-                rightAction={{ caption: 'Delete', icon: 'ios-trash', color: CommonStyles.DELETE_COLOR, callback: this._onDeleteCategory.bind(this) }}
-                leftAction={{ caption: 'Archive', icon: 'ios-archive', color: CommonStyles.ARCHIVE_COLOR, callback: this._onArchiveCategory.bind(this) }}
-                onSwipeStart={() => this.props.setParentState({isSwiping: true})}
-                onSwipeRelease={() => this.props.setParentState({isSwiping: false})}
-            >
-                { this.renderTouchableContent() }
-            </SwipeableListViewItem>
-        );
-    }
-
-    render() {
-        if (this.props.mode == global.LIST_EDITION_MODE) {
-            return this.renderSwipeableContent();
-        } else {
-            return this.renderTouchableContent();
-        }
-    }
-}
+import CommonStyles from '../../styles/common'; 
 
 const DISPLAY_ALL = 0;
 const DISPLAY_SELECTED = 1;
@@ -136,33 +24,26 @@ const DISPLAY_SELECTED = 1;
  * - selectionMode = global.SINGLE_SELECTION or global.MULTI_SELECTION (optional / Not used if mode is EDITION)
  * - selection = initial selection = identifier array
  * - onSelectionChanged (category array)
- * - categories = [ { id: string, name: string, parent: string, level: int } , ...]
- * - hiddenCategories = array containing categories which must not be displayed (+ children) [ id, ... ]
+ * - categories = [ { id: string, name: string, parent: string, level: int , deactivted: bool } , ...]
  * - navigation = the navigation object
  */
-export default class CategoryList extends React.PureComponent {
+export default class CategoryListUi extends React.PureComponent {
 
     constructor(props) {
         super(props);
 
-        let hiddenCategories = new Set(this.props.hiddenCategories);
-        this.deactivateHiddenCategoriesChildren(this.props.categories, hiddenCategories);
-
         this.state = {
             isSwiping: false,
             isLoading: false,
-            categories: this.props.categories,
             selectedCategories: null,            
-            categoriesMap: this.getMapFromCategories(this.props.categories),
             selection: new Set(this.props.selection),
-            hiddenCategories: hiddenCategories,
             displayType: DISPLAY_ALL
         };
         
-        if (this.props.selection != null && this.props.selection.length > 0) {
-            this.state.displayType = DISPLAY_SELECTED;
-            this.state.selectedCategories = this.getSelectedCategories();
-        }
+        // if (this.props.selection != null && this.props.selection.length > 0) {
+        //     this.state.displayType = DISPLAY_SELECTED;
+        //     this.state.selectedCategories = this.getSelectedCategories();
+        // }
 
         this.renderCategory = this.renderCategory.bind(this);
         this.renderEmptyComponent = this.renderEmptyComponent.bind(this);
@@ -173,42 +54,11 @@ export default class CategoryList extends React.PureComponent {
         this.onPressCategory = this.onPressCategory.bind(this);
         this.onDeleteCategory = this.onDeleteCategory.bind(this);
         this.setStateProxy = this.setStateProxy.bind(this);
-
-        this.onCategoryUpdated = this.onCategoryUpdated.bind(this);
-    }
-
-    deactivateHiddenCategoriesChildren(categories, hiddenSet) {
-
-        let hidechildren = false;
-        let hiddenRootLevel = 0;
-        for (let category of categories) {
-            
-            if (hidechildren && category.level === hiddenRootLevel) {
-                // current category is a sibling of the initial hidden category
-                hidechildren = false;
-            }
-            
-            if (hiddenSet.has(category.id)) {
-                // The current category is already hidden
-                // make sure to hidde children...
-                hiddenRootLevel = category.level;
-                hidechildren = true;
-            } else if (hidechildren && category.level > hiddenRootLevel) {
-                // It seems the category is a children of a hidden category
-                // -> add the current category in the hidden set
-                hiddenSet.add(category.id);
-            }
-        }
-    }
-
-    getMapFromCategories(categories) {
-        return categories.reduce((map, cat) => { map.set(cat.id, cat); return map; }, new Map());
     }
 
     navigateToEditScreen(categoryToEdit) {
         const params = {
             updateItem: categoryToEdit,
-            onItemUpdated: this.onCategoryUpdated,
             itemType: global.CATEGORY_ITEM
         };
         this.props.navigation.navigate('HashtagCategoryEdit', params);
@@ -222,7 +72,7 @@ export default class CategoryList extends React.PureComponent {
 
         if (this.props.mode === global.LIST_EDITION_MODE) {
 
-            const category = this.state.categoriesMap.get(categoryId);
+            const category = this.props.rawCategories.get(categoryId);
             this.navigateToEditScreen(category);
 
         } else {
@@ -263,7 +113,7 @@ export default class CategoryList extends React.PureComponent {
             this.setState( { selection: newSelection } );
             
             if (this.props.onSelectionChanged) {
-                let selectedCategories = [...newSelection].reduce((array, catId) => {array.push(this.state.categoriesMap.get(catId)); return array; }, new Array());
+                let selectedCategories = [...newSelection].reduce((array, catId) => {array.push(this.props.rawCategories.get(catId)); return array; }, new Array());
                 this.props.onSelectionChanged(selectedCategories);
             }
         }
@@ -271,25 +121,8 @@ export default class CategoryList extends React.PureComponent {
 
     onDeleteCategory(categoryId) {
 
-        this.setState({ isLoading: false });
-        global.hashtagManager.deleteCategory(categoryId);
-        this.onCategoryUpdated(null, false);
-    }
-
-    onCategoryUpdated(updatedCategory, initiateLoading) {
-
-        if (initiateLoading) {
-            this.setState({ isLoading: true });
-        }
-        global.hashtagManager.getCategories()
-        .then((categories) => {
-
-            this.setState( {
-                isLoading: false,
-                categories: categories,
-                categoriesMap: this.getMapFromCategories(categories)
-            });
-        });
+        let updates = global.hashtagManager.deleteCategory(this.props.rawCategories.get(categoryId));
+        this.props.dispatch(createMultiUpdateAction(updates));
     }
 
     setStateProxy(state) {
@@ -297,7 +130,6 @@ export default class CategoryList extends React.PureComponent {
     }
 
     renderCategory({item}) {
-        const deactivated = this.state.hiddenCategories.has(item.id);
 
         return (
             <CategoryListItem
@@ -309,7 +141,7 @@ export default class CategoryList extends React.PureComponent {
                 name={item.name}
                 level={item.level ? item.level : 0}
                 selected={this.state.selection.has(item.id)}
-                deactivated={deactivated}
+                deactivated={item.deactivated}
             />
         );
     }
@@ -360,7 +192,7 @@ export default class CategoryList extends React.PureComponent {
 
     getSearchDataSource() {
 
-        return this.state.categories;
+        return this.props.categories;
     }
 
     setSearchResults(results) {
@@ -373,12 +205,12 @@ export default class CategoryList extends React.PureComponent {
     getSelectedCategories(selection) {
 
         let _selection = selection ? selection : this.state.selection;
-        if (this.state.categories == null) {
+        if (this.props.categories == null) {
             return [];
         }
         const displayedCategories = new Set(); 
         const selectedCategories = [];
-        for (let category of this.state.categories) {
+        for (let category of this.props.categories) {
             if (_selection.has(category.id)) {
                 selectedCategories.push(category);
                 displayedCategories.add(category.id);
@@ -390,11 +222,9 @@ export default class CategoryList extends React.PureComponent {
 
     addParentCategories(category, categoryIndex, selectedCategoriesList, selectedCategoriesSet) {
         if (category.parent && !selectedCategoriesSet.has(category.parent)) {
-            const realmParentCategory = global.hashtagManager.getItemFromId(global.CATEGORY_ITEM, category.parent);
+            const parentStoreCategory = this.props.rawCategories.get(category.parent);
             const parentCategory = {
-                id: realmParentCategory.id,
-                name: realmParentCategory.name,
-                parent: realmParentCategory.parent ? realmParentCategory.parent.id : null,
+                ...parentStoreCategory,
                 level: category.level - 1
             };
             selectedCategoriesList.splice(categoryIndex, 0, parentCategory);
@@ -436,6 +266,7 @@ export default class CategoryList extends React.PureComponent {
     }
 
     render() {
+
         return (
             <View style={{ flex: 1 }}>
                 {   
@@ -471,7 +302,7 @@ export default class CategoryList extends React.PureComponent {
                                 this.state.searchResults :
                                 this.state.displayType == DISPLAY_SELECTED ?
                                 this.state.selectedCategories :
-                                this.state.categories}
+                                this.props.categories}
                             extraData={this.state}
                             keyExtractor={this.keyExtractor}
                             ListEmptyComponent={this.renderEmptyComponent}
@@ -492,3 +323,4 @@ const styles = StyleSheet.create(
         borderColor: CommonStyles.MEDIUM_BACKGROUND
     }
 });
+

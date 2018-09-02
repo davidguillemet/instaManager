@@ -8,11 +8,15 @@ import {
   Alert
 } from 'react-native';
 
-import Ionicons from 'react-native-vector-icons/Ionicons';
+import { connect } from 'react-redux'
 
+import LoadingIndicatorView from '../components/LoadingIndicator';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 import CommonStyles from '../styles/common'; 
 
-export default class HashTagsHomeScreen extends React.Component {
+import { loadCategoriesIfNeeded, loadTagsIfNeeded } from '../actions';
+
+class HashTagsHomeScreenComponent extends React.Component {
 
     static navigationOptions = ({ navigation }) => {
         const params = navigation.state.params || {};
@@ -23,6 +27,15 @@ export default class HashTagsHomeScreen extends React.Component {
 
     constructor(props) {
         super(props);
+    }
+
+    componentDidMount() {
+        const { dispatch } = this.props
+        dispatch(loadCategoriesIfNeeded());
+        dispatch(loadTagsIfNeeded());
+    }
+    
+    configureMenus() {
         this.sections = [];
 
         // Section Hashtags
@@ -51,7 +64,7 @@ export default class HashTagsHomeScreen extends React.Component {
             data: categoryMenuItems
         });
     }
-    
+
     renderItemSeparator() {
         return (
             <View
@@ -98,23 +111,30 @@ export default class HashTagsHomeScreen extends React.Component {
 
     render() {
 
-        return(
-            <View style={CommonStyles.styles.standardPage}>
-                <View style={CommonStyles.styles.standardTile}>
-                    <Text style={CommonStyles.styles.mediumLabel}>You can manage and organize your hashtags in hierarchical categories to quickly select all the tags you need for each of your publications.</Text>
+        const { categoriesLoaded, tagsLoaded  } = this.props;
+
+        if (categoriesLoaded && tagsLoaded) {
+            this.configureMenus();
+            return(
+                <View style={CommonStyles.styles.standardPage}>
+                    <View style={CommonStyles.styles.standardTile}>
+                        <Text style={CommonStyles.styles.mediumLabel}>You can manage and organize your hashtags in hierarchical categories to quickly select all the tags you need for each of your publications.</Text>
+                    </View>
+                    <View style={{ height: 10}}></View>
+                    <SectionList
+                        sections={this.sections} 
+                        renderItem={({item}) => this.renderListItem(item)}
+                        renderSectionHeader={({section}) => this.renderSectionHeader(section)}
+                        ItemSeparatorComponent={this.renderItemSeparator}
+                        SectionSeparatorComponent={this.renderSectionSeparator}
+                        ListFooterComponent={this.renderListFooter}
+                        ListEmptyComponent={this.renderEmptyComponent}
+                        keyExtractor={(item, index) => item.target} />
                 </View>
-                <View style={{ height: 10}}></View>
-                <SectionList
-                    sections={this.sections} 
-                    renderItem={({item}) => this.renderListItem(item)}
-                    renderSectionHeader={({section}) => this.renderSectionHeader(section)}
-                    ItemSeparatorComponent={this.renderItemSeparator}
-                    SectionSeparatorComponent={this.renderSectionSeparator}
-                    ListFooterComponent={this.renderListFooter}
-                    ListEmptyComponent={this.renderEmptyComponent}
-                    keyExtractor={(item, index) => item.target} />
-            </View>
-        );
+            );
+        } else {
+            return <LoadingIndicatorView/>;
+        }
     }
 }
 
@@ -132,3 +152,14 @@ const styles = StyleSheet.create(
         paddingVertical: 10
     }, 
 });
+
+
+
+const mapStateToProps = state => {
+    return {
+        tagsLoaded: state.get('tagsLoaded'),
+        categoriesLoaded: state.get('categoriesLoaded')
+    }
+}
+
+export default connect(mapStateToProps)(HashTagsHomeScreenComponent)

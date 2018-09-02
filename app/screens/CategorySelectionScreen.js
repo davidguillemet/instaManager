@@ -13,7 +13,7 @@ import {
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import LoadingIndicatorView from '../components/LoadingIndicator';
 import SearchInput from '../components/Search';
-import CategoryList from '../components/CategoryList';
+import CategoryList from '../components/categorylist';
 
 
 import CommonStyles from '../styles/common'; 
@@ -51,8 +51,7 @@ export default class CategorySelectionScreen extends React.Component {
 
         this.state = {
             isLoading: true,
-            isSwiping: false,
-            searchResults: null,
+            isSwiping: false
         };
 
         this.onCategorySelectionChanged = this.onCategorySelectionChanged.bind(this);

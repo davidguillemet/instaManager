@@ -13,7 +13,7 @@ import {
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import LoadingIndicatorView from '../components/LoadingIndicator';
 import SearchInput from '../components/Search';
-import CategoryList from '../components/CategoryList';
+import CategoryList from '../components/categorylist';
 
 
 import CommonStyles from '../styles/common'; 
@@ -41,37 +41,24 @@ export default class HashtagCategoriesScreen extends React.Component {
         super(props);
         
         this.state = {
-            isLoading: true,
-            isSwiping: false,
-            searchResults: null,
-            categories: []
+            isSwiping: false
         };
     }
 
-    componentWillMount() {
+    componentDidMount() {
         
         this.props.navigation.setParams({ 
             onAddCategory: this.onAddCategory.bind(this)
         });
-
-        this.updateCategories();
-    }
-
-    updateCategories() {
-
-        global.hashtagManager.getCategories()
-        .then((categories) => {           
-            this.setState({ isLoading: false, categories: categories }); 
-        });
-    }
-
-    onCategoriesModified() {
-        this.setState({ isLoading: true }); 
-        this.updateCategories();
     }
 
     onAddCategory() {
-        this._categoryList.onAddCategory();
+    
+        const params = {
+            updateItem: null,
+            itemType: global.CATEGORY_ITEM
+        };
+        this.props.navigation.navigate('HashtagCategoryEdit', params);
     }
 
     renderEmptyComponent() {
@@ -87,12 +74,8 @@ export default class HashtagCategoriesScreen extends React.Component {
         return (
             <View style={[CommonStyles.styles.standardPage, {paddingHorizontal: 0, paddingTop: 0}]}>
                 { 
-                    this.state.isLoading ?
-                    <LoadingIndicatorView/> :
                     <CategoryList
-                        ref={component => this._categoryList = component}
                         mode={global.LIST_EDITION_MODE}
-                        categories= {this.state.categories}
                         renderEmptyComponent={this.renderEmptyComponent}
                         navigation={this.props.navigation}
                     />

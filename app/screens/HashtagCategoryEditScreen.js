@@ -8,8 +8,10 @@ import {
   Alert
 } from 'react-native';
 
+import { connect } from 'react-redux';
+import { createMultiUpdateAction } from './../actions';
+
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import CategoryList from '../components/CategoryList';
 import TagContainer from '../components/TagContainer';
 
 import CommonStyles from '../styles/common'; 
@@ -23,7 +25,7 @@ function renderRightButtons(params) {
     );
 }
 
-export default class HashtagCategoryEditScreen extends React.Component {
+class HashtagCategoryEditScreenComponent extends React.Component {
 
     static navigationOptions = ({ navigation }) => {
         const params = navigation.state.params || {};
@@ -75,7 +77,6 @@ export default class HashtagCategoryEditScreen extends React.Component {
         // Note: updateItem is a realm object. It will be updated automaticcaly when saving the new item
         //       -> to get the previous item name, we must copy the initial item
         this.initialItem = updateItem == null ? null : {...updateItem};
-        this.onItemUpdated = params ? params.onItemUpdated : null;
         this.editorMode = updateItem ? global.UPDATE_MODE : global.CREATE_MODE;
         
         this.state = {
@@ -126,20 +127,20 @@ export default class HashtagCategoryEditScreen extends React.Component {
 
         if (this.validateItem()) {
 
-            let updatedItem; 
+            let updates; 
 
             switch (this.itemType) {
 
                 case global.TAG_ITEM:
-                    updatedItem = this.saveTag();
+                    updates = this.saveTag();
                     break;
 
                 case global.CATEGORY_ITEM:
-                    updatedItem = this.saveCategory();
+                    updates = this.saveCategory();
                     break;
             }
 
-            this.onItemUpdated(updatedItem, this.initialItem);
+            this.props.dispatch(createMultiUpdateAction(updates));
             this.props.navigation.goBack();
         }
     }
@@ -158,9 +159,9 @@ export default class HashtagCategoryEditScreen extends React.Component {
             categories: tagCategories
         };
 
-        global.hashtagManager.saveTag(tagToSave, this.editorMode === global.UPDATE_MODE);
+        const updates = global.hashtagManager.saveTag(tagToSave, this.editorMode === global.UPDATE_MODE);
 
-        return tagToSave;
+        return updates;
     }
 
     saveCategory() {
@@ -177,38 +178,9 @@ export default class HashtagCategoryEditScreen extends React.Component {
             hashtags: this.state.childrenTags // useless...cannot be updated directly (type is "LinkingObjects")
         };
 
-        global.hashtagManager.saveCategory(categoryToSave, this.editorMode === global.UPDATE_MODE);
+        const updates = global.hashtagManager.saveCategory(categoryToSave, this.editorMode === global.UPDATE_MODE);
 
-        // Update hashtags (we cannot manipulate linkingObjects directly...)
-        // 1. Get the previous hashtags directly from the category itself since LinkingObjects cannot be updated directly
-        let realmCat = global.hashtagManager.getItemFromId(global.CATEGORY_ITEM, this.state.itemId);
-        let prevHashTags = realmCat.hashtags.map(tag => tag.id);
-
-        // 1. Make sure all tags from the updated category includes this category in the categories array property
-        let newHashtags = new Set(this.state.childrenTags);
-        for (let newHashtag of this.state.childrenTags) {
-            let realmHashtag = global.hashtagManager.getItemFromId(global.TAG_ITEM, newHashtag);
-            let newHashtagCategories = realmHashtag.categories.reduce((set, cat) => { set.add(cat.id); return set; }, new Set());
-            if (!newHashtagCategories.has(categoryToSave.id)) {
-                // add the updated category in the categories list for the current tag
-                global.hashtagManager.saveTag({ id: newHashtag, name: realmHashtag.name, categories: [...newHashtagCategories, categoryToSave.id]}, true /* update */);
-            }
-        }
-
-        // 2. Make sure that previous tags of the updated category doon't contain this category in the categories array property 
-        for (let prevHashtag of prevHashTags) {
-            if (!newHashtags.has(prevHashtag)) {
-                // This hashtag has been removed from the updated category
-                let realmHashtag = global.hashtagManager.getItemFromId(global.TAG_ITEM, prevHashtag);
-                let prevHashtagCategories = realmHashtag.categories.reduce((set, cat) => { set.add(cat.id); return set; }, new Set());
-                if (prevHashtagCategories.has(categoryToSave.id)) {
-                    prevHashtagCategories.delete(categoryToSave.id);
-                    global.hashtagManager.saveTag({ id: prevHashtag, name: realmHashtag.name, categories: [...prevHashtagCategories]}, true /* update */);
-                }
-            }
-        }
-
-        return categoryToSave;
+        return updates;
     }
 
     validateItem() {
@@ -436,10 +408,10 @@ const styles = StyleSheet.create(
     },
     iconSelect: {
         color: CommonStyles.PLACEHOLDER_COLOR,
-    },
-    categoryList: {
-        flex: 1,
-        margin: CommonStyles.GLOBAL_PADDING,
-        marginBottom: 5
     }
 });
+
+
+const HashtagCategoryEditScreen = connect()(HashtagCategoryEditScreenComponent);
+
+export default HashtagCategoryEditScreen;

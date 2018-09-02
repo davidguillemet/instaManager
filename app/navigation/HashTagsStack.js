@@ -24,5 +24,6 @@ export default HashTagsStack = StackNavigator(
     {
         initialRouteName: 'HashTagsHome',
         navigationOptions: NavigationOptions
-    });
+    }
+);
     
