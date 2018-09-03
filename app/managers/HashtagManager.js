@@ -335,5 +335,20 @@ export default class HashtagManagerClass {
         return tagCount;
     }
 
+    getAncestorCategories(catId) {
+
+        let ancestors = [];
+
+        let parentCategory = this.realm.objectForPrimaryKey(categorySchema, catId);
+
+        while (parentCategory != null) {
+            
+            ancestors.push(this._getCatProxyFromRealm(parentCategory));
+            parentCategory = parentCategory.parent;
+        }
+
+        return ancestors;
+    }
+
 
 }

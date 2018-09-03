@@ -30,30 +30,43 @@ export default class TagContainer extends React.PureComponent {
         let tagList = this.props.tags.reduce((arr, id) => { arr.push(global.hashtagManager.getItemFromId(this.props.itemType, id)); return arr; }, new Array());
 
         return (
-            <View style={{flex: 1}}>
-                <ScrollView style={styles.scrollViewer}>
-                    <View style={styles.tagCcontainer}>
-                        {
-                            tagList.sort((t1, t2) => t1.name.localeCompare(t2.name)).map(tag => {
-                                return (
-                                    <Tag
-                                        style={styles.tag}
-                                        key={tag.id}
-                                        id={tag.id}
-                                        name={(this.props.addSharp ? '#' : '') + tag.name}
-                                        onPress={this.props.onDelete}
-                                        iconName={'ios-close-circle-outline'}
-                                    />
-                                );
-                            })
-                        }
+            <View style={this.props.style}>
+                {
+                    this.props.label ?
+                    <View style={{ flexDirection: 'row' }}>
+                        <View style={styles.tagCcontainerLabel}>
+                            <Text style={[CommonStyles.styles.mediumLabel]}>{this.props.label}</Text>
+                        </View>
                     </View>
-                </ScrollView>
-                <View style={styles.addTagButton}>
-                    <TouchableOpacity onPress={this.props.onAdd}>
-                        <Ionicons style={{color: '#2DCF59'}} name={'ios-add-circle'} size={30} />
-                    </TouchableOpacity>
+                    :
+                    null
+                }
+                <View style={styles.tagCcontainer}>
+                    {
+                        tagList.sort((t1, t2) => t1.name.localeCompare(t2.name)).map(tag => {
+                            return (
+                                <Tag
+                                    style={styles.tag}
+                                    key={tag.id}
+                                    id={tag.id}
+                                    name={(this.props.addSharp ? '#' : '') + tag.name}
+                                    onPress={this.props.readOnly ? null : this.props.onDelete}
+                                    iconName={'ios-close-circle-outline'}
+                                />
+                            );
+                        })
+                    }
                 </View>
+                {
+                    this.props.readOnly ?
+                    null
+                    :
+                    <View style={styles.addTagButton}>
+                        <TouchableOpacity onPress={this.props.onAdd}>
+                            <Ionicons style={{color: '#2DCF59'}} name={'ios-add-circle'} size={30} />
+                        </TouchableOpacity>
+                    </View>
+                }
             </View>
         );
     }
@@ -70,20 +83,27 @@ const styles = StyleSheet.create(
         borderWidth: 1,
         paddingLeft: 10,
         paddingRight: 5,
-        paddingVertical: 3,
+        paddingVertical: 3
+    },
+    tagCcontainerLabel: {
+        borderColor: CommonStyles.SEPARATOR_COLOR,
+        borderWidth: 1,
+        borderTopLeftRadius: CommonStyles.BORDER_RADIUS,
+        borderTopRightRadius: CommonStyles.BORDER_RADIUS,
+        borderBottomWidth: 0,
+        paddingHorizontal: 10,
+        paddingVertical: 4
     },
     tagCcontainer: {
-        flex: 1,
         flexDirection: 'row',
         flexWrap: 'wrap',
         paddingBottom: 10,
         paddingHorizontal: 10,
-        paddingTop: 10,
-    },
-    scrollViewer: {
-        flex: 1,
+        paddingTop: 20,
+        borderTopRightRadius: CommonStyles.BORDER_RADIUS,
+        borderBottomLeftRadius: CommonStyles.BORDER_RADIUS,
+        borderBottomRightRadius: CommonStyles.BORDER_RADIUS,
         borderColor: CommonStyles.SEPARATOR_COLOR,
-        borderRadius: CommonStyles.BORDER_RADIUS,
         borderWidth: 1
     },
     addTagButton: {

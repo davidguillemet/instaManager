@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import {
   StyleSheet,
+  ScrollView,
   View,
   Text,
   TextInput,
@@ -15,6 +16,9 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import TagContainer from '../components/TagContainer';
 
 import CommonStyles from '../styles/common'; 
+
+const TAGS_DISPLAY_SELF = 'TagsDisplaySelf';
+const TAGS_DISPLAY_ANCESTORS = 'TagsDisplayAncestors';
 
 function renderRightButtons(params) {
 
@@ -85,7 +89,8 @@ class HashtagCategoryEditScreenComponent extends React.Component {
             parentCategories: parentCategories, // List of identifiers
             parentCategoriesCaption: parentCategoriesCaption,
             childrenTags: childrenTags,
-            childrenTagsCaption: childrenTagsCaption
+            childrenTagsCaption: childrenTagsCaption,
+            tagsDisplayMode: TAGS_DISPLAY_SELF
         };
 
         this.onCategoriesSelected = this.onCategoriesSelected.bind(this);
@@ -93,6 +98,9 @@ class HashtagCategoryEditScreenComponent extends React.Component {
         this.onSelectCategoryTags = this.onSelectCategoryTags.bind(this);
         this.onTagSelectionValidated = this.onTagSelectionValidated.bind(this);
         this.onDeleteTag = this.onDeleteTag.bind(this);
+        this.toggleTagsDisplay = this.toggleTagsDisplay.bind(this);
+        this.setTagsDisplayAncestors = this.setTagsDisplayAncestors.bind(this);
+        this.setTagsDisplaySelf = this.setTagsDisplaySelf.bind(this);
     }
     
     componentDidMount() {
@@ -278,16 +286,97 @@ class HashtagCategoryEditScreenComponent extends React.Component {
         });
     }
 
-    render() {
+    toggleTagsDisplay(tagsDisplayMode) {
 
-        // In case of a category item, get the countof tags from ancestor categories
-        let ancestorCategoriesTagCount =
-            this.itemType == global.CATEGORY_ITEM && this.state.parentCategories != null && this.state.parentCategories.length > 0 ?
+        this.setState( { tagsDisplayMode: tagsDisplayMode } );
+    }
+
+    setTagsDisplaySelf() {
+
+        this.toggleTagsDisplay(TAGS_DISPLAY_SELF);
+    }
+
+    setTagsDisplayAncestors() {
+
+        this.toggleTagsDisplay(TAGS_DISPLAY_ANCESTORS);
+    }
+
+    renderTagContainers() {
+        if (this.state.tagsDisplayMode == TAGS_DISPLAY_SELF) {
+            // Return tags from the edited category
+            return (
+                <TagContainer style={{ marginTop: 10 }}
+                tags={this.state.childrenTags}
+                label={ this.state.childrenTags.length + ' tag(s) in this category'}
+                itemType={global.TAG_ITEM}
+                onDelete={this.onDeleteTag}
+                onAdd={this.onSelectCategoryTags}
+                readOnly={false}
+                addSharp={true} />
+            );
+        }
+
+        // Return tags from ancestor
+        if (this.state.parentCategories == null || this.state.parentCategories.length == 0) {
+            // no parent...
+            return null;
+        }
+
+        const parentId = this.state.parentCategories[0];
+        const ancestors = global.hashtagManager.getAncestorCategories(parentId);
+
+        return (
+            ancestors.map(cat => {
+                return (
+                    <TagContainer
+                        style={{ marginTop: 10 }}
+                        label={cat.hashtags.length + ' tag(s) in ' + cat.name}
+                        key={cat.id}
+                        tags={cat.hashtags}
+                        itemType={global.TAG_ITEM}
+                        readOnly={true}
+                        addSharp={true} />
+                );
+            })
+        );
+    }
+    renderCategoryTags() {
+
+        if (this.itemType == global.TAG_ITEM)
+        {
+            return null;
+        }
+
+        // In case of a category item, get the count of tags from ancestor categories
+        const ancestorCategoriesTagCount =
+            this.state.parentCategories != null && this.state.parentCategories.length > 0 ?
             global.hashtagManager.getAncestorCategoriesTagCount(this.state.parentCategories[0]) :
             0;
 
         return (
-            <View style={CommonStyles.styles.standardPage}>
+            <View>
+                <View style={[CommonStyles.styles.standardTile, { marginTop: 15, justifyContent: 'center' }]}>
+                    <Text style={CommonStyles.styles.mediumLabel}>{ancestorCategoriesTagCount + this.state.childrenTags.length} Tag(s) in total</Text>
+                </View>
+                {
+                    ancestorCategoriesTagCount > 0 ?
+                    <TouchableOpacity onPress={this.setTagsDisplaySelf}>
+                        <Text style={[CommonStyles.styles.mediumLabel, { paddingLeft: 10, marginTop: 5 }]}>- {this.state.childrenTags.length} Tag(s) in this category</Text>
+                    </TouchableOpacity>
+                    :
+                    null
+                }
+                <TouchableOpacity onPress={this.setTagsDisplayAncestors}>
+                    <Text style={[CommonStyles.styles.mediumLabel, { paddingLeft: 10, marginTop: 5 }]}>- {ancestorCategoriesTagCount} Tag(s) from ancestors</Text>
+                </TouchableOpacity>
+                { this.renderTagContainers() }
+            </View>
+        );
+    }
+
+    render() {
+        return (
+            <ScrollView style={CommonStyles.styles.standardPage}>
                 <View style={[CommonStyles.styles.standardTile, { alignItems: 'center'} ]}>
                     <Ionicons name={'ios-information-circle'} style={[CommonStyles.styles.textIcon, { paddingLeft: 0}]}/>
                     <Text style={CommonStyles.styles.mediumLabel}>Click on </Text>
@@ -349,29 +438,10 @@ class HashtagCategoryEditScreenComponent extends React.Component {
                         }
                     </TouchableOpacity>
                 </View>
-                {
-                    this.itemType == global.TAG_ITEM ?
-                    null :
-                    // Selection des tags de la catégorie
-                    <View style={[styles.parameterContainerColView, { borderBottomWidth: 0, marginBottom: 5, marginTop: 10 }]}>
-                        <Text style={CommonStyles.styles.mediumLabel}>{ancestorCategoriesTagCount + this.state.childrenTags.length} Tag(s) in this category</Text>
-                        <Text style={[CommonStyles.styles.smallLabel, { paddingLeft: 10 }]}>- {this.state.childrenTags.length} Tag(s) in this category itself</Text>
-                        <Text style={[CommonStyles.styles.smallLabel, { paddingLeft: 10 }]}>- {ancestorCategoriesTagCount} Tag(s) from ancestor categories</Text>
-                    </View>
-                }
-                {
-                    // Affichage de tous les tags
-                    this.itemType == global.CATEGORY_ITEM ?
-                    <TagContainer
-                        tags={this.state.childrenTags}
-                        itemType={global.TAG_ITEM}
-                        onDelete={this.onDeleteTag}
-                        onAdd={this.onSelectCategoryTags}
-                        readOnly={false}
-                        addSharp={true} />
-                    : null
-                }
-            </View>
+                { this.renderCategoryTags() }
+
+                <View style={{ height: 20 }}></View>
+            </ScrollView>
         );
     }
 }

@@ -25,7 +25,9 @@ export default class Tag extends React.PureComponent {
     }
 
     onPress() {
-        this.props.onPress(this.props.id);
+        if (this.props.onPress != null) {
+            this.props.onPress(this.props.id);
+        }
     }
 
     render() {
@@ -37,7 +39,12 @@ export default class Tag extends React.PureComponent {
                   onPress={this.onPress}
                 >
                     <Text style={styles.title}>{this.props.name}</Text>
-                    <Ionicons style={{color: '#FFF'}} name={this.props.iconName} size={20} />
+                    {
+                        this.props.onPress == null ?
+                        null
+                        :
+                        <Ionicons style={{color: '#FFF'}} name={this.props.iconName} size={20} />
+                    }
                 </TouchableOpacity>
             </View>
         );
