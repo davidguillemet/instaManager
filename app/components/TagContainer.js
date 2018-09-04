@@ -27,7 +27,7 @@ export default class TagContainer extends React.PureComponent {
     }
     render() {
 
-        let tagList = this.props.tags.reduce((arr, id) => { arr.push(global.hashtagManager.getItemFromId(this.props.itemType, id)); return arr; }, new Array());
+        let tagList = this.props.tags.reduce((arr, id) => { arr.push(global.hashtagUtil.getTagFromId(id)); return arr; }, new Array());
 
         return (
             <View style={this.props.style}>

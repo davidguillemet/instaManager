@@ -9,8 +9,6 @@ import {
   SegmentedControlIOS,
 } from 'react-native';
 
-import { createMultiUpdateAction } from '../../actions';
-
 import CategoryListItem from './CategoryListItem';
 import LoadingIndicatorView from '../LoadingIndicator';
 import SearchInput from '../Search';
@@ -54,7 +52,6 @@ class CategoryListUi extends React.PureComponent {
         this.setSearchResults = this.setSearchResults.bind(this);
 
         this.onPressCategory = this.onPressCategory.bind(this);
-        this.onDeleteCategory = this.onDeleteCategory.bind(this);
         this.setStateProxy = this.setStateProxy.bind(this);
     }
 
@@ -74,7 +71,7 @@ class CategoryListUi extends React.PureComponent {
 
         if (this.props.mode === global.LIST_EDITION_MODE) {
 
-            const category = this.props.rawCategories.get(categoryId);
+            const category = global.hashtagUtil.getCatFromId(categoryId);
             this.navigateToEditScreen(category);
 
         } else {
@@ -115,16 +112,10 @@ class CategoryListUi extends React.PureComponent {
             this.setState( { selection: newSelection } );
             
             if (this.props.onSelectionChanged) {
-                let selectedCategories = [...newSelection].reduce((array, catId) => {array.push(this.props.rawCategories.get(catId)); return array; }, new Array());
+                let selectedCategories = [...newSelection].reduce((array, catId) => {array.push(global.hashtagUtil.getCatFromId(catId)); return array; }, new Array());
                 this.props.onSelectionChanged(selectedCategories);
             }
         }
-    }
-
-    onDeleteCategory(categoryId) {
-
-        let updates = global.hashtagManager.deleteCategory(this.props.rawCategories.get(categoryId));
-        this.props.dispatch(createMultiUpdateAction(updates));
     }
 
     setStateProxy(state) {
@@ -137,7 +128,7 @@ class CategoryListUi extends React.PureComponent {
             <CategoryListItem
                 mode={this.props.mode}
                 onPress={this.onPressCategory}
-                onDeleteCategory={this.onDeleteCategory}
+                onDeleteCategory={this.props.onDeleteCategory}
                 setParentState={this.setStateProxy}
                 id={item.id}
                 name={item.name}
@@ -224,7 +215,7 @@ class CategoryListUi extends React.PureComponent {
 
     addParentCategories(category, categoryIndex, selectedCategoriesList, selectedCategoriesSet) {
         if (category.parent && !selectedCategoriesSet.has(category.parent)) {
-            const parentStoreCategory = this.props.rawCategories.get(category.parent);
+            const parentStoreCategory = global.hashtagUtil.getCatFromId(category.parent);
             const parentCategory = {
                 ...parentStoreCategory,
                 level: category.level - 1

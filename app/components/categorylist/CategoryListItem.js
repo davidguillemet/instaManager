@@ -32,7 +32,7 @@ export default class CategoryListItem extends React.PureComponent {
 
     _onDeleteCategory = (catId) => {
 
-        const catToDelete = global.hashtagManager.getItemFromId(global.CATEGORY_ITEM, catId);
+        const catToDelete = global.hashtagUtil.getCatFromId(catId);
         
         Alert.alert('', `Are you sure you want to delete the category '${catToDelete.name}'?`,
         [

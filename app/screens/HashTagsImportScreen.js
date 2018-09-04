@@ -104,7 +104,7 @@ export default class HashTagsImportScreen extends React.Component {
         this.importResults.clear();
 
         // populate a Set containing current tags
-        const sortedHashtags = global.hashtagManager.getHashtags();
+        const sortedHashtags = global.hashtagUtil.getHashtags();
         this.currentTags = sortedHashtags.reduce((set, tag) => { set.add(tag.name); return set; }, new Set());
 
         global.userManager.getMediaCount()

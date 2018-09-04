@@ -88,7 +88,7 @@ export default class HashTagListScreenUi extends React.Component {
     }
 
     getSearchDataSource() {
-        return global.hashtagManager.getHashtags();
+        return global.hashtagUtil.getHashtags().valueSeq();
     }
 
     setSearchResults(results) {
@@ -154,8 +154,6 @@ export default class HashTagListScreenUi extends React.Component {
         ///////////
         // TODO
         ///////////
-        const tag = global.hashtagManager.getItemFromId(global.TAG_ITEM, itemId);
-        Alert.alert("archive", tag.name);
     }
 
     onPressSectionIndex(sectionTitle) {
@@ -246,6 +244,10 @@ export default class HashTagListScreenUi extends React.Component {
     }
 
     renderListItem({item}) {
+        
+        const itemId = item.id || item;
+        const itemName = item.name || global.hashtagUtil.getTagFromId(item).name;
+
         return (
             /**
              * props:
@@ -258,9 +260,9 @@ export default class HashTagListScreenUi extends React.Component {
              * - onPress = callback when a tag is pressed
              */
             <TagListItem
-                id={item}
-                name={this.props.tags.get(item).name}
-                selected={this.state.selection.has(item)}
+                id={itemId}
+                name={itemName}
+                selected={this.state.selection.has(itemId)}
                 mode={this.mode}
                 setParentState={this.setStateProxy}
                 onDeleteTag={this.props.onDeleteTag}
@@ -278,7 +280,7 @@ export default class HashTagListScreenUi extends React.Component {
     }
 
     keyExtractor(item, index) {
-        return item;
+        return item.id || item;
     }
 
     render() {

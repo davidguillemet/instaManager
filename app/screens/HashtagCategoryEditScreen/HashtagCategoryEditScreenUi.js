@@ -66,7 +66,7 @@ export default class HashtagCategoryEditScreenUi extends React.Component {
                     parentCategories = [updateItem.parent];
                 }
                 
-                this.childrenTags = global.hashtagManager.getHashtags(updateItem.id).map(tag => tag.id);
+                this.childrenTags = global.hashtagUtil.getHashtags(updateItem.id).map(tag => tag.id);
             }
 
             parentCategoriesCaption = this.getCaptionFromItems(parentCategories, global.CATEGORY_ITEM);
@@ -104,18 +104,7 @@ export default class HashtagCategoryEditScreenUi extends React.Component {
             return '';
         }
 
-        let realmItems = global.hashtagManager.getItemsFromId(itemType, items);
-
-        let itemsCaption = '';
-        let itemIndex = 0;
-        for (let realmItem of realmItems) {
-            if (itemIndex > 0) {
-                itemsCaption += ', ';
-            }
-            itemsCaption += realmItem.name;
-            itemIndex++;
-        }
-        return itemsCaption;
+        return items.map(id => global.hashtagUtil.getCatFromId(id).name).sort().join(', ');
     }
 
     onSaveItem() {

@@ -43,7 +43,7 @@ export default class TagListItem extends React.PureComponent {
 
     _onDeleteTag(itemId) {
         
-        const tagToDelete = global.hashtagManager.getItemFromId(global.TAG_ITEM, itemId);
+        const tagToDelete = global.hashtagUtil.getTagFromId(itemId);
         
         Alert.alert('', `Are you sure you want to delete the tag '${tagToDelete.name}'?`,[
             { 

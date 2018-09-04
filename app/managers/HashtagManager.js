@@ -54,12 +54,9 @@ export default class HashtagManagerClass {
         });       
     }
 
-    getHashtags(categoryId) {
+    getHashtags() {
 
-        let tags =
-            categoryId ?
-            this.realm.objectForPrimaryKey(categorySchema, categoryId).hashtags :
-            this.realm.objects(hashtagSchema).sorted('name');
+        let tags = this.realm.objects(hashtagSchema).sorted('name');
 
         return tags.map((item, index, array) => {
             return this._getTagProxyFromRealm(item);
@@ -92,10 +89,6 @@ export default class HashtagManagerClass {
 
     searchItem(itemType, filter) {
         return this.realm.objects(this._getRealmTypeFromItemType(itemType)).filtered('name like[c] $0', filter);
-    }
-
-    getItemFromId(itemType, itemId) {
-        return this.realm.objectForPrimaryKey(this._getRealmTypeFromItemType(itemType), itemId);
     }
 
     getItemsFromId(itemType, identifiers) {
@@ -320,35 +313,4 @@ export default class HashtagManagerClass {
         // -> or shouyld we introduce an option?
         this.realm.delete(categoryToDelete);
     }
-
-    getAncestorCategoriesTagCount(catId) {
-
-        let tagCount = 0;
-        let parentCategory = this.realm.objectForPrimaryKey(categorySchema, catId);
-
-        while (parentCategory != null) {
-            
-            tagCount += parentCategory.hashtags.length;
-            parentCategory = parentCategory.parent;
-        }
-
-        return tagCount;
-    }
-
-    getAncestorCategories(catId) {
-
-        let ancestors = [];
-
-        let parentCategory = this.realm.objectForPrimaryKey(categorySchema, catId);
-
-        while (parentCategory != null) {
-            
-            ancestors.push(this._getCatProxyFromRealm(parentCategory));
-            parentCategory = parentCategory.parent;
-        }
-
-        return ancestors;
-    }
-
-
 }

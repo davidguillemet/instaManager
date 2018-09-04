@@ -50,7 +50,6 @@ export default class CategorySelectionScreen extends React.Component {
         this.newSelectedCategories = this.initialSelectedCategories;
 
         this.state = {
-            isLoading: true,
             isSwiping: false
         };
 
@@ -62,22 +61,6 @@ export default class CategorySelectionScreen extends React.Component {
         this.props.navigation.setParams({ 
             onValidateSelection: this.onValidateSelection.bind(this)
         });
-
-        this.updateCategories();
-    }
-
-    updateCategories() {
-
-        global.hashtagManager.getCategories()
-        .then((categories) => {           
-            this.setState({ isLoading: false, categories: categories }); 
-        });
-    }
-
-    onCategoriesModified() {
-
-        this.setState({ isLoading: true }); 
-        this.updateCategories();
     }
 
     onValidateSelection() {
@@ -116,7 +99,6 @@ export default class CategorySelectionScreen extends React.Component {
                     <CategoryList
                         mode={global.LIST_SELECTION_MODE}
                         selectionMode={this.itemType === global.TAG_ITEM ? global.MULTI_SELECTION : global.SINGLE_SELECTION}
-                        categories= {this.state.categories}
                         onSelectionChanged={this.onCategorySelectionChanged}
                         selection={ this.initialSelectedCategories }
                         hiddenCategories={

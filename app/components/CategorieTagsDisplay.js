@@ -85,7 +85,7 @@ class CategorieTagsDisplay extends React.PureComponent {
         this.toggleTagsDisplay(TAGS_DISPLAY_ANCESTORS);
     }
 
-    renderTagContainers() {
+    renderTagContainers(ancestors) {
 
         if (this.state.tagsDisplayMode == TAGS_DISPLAY_SELF) {
             // Return tags from the edited category
@@ -102,14 +102,10 @@ class CategorieTagsDisplay extends React.PureComponent {
             );
         }
 
-        // Return tags from ancestor
-        const parentId = this.props.parentCategory;
-        if (parentId == null) {
+        if (ancestors == null || ancestors.length == 0) {
             // no parent...
             return null;
         }
-
-        const ancestors = global.hashtagManager.getAncestorCategories(parentId);
 
         return (
             ancestors.map(cat => {
@@ -131,7 +127,8 @@ class CategorieTagsDisplay extends React.PureComponent {
 
         // In case of a category item, get the count of tags from ancestor categories
         const parentId = this.props.parentCategory;
-        const ancestorCategoriesTagCount = parentId != null ? global.hashtagManager.getAncestorCategoriesTagCount(parentId) : 0;
+        const ancestors = parentId != null ? global.hashtagUtil.getAncestorCategories(parentId) : null;
+        const ancestorCategoriesTagCount = ancestors != null ? ancestors.reduce((count, cat) => count + cat.hashtags.length, 0) : 0;
 
         return (
             <View>
@@ -157,7 +154,7 @@ class CategorieTagsDisplay extends React.PureComponent {
                             this.state.tagsDisplayMode == TAGS_DISPLAY_ANCESTORS ? styles.selectedSegment : styles.unselectedSegment ]}
                     />
                 </View>
-                { this.renderTagContainers() }
+                { this.renderTagContainers(ancestors) }
             </View>
         );
     }

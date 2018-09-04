@@ -1,5 +1,6 @@
 import { connect } from 'react-redux';
 import { createSelector } from 'reselect';
+import { createMultiUpdateAction } from '../../actions';
 import CategorylistUi from './CategoryListUi';
 
 /**
@@ -82,11 +83,20 @@ const hierarchicalCategoriesSelector = createSelector([categoriesSelector, hidde
 const mapStateToProps = (state, ownProps) => {
     const rawCategories = state.get('categories');
     return {
-      categories: hierarchicalCategoriesSelector(state, ownProps),
-      rawCategories: rawCategories
+        categories: hierarchicalCategoriesSelector(state, ownProps),
     }
 }
 
-const CategoryList = connect(mapStateToProps)(CategorylistUi);
+const mapDispatchToProps = dispatch => {
+    return {
+        onDeleteCategory: categoryId => {
+            let updates = global.hashtagManager.deleteCategory(global.hashtagUtil.getCatFromId(categoryId));
+            dispatch(createMultiUpdateAction(updates));
+        }
+    }
+}
+
+
+const CategoryList = connect(mapStateToProps, mapDispatchToProps)(CategorylistUi);
 
 export default CategoryList;
