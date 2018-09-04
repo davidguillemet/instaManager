@@ -1,4 +1,6 @@
 import React, { PureComponent } from 'react';
+import { withNavigation } from 'react-navigation';
+
 import {
   StyleSheet,
   View,
@@ -27,7 +29,7 @@ const DISPLAY_SELECTED = 1;
  * - categories = [ { id: string, name: string, parent: string, level: int , deactivted: bool } , ...]
  * - navigation = the navigation object
  */
-export default class CategoryListUi extends React.PureComponent {
+class CategoryListUi extends React.PureComponent {
 
     constructor(props) {
         super(props);
@@ -323,4 +325,6 @@ const styles = StyleSheet.create(
         borderColor: CommonStyles.MEDIUM_BACKGROUND
     }
 });
+
+export default withNavigation(CategoryListUi);
 

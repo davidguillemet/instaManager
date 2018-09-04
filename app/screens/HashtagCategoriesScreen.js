@@ -77,7 +77,6 @@ export default class HashtagCategoriesScreen extends React.Component {
                     <CategoryList
                         mode={global.LIST_EDITION_MODE}
                         renderEmptyComponent={this.renderEmptyComponent}
-                        navigation={this.props.navigation}
                     />
                 }
             </View>

@@ -10,13 +10,9 @@ import {
 } from 'react-native';
 
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import TagContainer from '../../components/TagContainer';
-import CustomButton from '../../components/CustomButton';
+import CategorieTagsDisplay from '../../components/CategorieTagsDisplay';
 
-import CommonStyles from '../../styles/common'; 
-
-const TAGS_DISPLAY_SELF = 0;
-const TAGS_DISPLAY_ANCESTORS = 1;
+import CommonStyles from '../../styles/common';
 
 function renderRightButtons(params) {
 
@@ -54,8 +50,9 @@ export default class HashtagCategoryEditScreenUi extends React.Component {
         
         let parentCategories = [];
         let parentCategoriesCaption = null;
-        let childrenTags = [];
-        let childrenTagsCaption = null;
+        
+        // children tags are not stored in state since it is managed/displayed by CategoryTagsDisplay component
+        this.childrenTags = [];
 
         if (updateItem != null) {
 
@@ -69,8 +66,7 @@ export default class HashtagCategoryEditScreenUi extends React.Component {
                     parentCategories = [updateItem.parent];
                 }
                 
-                childrenTags = global.hashtagManager.getHashtags(updateItem.id).map(tag => tag.id);
-                childrenTagsCaption = this.getCaptionFromItems(childrenTags, global.TAG_ITEM);
+                this.childrenTags = global.hashtagManager.getHashtags(updateItem.id).map(tag => tag.id);
             }
 
             parentCategoriesCaption = this.getCaptionFromItems(parentCategories, global.CATEGORY_ITEM);
@@ -85,20 +81,13 @@ export default class HashtagCategoryEditScreenUi extends React.Component {
             itemId: updateItem ? updateItem.id : global.uniqueID(),
             itemName: updateItem ? updateItem.name : null,
             parentCategories: parentCategories, // List of identifiers
-            parentCategoriesCaption: parentCategoriesCaption,
-            childrenTags: childrenTags,
-            childrenTagsCaption: childrenTagsCaption,
-            tagsDisplayMode: TAGS_DISPLAY_SELF
+            parentCategoriesCaption: parentCategoriesCaption
         };
 
         this.onCategoriesSelected = this.onCategoriesSelected.bind(this);
-        this.onSelectParentCategory = this.onSelectParentCategory.bind(this);
-        this.onSelectCategoryTags = this.onSelectCategoryTags.bind(this);
         this.onTagSelectionValidated = this.onTagSelectionValidated.bind(this);
+        this.onSelectParentCategory = this.onSelectParentCategory.bind(this);
         this.onDeleteTag = this.onDeleteTag.bind(this);
-        this.toggleTagsDisplay = this.toggleTagsDisplay.bind(this);
-        this.setTagsDisplayAncestors = this.setTagsDisplayAncestors.bind(this);
-        this.setTagsDisplaySelf = this.setTagsDisplaySelf.bind(this);
     }
     
     componentDidMount() {
@@ -176,7 +165,7 @@ export default class HashtagCategoryEditScreenUi extends React.Component {
             id: this.state.itemId,
             name: this.state.itemName,
             parent: parent,
-            hashtags: this.state.childrenTags // useless...cannot be updated directly (type is "LinkingObjects")
+            hashtags: this.childrenTags // useless...cannot be updated directly (type is "LinkingObjects")
         };
 
         this.props.onSaveCategory(categoryToSave, this.editorMode === global.UPDATE_MODE);
@@ -251,126 +240,13 @@ export default class HashtagCategoryEditScreenUi extends React.Component {
     }
 
     onTagSelectionValidated(selection) {
-        this.setState( {
-            childrenTags: selection,
-            childrenTagsCaption: this.getCaptionFromItems(selection, global.TAG_ITEM)
-        });
-    }
 
-    onSelectCategoryTags() {
-
-        const params = {
-            mode: global.LIST_SELECTION_MODE,
-            selection: this.state.childrenTags,
-            onSelectionValidated: this.onTagSelectionValidated
-        };
-
-        this.props.navigation.navigate('HashTagList', params);
+        this.childrenTags = selection;
     }
 
     onDeleteTag(tagId) {
 
-        let newSelection = this.state.childrenTags.filter(id => id != tagId);
-        this.setState( {
-            childrenTags: newSelection,
-            childrenTagsCaption: this.getCaptionFromItems(newSelection, global.TAG_ITEM)
-        });
-    }
-
-    toggleTagsDisplay(tagsDisplayMode) {
-
-        this.setState( { tagsDisplayMode: tagsDisplayMode } );
-    }
-
-    setTagsDisplaySelf() {
-
-        this.toggleTagsDisplay(TAGS_DISPLAY_SELF);
-    }
-
-    setTagsDisplayAncestors() {
-
-        this.toggleTagsDisplay(TAGS_DISPLAY_ANCESTORS);
-    }
-
-    renderTagContainers() {
-        if (this.state.tagsDisplayMode == TAGS_DISPLAY_SELF) {
-            // Return tags from the edited category
-            return (
-                <TagContainer style={{ marginTop: 10 }}
-                tags={this.state.childrenTags}
-                label={ this.state.childrenTags.length + ' tag(s) in this category'}
-                itemType={global.TAG_ITEM}
-                onDelete={this.onDeleteTag}
-                onAdd={this.onSelectCategoryTags}
-                readOnly={false}
-                addSharp={true} />
-            );
-        }
-
-        // Return tags from ancestor
-        if (this.state.parentCategories == null || this.state.parentCategories.length == 0) {
-            // no parent...
-            return null;
-        }
-
-        const parentId = this.state.parentCategories[0];
-        const ancestors = global.hashtagManager.getAncestorCategories(parentId);
-
-        return (
-            ancestors.map(cat => {
-                return (
-                    <TagContainer
-                        style={{ marginTop: 10 }}
-                        label={cat.hashtags.length + ' tag(s) in ' + cat.name}
-                        key={cat.id}
-                        tags={cat.hashtags}
-                        itemType={global.TAG_ITEM}
-                        readOnly={true}
-                        addSharp={true} />
-                );
-            })
-        );
-    }
-    renderCategoryTags() {
-
-        if (this.itemType == global.TAG_ITEM)
-        {
-            return null;
-        }
-
-        // In case of a category item, get the count of tags from ancestor categories
-        const ancestorCategoriesTagCount =
-            this.state.parentCategories != null && this.state.parentCategories.length > 0 ?
-            global.hashtagManager.getAncestorCategoriesTagCount(this.state.parentCategories[0]) :
-            0;
-
-        return (
-            <View>
-                <View style={[CommonStyles.styles.standardTile, styles.tagSegmentTitle]}>
-                    <Text style={CommonStyles.styles.mediumLabel}>{ancestorCategoriesTagCount + this.state.childrenTags.length} Tag(s) in total</Text>
-                </View>
-                <View style={{ flexDirection: 'row', flex: 1 }}>
-                    <CustomButton
-                        onPress={this.setTagsDisplaySelf}
-                        title={this.state.childrenTags.length + ' in this category'}
-                        style={[
-                            CommonStyles.styles.standardButton,
-                            styles.leftSegment,
-                            this.state.tagsDisplayMode == TAGS_DISPLAY_SELF ? styles.selectedSegment : styles.unselectedSegment]}
-                    />
-                    <CustomButton
-                        onPress={this.setTagsDisplayAncestors}
-                        deactivated={ancestorCategoriesTagCount == 0}
-                        title={ancestorCategoriesTagCount + ' from ancestors'}
-                        style={[
-                            CommonStyles.styles.standardButton,
-                            styles.rightSegment,
-                            this.state.tagsDisplayMode == TAGS_DISPLAY_ANCESTORS ? styles.selectedSegment : styles.unselectedSegment ]}
-                    />
-                </View>
-                { this.renderTagContainers() }
-            </View>
-        );
+        this.childrenTags = this.childrenTags.filter(id => id != tagId);
     }
 
     render() {
@@ -438,7 +314,17 @@ export default class HashtagCategoryEditScreenUi extends React.Component {
                         }
                     </TouchableOpacity>
                 </View>
-                { this.renderCategoryTags() }
+                
+                {
+                    this.itemType == global.CATEGORY_ITEM ?
+                    <CategorieTagsDisplay
+                        tags={this.childrenTags}
+                        onDeleteTag={this.onDeleteTag}
+                        onTagSelectionValidated={this.onTagSelectionValidated}
+                        parentCategory={this.state.parentCategories && this.state.parentCategories.length > 0 ? this.state.parentCategories[0] : null}
+                    />
+                    : null
+                }
 
                 <View style={{ height: 20 }}></View>
             </ScrollView>
@@ -478,42 +364,5 @@ const styles = StyleSheet.create(
     },
     iconSelect: {
         color: CommonStyles.PLACEHOLDER_COLOR,
-    },
-    leftSegment: {
-        borderTopLeftRadius: 0,
-        borderTopRightRadius: 0,
-        borderBottomRightRadius: 0
-    },
-    rightSegment: {
-        borderTopLeftRadius: 0,
-        borderTopRightRadius: 0,
-        borderBottomLeftRadius: 0
-    },
-    selectedSegment:
-    {
-        flex: 0.5,
-        justifyContent: 'center',
-        fontSize: CommonStyles.SMALL_FONT_SIZE,
-        borderColor: CommonStyles.SEPARATOR_COLOR,
-        borderTopWidth: 0,
-        backgroundColor: CommonStyles.TEXT_COLOR,
-        color: CommonStyles.GLOBAL_FOREGROUND
-    },
-    unselectedSegment:
-    {
-        flex: 0.5,
-        justifyContent: 'center',
-        fontSize: CommonStyles.SMALL_FONT_SIZE,
-        borderColor: CommonStyles.SEPARATOR_COLOR,
-        borderTopWidth: 1,
-        backgroundColor: CommonStyles.GLOBAL_FOREGROUND,
-        color: CommonStyles.TEXT_COLOR
-    },
-    tagSegmentTitle: {
-        marginTop: 15,
-        marginBottom: 0,
-        justifyContent: 'center',
-        borderBottomLeftRadius: 0,
-        borderBottomRightRadius: 0
     }
 });
