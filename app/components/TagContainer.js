@@ -32,11 +32,26 @@ export default class TagContainer extends React.PureComponent {
         return (
             <View style={this.props.style}>
                 {
-                    this.props.label ?
-                    <View style={{ flexDirection: 'row' }}>
-                        <View style={styles.tagCcontainerLabel}>
-                            <Text style={[CommonStyles.styles.mediumLabel]}>{this.props.label}</Text>
-                        </View>
+                    this.props.label || !this.props.readOnly ?
+                    <View style={{ flexDirection: 'row', flex: 1, justifyContent: 'space-between'}}>
+                        {
+                            this.props.label ?
+                            <View style={styles.tagCcontainerLabel}>
+                                <Text style={[CommonStyles.styles.mediumLabel]}>{this.props.label}</Text>
+                            </View>
+                            :
+                            null
+                        }
+                        {
+                            this.props.readOnly ?
+                            null
+                            :
+                            <View style={styles.addTagButton}>
+                                <TouchableOpacity onPress={this.props.onAdd}>
+                                    <Ionicons style={{color: '#2DCF59'}} name={'ios-add-circle'} size={30} />
+                                </TouchableOpacity>
+                            </View>
+                        }
                     </View>
                     :
                     null
@@ -57,16 +72,6 @@ export default class TagContainer extends React.PureComponent {
                         })
                     }
                 </View>
-                {
-                    this.props.readOnly ?
-                    null
-                    :
-                    <View style={styles.addTagButton}>
-                        <TouchableOpacity onPress={this.props.onAdd}>
-                            <Ionicons style={{color: '#2DCF59'}} name={'ios-add-circle'} size={30} />
-                        </TouchableOpacity>
-                    </View>
-                }
             </View>
         );
     }
@@ -108,11 +113,6 @@ const styles = StyleSheet.create(
     },
     addTagButton: {
         justifyContent: 'center',
-        alignItems: 'center',
-        position: 'absolute',
-        right: -10,
-        top: -10,
-        width: 26,
-        height: 26
+        alignItems: 'center'
     }
 });

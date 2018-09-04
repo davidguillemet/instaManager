@@ -9,16 +9,14 @@ import {
   Alert
 } from 'react-native';
 
-import { connect } from 'react-redux';
-import { createMultiUpdateAction } from './../actions';
-
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import TagContainer from '../components/TagContainer';
+import TagContainer from '../../components/TagContainer';
+import CustomButton from '../../components/CustomButton';
 
-import CommonStyles from '../styles/common'; 
+import CommonStyles from '../../styles/common'; 
 
-const TAGS_DISPLAY_SELF = 'TagsDisplaySelf';
-const TAGS_DISPLAY_ANCESTORS = 'TagsDisplayAncestors';
+const TAGS_DISPLAY_SELF = 0;
+const TAGS_DISPLAY_ANCESTORS = 1;
 
 function renderRightButtons(params) {
 
@@ -29,7 +27,7 @@ function renderRightButtons(params) {
     );
 }
 
-class HashtagCategoryEditScreenComponent extends React.Component {
+export default class HashtagCategoryEditScreenUi extends React.Component {
 
     static navigationOptions = ({ navigation }) => {
         const params = navigation.state.params || {};
@@ -135,20 +133,17 @@ class HashtagCategoryEditScreenComponent extends React.Component {
 
         if (this.validateItem()) {
 
-            let updates; 
-
             switch (this.itemType) {
 
                 case global.TAG_ITEM:
-                    updates = this.saveTag();
+                    this.saveTag();
                     break;
 
                 case global.CATEGORY_ITEM:
-                    updates = this.saveCategory();
+                    this.saveCategory();
                     break;
             }
 
-            this.props.dispatch(createMultiUpdateAction(updates));
             this.props.navigation.goBack();
         }
     }
@@ -167,9 +162,7 @@ class HashtagCategoryEditScreenComponent extends React.Component {
             categories: tagCategories
         };
 
-        const updates = global.hashtagManager.saveTag(tagToSave, this.editorMode === global.UPDATE_MODE);
-
-        return updates;
+        this.props.onSaveTag(tagToSave, this.editorMode === global.UPDATE_MODE);
     }
 
     saveCategory() {
@@ -186,9 +179,7 @@ class HashtagCategoryEditScreenComponent extends React.Component {
             hashtags: this.state.childrenTags // useless...cannot be updated directly (type is "LinkingObjects")
         };
 
-        const updates = global.hashtagManager.saveCategory(categoryToSave, this.editorMode === global.UPDATE_MODE);
-
-        return updates;
+        this.props.onSaveCategory(categoryToSave, this.editorMode === global.UPDATE_MODE);
     }
 
     validateItem() {
@@ -355,20 +346,28 @@ class HashtagCategoryEditScreenComponent extends React.Component {
 
         return (
             <View>
-                <View style={[CommonStyles.styles.standardTile, { marginTop: 15, justifyContent: 'center' }]}>
+                <View style={[CommonStyles.styles.standardTile, styles.tagSegmentTitle]}>
                     <Text style={CommonStyles.styles.mediumLabel}>{ancestorCategoriesTagCount + this.state.childrenTags.length} Tag(s) in total</Text>
                 </View>
-                {
-                    ancestorCategoriesTagCount > 0 ?
-                    <TouchableOpacity onPress={this.setTagsDisplaySelf}>
-                        <Text style={[CommonStyles.styles.mediumLabel, { paddingLeft: 10, marginTop: 5 }]}>- {this.state.childrenTags.length} Tag(s) in this category</Text>
-                    </TouchableOpacity>
-                    :
-                    null
-                }
-                <TouchableOpacity onPress={this.setTagsDisplayAncestors}>
-                    <Text style={[CommonStyles.styles.mediumLabel, { paddingLeft: 10, marginTop: 5 }]}>- {ancestorCategoriesTagCount} Tag(s) from ancestors</Text>
-                </TouchableOpacity>
+                <View style={{ flexDirection: 'row', flex: 1 }}>
+                    <CustomButton
+                        onPress={this.setTagsDisplaySelf}
+                        title={this.state.childrenTags.length + ' in this category'}
+                        style={[
+                            CommonStyles.styles.standardButton,
+                            styles.leftSegment,
+                            this.state.tagsDisplayMode == TAGS_DISPLAY_SELF ? styles.selectedSegment : styles.unselectedSegment]}
+                    />
+                    <CustomButton
+                        onPress={this.setTagsDisplayAncestors}
+                        deactivated={ancestorCategoriesTagCount == 0}
+                        title={ancestorCategoriesTagCount + ' from ancestors'}
+                        style={[
+                            CommonStyles.styles.standardButton,
+                            styles.rightSegment,
+                            this.state.tagsDisplayMode == TAGS_DISPLAY_ANCESTORS ? styles.selectedSegment : styles.unselectedSegment ]}
+                    />
+                </View>
                 { this.renderTagContainers() }
             </View>
         );
@@ -478,10 +477,42 @@ const styles = StyleSheet.create(
     },
     iconSelect: {
         color: CommonStyles.PLACEHOLDER_COLOR,
+    },
+    leftSegment: {
+        borderTopLeftRadius: 0,
+        borderTopRightRadius: 0,
+        borderBottomRightRadius: 0
+    },
+    rightSegment: {
+        borderTopLeftRadius: 0,
+        borderTopRightRadius: 0,
+        borderBottomLeftRadius: 0
+    },
+    selectedSegment:
+    {
+        flex: 0.5,
+        justifyContent: 'center',
+        fontSize: CommonStyles.SMALL_FONT_SIZE,
+        borderColor: CommonStyles.SEPARATOR_COLOR,
+        borderTopWidth: 0,
+        backgroundColor: CommonStyles.TEXT_COLOR,
+        color: CommonStyles.GLOBAL_FOREGROUND
+    },
+    unselectedSegment:
+    {
+        flex: 0.5,
+        justifyContent: 'center',
+        fontSize: CommonStyles.SMALL_FONT_SIZE,
+        borderColor: CommonStyles.SEPARATOR_COLOR,
+        borderTopWidth: 1,
+        backgroundColor: CommonStyles.GLOBAL_FOREGROUND,
+        color: CommonStyles.TEXT_COLOR
+    },
+    tagSegmentTitle: {
+        marginTop: 15,
+        marginBottom: 0,
+        justifyContent: 'center',
+        borderBottomLeftRadius: 0,
+        borderBottomRightRadius: 0
     }
 });
-
-
-const HashtagCategoryEditScreen = connect()(HashtagCategoryEditScreenComponent);
-
-export default HashtagCategoryEditScreen;
