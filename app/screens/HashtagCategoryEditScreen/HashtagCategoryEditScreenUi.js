@@ -389,6 +389,7 @@ export default class HashtagCategoryEditScreenUi extends React.Component {
                         defaultValue={this.state.itemName ? this.state.itemName : null }
                         autoFocus={true}
                         keyboardType='default'
+                        autoCapitalize='none'
                         style={styles.parameterInput}
                         placeholder={`Enter a ${this.itemTypeName} name`}
                         selectionColor={CommonStyles.TEXT_COLOR}
