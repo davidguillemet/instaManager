@@ -15,9 +15,9 @@ export function loadTagsIfNeeded() {
 
 export function createLoadTagsAction() {
     return dispatch => {
-        return global.hashtagManager.open()
+        return global.hashtagPersistenceManager.open()
         .then(() => {
-            const hashtags = global.hashtagManager.getHashtags();
+            const hashtags = global.hashtagPersistenceManager.getHashtags();
             const immutableTagsMap = OrderedMap(hashtags.map(item => [item.id, item]));
             dispatch(createTagsLoadedAction(immutableTagsMap));
         })

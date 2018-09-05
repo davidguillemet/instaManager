@@ -5,11 +5,11 @@ import HashtagCategoryEditScreenUi from './HashtagCategoryEditScreenUi';
 const mapDispatchToProps = dispatch => {
     return {
         onSaveTag: (tagToSave, isAnUpdate) => {
-            const updates = global.hashtagManager.saveTag(tagToSave, isAnUpdate);
+            const updates = global.hashtagPersistenceManager.saveTag(tagToSave, isAnUpdate);
             dispatch(createMultiUpdateAction(updates));
         },
         onSaveCategory: (catToSave, isAnUpdate) => {
-            const updates = global.hashtagManager.saveCategory(catToSave, isAnUpdate);   
+            const updates = global.hashtagPersistenceManager.saveCategory(catToSave, isAnUpdate);   
             dispatch(createMultiUpdateAction(updates));
         }
     }

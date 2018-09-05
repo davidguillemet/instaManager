@@ -176,7 +176,7 @@ export default class HashtagCategoryEditScreenUi extends React.Component {
 
         
         // 3. Check category does not already exist
-        const itemsWithSameName = global.hashtagManager.searchItem(this.itemType, this.state.itemName);
+        const itemsWithSameName = global.hashtagUtil.searchItem(this.itemType, this.state.itemName);
         let nameAlreadyExists = false;
         if (itemsWithSameName.length > 0) {
             

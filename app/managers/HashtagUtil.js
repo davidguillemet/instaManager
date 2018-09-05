@@ -49,4 +49,9 @@ export default class HashtagUtil {
         return ancestors;
     }
 
+    searchItem(itemType, filter) {
+
+        // TODO use the store instead of the persistence layer ?
+        return global.hashtagPersistenceManager.searchItem(itemType, filter);
+    }
 }

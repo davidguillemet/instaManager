@@ -1,12 +1,12 @@
 import InstaFacadeClass from './managers/InstaFacade';
 import ServiceManagerClass from './services/ServiceManager';
 import UserManagerClass from './managers/UserManager';
-import HashtagManagerClass from './managers/HashtagManager';
+import HashtagPersistenceManagerClass from './managers/HashtagPersistenceManager';
 
 global.instaFacade = new InstaFacadeClass();
 global.serviceManager = new ServiceManagerClass(global.instaFacade);
 global.userManager = new UserManagerClass();
-global.hashtagManager = new HashtagManagerClass();
+global.hashtagPersistenceManager = new HashtagPersistenceManagerClass();
 
 // Editor modes
 global.CREATE_MODE = 'create';

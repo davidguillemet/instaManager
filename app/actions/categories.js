@@ -15,7 +15,7 @@ export function loadCategoriesIfNeeded() {
 
 export function createLoadCategoriesAction() {
     return dispatch => {
-        return global.hashtagManager.getCategories()
+        return global.hashtagPersistenceManager.getCategories()
         .then((categories) => {
             const immutableMap = OrderedMap(categories.map(item => [item.id, item]));
             dispatch(createCategoriesLoadedAction(immutableMap));

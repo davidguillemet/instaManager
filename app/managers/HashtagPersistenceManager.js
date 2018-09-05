@@ -8,7 +8,7 @@ const Realm = require('realm');
 const categorySchema = 'TagCategory';
 const hashtagSchema = 'Hashtag';
 
-export default class HashtagManagerClass {
+export default class HashtagPersistenceManagerClass {
 
     constructor() {
         this.realm = null;
@@ -63,74 +63,6 @@ export default class HashtagManagerClass {
         });
     }
 
-    _getCatProxyFromRealm(item) {
-
-        return {
-            id: item.id,
-            name: item.name,
-            parent: item.parent ? item.parent.id : null,
-            children: item.children.map((cat, index, array) => cat.id),
-            hashtags: item.hashtags.map((tag, index, array) => tag.id)
-        }
-    }
-
-    _getTagProxyFromRealm(item) {
-
-        return {
-            id: item.id,
-            name: item.name,
-            categories: item.categories.map((cat, index, array) => cat.id)
-        }
-    }
-
-    _getRealmTypeFromItemType(itemType) {
-        return itemType === global.TAG_ITEM ? hashtagSchema : categorySchema;
-    }
-
-    searchItem(itemType, filter) {
-        return this.realm.objects(this._getRealmTypeFromItemType(itemType)).filtered('name like[c] $0', filter);
-    }
-
-    getItemsFromId(itemType, identifiers) {
-        let items = [];
-        const realmItemType = this._getRealmTypeFromItemType(itemType);
-        for (itemId of identifiers) {
-            items.push(this.realm.objectForPrimaryKey(realmItemType, itemId));
-        }
-        return items;
-    }
-
-    getSetDifferences(set1, set2) {
-
-        if ((set1 == null || set1.length == 0) &&
-            (set2 == null || set2.length == 0)) {
-            return [];
-        }
-
-        if (set1 == null || set1.length == 0) {
-            return [ ...set2 ];
-        }
-
-        if (set2 == null || set2.length == 0) {
-            return [ ...set1 ];
-        }
-        
-        let differences = [];
-        
-        set1.forEach(element => {
-            if (!set2.has(element)) {
-                differences.push(element);
-            }
-        });
-        set2.forEach(element => {
-            if (!set1.has(element)) {
-                differences.push(element);
-            }
-        });
-
-        return differences;
-    }
-
     saveTag(tag, update) {
     
         let updatedCats = [];
@@ -153,7 +85,7 @@ export default class HashtagManagerClass {
             updatedTag = this.realm.create(hashtagSchema, { id: tag.id, name: tag.name, categories: parentCategories }, update);
 
             // Categories to modify are catgories which are not in both prev and new sets
-            let categoriesToUpdate = this.getSetDifferences(prevCategories, newCategories);
+            let categoriesToUpdate = this._getSetDifferences(prevCategories, newCategories);
             updatedCats = categoriesToUpdate.
                 map(catId => this.realm.objectForPrimaryKey(categorySchema, catId)).
                 map(realmCat => this._getCatProxyFromRealm(realmCat));
@@ -306,6 +238,45 @@ export default class HashtagManagerClass {
         
     }
 
+    searchItem(itemType, filter) {
+
+        const searchResults = this.realm.objects(this._getRealmTypeFromItemType(itemType)).filtered('name like[c] $0', filter);
+
+        if (itemType == global.TAG_ITEM) {
+            return searchResults.map((item, index, array) => {
+                return this._getTagProxyFromRealm(item);
+            });    
+        } else {
+            return searchResults.map((item, index, array) => {
+                return this._getCatProxyFromRealm(item);
+            });
+        }
+    }
+
+    _getCatProxyFromRealm(item) {
+
+        return {
+            id: item.id,
+            name: item.name,
+            parent: item.parent ? item.parent.id : null,
+            children: item.children.map((cat, index, array) => cat.id),
+            hashtags: item.hashtags.map((tag, index, array) => tag.id)
+        }
+    }
+
+    _getTagProxyFromRealm(item) {
+
+        return {
+            id: item.id,
+            name: item.name,
+            categories: item.categories.map((cat, index, array) => cat.id)
+        }
+    }
+
+    _getRealmTypeFromItemType(itemType) {
+        return itemType === global.TAG_ITEM ? hashtagSchema : categorySchema;
+    }
+
     _internalDeleteCategory(categoryToDelete) {
         // TODO : should we remove children categories ??
         // SO far, if we remove a category which contains children, these children
@@ -313,4 +284,36 @@ export default class HashtagManagerClass {
         // -> or shouyld we introduce an option?
         this.realm.delete(categoryToDelete);
     }
+
+    _getSetDifferences(set1, set2) {
+
+        if ((set1 == null || set1.length == 0) &&
+            (set2 == null || set2.length == 0)) {
+            return [];
+        }
+
+        if (set1 == null || set1.length == 0) {
+            return [ ...set2 ];
+        }
+
+        if (set2 == null || set2.length == 0) {
+            return [ ...set1 ];
+        }
+        
+        let differences = [];
+        
+        set1.forEach(element => {
+            if (!set2.has(element)) {
+                differences.push(element);
+            }
+        });
+        set2.forEach(element => {
+            if (!set1.has(element)) {
+                differences.push(element);
+            }
+        });
+
+        return differences;
+    }
+
 }

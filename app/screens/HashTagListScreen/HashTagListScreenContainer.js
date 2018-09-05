@@ -46,7 +46,7 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => {
     return {
         onDeleteTag: tagId => {
-            const updates = global.hashtagManager.deleteTag(tagId);
+            const updates = global.hashtagPersistenceManager.deleteTag(tagId);
             dispatch(createMultiUpdateAction(updates));
         }
     }

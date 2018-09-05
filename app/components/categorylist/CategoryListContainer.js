@@ -90,7 +90,7 @@ const mapStateToProps = (state, ownProps) => {
 const mapDispatchToProps = dispatch => {
     return {
         onDeleteCategory: categoryId => {
-            let updates = global.hashtagManager.deleteCategory(global.hashtagUtil.getCatFromId(categoryId));
+            let updates = global.hashtagPersistenceManager.deleteCategory(global.hashtagUtil.getCatFromId(categoryId));
             dispatch(createMultiUpdateAction(updates));
         }
     }
