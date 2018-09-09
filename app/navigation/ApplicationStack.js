@@ -9,7 +9,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import CommonStyles from '../styles/common';
 
 import StatisticsStack from './SatisticsStack';
-import MediaStack from './MediaStack';
+import PublicationStack from './PublicationStack';
 import HashTagsStack from './HashTagsStack';
 import SettingsStack from './SettingsStack';
 
@@ -21,7 +21,7 @@ function getRouteIcon(routeName, focused) {
         iconName = `ios-pricetags${focused ? '' : '-outline'}`;
     } else if (routeName === 'Settings') {
         iconName = `ios-options${focused ? '' : '-outline'}`;
-    } else if (routeName === 'Media') {
+    } else if (routeName === 'Publication') {
         iconName = `ios-images${focused ? '' : '-outline'}`;
     }
     return iconName;
@@ -30,12 +30,12 @@ function getRouteIcon(routeName, focused) {
 export default ApplicationStack = TabNavigator(
 {
     Statistics : { screen: StatisticsStack },
-    Media: { screen: MediaStack },
     HashTags: { screen: HashTagsStack },
+    Publication: { screen: PublicationStack },
     Settings: { screen: SettingsStack }
 },
 {
-    ////// TO REMOVE ONCE FACEBOOK CONNECTIO IS BACK ///
+    ////// TO REMOVE ONCE FACEBOOK CONNECTION IS BACK ///
     initialRouteName: 'HashTags',
     ////////////////////////////////////////////////////
 
@@ -52,7 +52,7 @@ export default ApplicationStack = TabNavigator(
         activeTintColor: 'white',
         inactiveTintColor: '#bbbbbb',
         style: {
-        backgroundColor: CommonStyles.GLOBAL_FOREGROUND,
+            backgroundColor: CommonStyles.GLOBAL_FOREGROUND,
         },
         showIcon: true
     },

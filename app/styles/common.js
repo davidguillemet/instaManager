@@ -19,6 +19,12 @@ export default CommonStyles = {
   POSITIVE_DELTA_COLOR: 'green',
   NEGATIVE_DELTA_COLOR: 'red',
   PROFILE_PICTURE_BORDER_COLOR: 'white',
+  DARK_GREEN: '#1D7334',
+  MEDIUM_GREEN: '#2DCF59',
+  LIGHT_GREEN: '#80ED9E',
+
+  // Opacity
+  NOTIFICATION_OPACITY: 0.8,
   
   // Sizes
   PROFILE_PICTURE_SIZE: 60,
@@ -27,7 +33,7 @@ export default CommonStyles = {
   LARGE_FONT_SIZE: 25,
   MEDIUM_FONT_SIZE: 20,
   SMALL_FONT_SIZE: 14,
-  NAV_ICON_SIZE: 30,
+  NAV_ICON_SIZE: 34,
   SWIPE_ICON_SIZE: 25,
 
   LIST_ITEM_HEIGHT: 40,
@@ -64,7 +70,12 @@ CommonStyles.styles = StyleSheet.create(
       marginBottom: CommonStyles.GLOBAL_PADDING,
       padding: CommonStyles.GLOBAL_PADDING,
   },
-  largeLabel: {
+  animatedBottomConfirm: {
+    flexDirection: 'row',
+    backgroundColor: CommonStyles.LIGHT_GREEN,
+    padding: CommonStyles.GLOBAL_PADDING,
+},
+largeLabel: {
     color: CommonStyles.TEXT_COLOR,
     fontSize: CommonStyles.LARGE_FONT_SIZE
   },
@@ -87,7 +98,8 @@ CommonStyles.styles = StyleSheet.create(
     color: CommonStyles.TEXT_COLOR,
     padding: 10,
     paddingTop: 20,
-    fontSize: CommonStyles.NAV_ICON_SIZE
+    fontSize: CommonStyles.NAV_ICON_SIZE,
+    marginBottom: 5
   },
   textIcon: {
     color: CommonStyles.TEXT_COLOR,

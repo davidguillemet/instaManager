@@ -54,4 +54,18 @@ export default class HashtagUtil {
         // TODO use the store instead of the persistence layer ?
         return global.hashtagPersistenceManager.searchItem(itemType, filter);
     }
+
+    getItemTypeCaption(itemType) {
+        
+        switch (itemType) {
+            case global.TAG_ITEM:
+                return 'tag';
+            case global.CATEGORY_ITEM:
+                return 'category';
+            case global.PUBLICATION_ITEM:
+                return 'publication';
+            default:
+                return '<unkonwn item type';
+        }
+    }
 }

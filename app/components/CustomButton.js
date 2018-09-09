@@ -1,22 +1,69 @@
 import React from 'react';
 import {
+    ActivityIndicator,
     StyleSheet,
     TouchableOpacity,
     Text,
     View,
     Alert
 } from 'react-native';
+import PropTypes from 'prop-types';
 import CommonStyles from '../styles/common';
 
 export default class CustomButton extends React.Component {
 
+    static propTypes = {
+        title: PropTypes.string.isRequired,     // Button caption
+        deactivated: PropTypes.bool,            // true if the button is deactivated - optional
+        onPress: PropTypes.func.isRequired,     // callback when the button is pressed if not deactivated
+        showActivityIndicator: PropTypes.bool,  // true if we show the activity indicator when the button is pressed - optional - false by default
+        running: PropTypes.bool,                // true if the action is running
+        register:PropTypes.array                 // array for registering the current button to calback setActionCompleted()
+    };
+
+    static defaultProps = {
+        deactivated: false,        // by default, the button is activated
+        showActivityIndicator: false,
+        running: false,
+        register: null
+    };
+
     constructor(props) {
         super(props);
+
+        this.state = {
+            running: this.props.running
+        }
+
+        if (this.props.register != null) {
+            this.props.register.push(this);
+        }
+
+        this.onPress = this.onPress.bind(this);
+    }
+
+    onPress() {
+
+        if (this.props.showActivityIndicator) {
+            this.setState({
+                running: true
+            });
+        }
+        this.props.onPress();
+    }
+
+    setActionCompleted() {
+
+        if (this.props.showActivityIndicator) {
+            this.setState({
+                running: false
+            });
+        }
     }
 
     render() {
 
-        let globalStyle = StyleSheet.flatten(this.props.style);
+        let globalStyle = this.props.style ? StyleSheet.flatten(this.props.style) : {};
 
         const defaultStyle = {
             flexDirection: 'row',
@@ -38,19 +85,16 @@ export default class CustomButton extends React.Component {
             fontSize: fontSize ? fontSize : CommonStyles.MEDIUM_FONT_SIZE
         };
 
-        if (this.props.deactivated) {
-            return (
-                <View style={touchableStyle}>
-                    <Text style={textStyle}>{this.props.title}</Text>
-                </View>
-            );
-        }
-        else {
-            return (
-                <TouchableOpacity style={touchableStyle} onPress={this.props.onPress}>
-                    <Text style={textStyle}>{this.props.title}</Text>
-                </TouchableOpacity>
-            );
-        }
+        return (
+            <TouchableOpacity style={touchableStyle} onPress={this.onPress} disabled={this.props.deactivated || this.state.running}>
+                {
+                    this.state.running ?
+                    <ActivityIndicator style={{ marginRight: 10 }} color={'white'} />
+                    :
+                    null
+                }
+                <Text style={textStyle}>{this.props.title}</Text>
+            </TouchableOpacity>
+        );
     }
 }

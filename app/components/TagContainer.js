@@ -48,7 +48,7 @@ export default class TagContainer extends React.PureComponent {
                             :
                             <View style={styles.addTagButton}>
                                 <TouchableOpacity onPress={this.props.onAdd}>
-                                    <Ionicons style={{color: '#2DCF59'}} name={'ios-add-circle'} size={30} />
+                                    <Ionicons style={{color: CommonStyles.MEDIUM_GREEN}} name={'ios-add-circle'} size={30} />
                                 </TouchableOpacity>
                             </View>
                         }

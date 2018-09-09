@@ -21,7 +21,7 @@ class HashTagsHomeScreenComponent extends React.Component {
     static navigationOptions = ({ navigation }) => {
         const params = navigation.state.params || {};
         return {
-            headerTitle: 'Hashtags Management'
+            headerTitle: 'Hashtag Management'
         }   
     };
 

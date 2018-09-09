@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   Alert
 } from 'react-native';
+import PropTypes from 'prop-types';
 
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import TagContainer from './TagContainer';
@@ -18,13 +19,27 @@ const TAGS_DISPLAY_SELF = 0;
 const TAGS_DISPLAY_ANCESTORS = 1;
 
 class CategorieTagsDisplay extends React.PureComponent {
-    
+
+    static propTypes = {
+        tags: PropTypes.array,                              // Tags from the current category/publication - might be null or empty
+        onDeleteTag: PropTypes.func.isRequired,             // callback when deleting a tag
+        onTagSelectionValidated: PropTypes.func.isRequired, // callback when the button is pressed if not deactivated
+        parentCategory: PropTypes.string,                   // identifier of the parent category - optional
+        itemType: PropTypes.string.isRequired,              // item type - optional
+        showSegmentControl: PropTypes.bool                  // true to display the segment control - optional - default is true
+    };
+
+    static defaultProps = {
+        tags: [],
+        showSegmentControl: true
+    };
+
     constructor(props) {
         super(props);
-
+        
         this.state = {
-            tags: this.props.tags || [],
-            tagsDisplayMode: TAGS_DISPLAY_SELF,
+            tags: this.props.tags,
+            tagsDisplayMode: this.props.itemType == global.CATEGORY_ITEM || this.props.showSegmentControl == false ? TAGS_DISPLAY_SELF : TAGS_DISPLAY_ANCESTORS /* publication */,
         };
 
         // Callbacks for tag management
@@ -85,14 +100,18 @@ class CategorieTagsDisplay extends React.PureComponent {
         this.toggleTagsDisplay(TAGS_DISPLAY_ANCESTORS);
     }
 
-    renderTagContainers(ancestors) {
+    renderTagContainers(ancestors, ancesorsTagCount) {
 
         if (this.state.tagsDisplayMode == TAGS_DISPLAY_SELF) {
+
+            let tagsCount = this.state.tags.length;
+            let tags = this.state.tags;
+
             // Return tags from the edited category
             return (
                 <TagContainer style={{ marginTop: 10 }}
-                    tags={this.state.tags}
-                    label={ this.state.tags.length + ' tag(s) in this category'}
+                    tags={tags}
+                    label={tagsCount + ' tag(s) in this ' + global.hashtagUtil.getItemTypeCaption(this.props.itemType)}
                     itemType={global.TAG_ITEM}
                     onDelete={this.onDeleteTag}
                     onAdd={this.onSelectCategoryTags}
@@ -102,7 +121,7 @@ class CategorieTagsDisplay extends React.PureComponent {
             );
         }
 
-        if (ancestors == null || ancestors.length == 0) {
+        if (ancestors.length == 0) {
             // no parent...
             return null;
         }
@@ -122,13 +141,12 @@ class CategorieTagsDisplay extends React.PureComponent {
             })
         );
     }
-    
-    render() {
 
-        // In case of a category item, get the count of tags from ancestor categories
-        const parentId = this.props.parentCategory;
-        const ancestors = parentId != null ? global.hashtagUtil.getAncestorCategories(parentId) : null;
-        const ancestorCategoriesTagCount = ancestors != null ? ancestors.reduce((count, cat) => count + cat.hashtags.length, 0) : 0;
+    renderSegmentControl(ancestorCategoriesTagCount) {
+
+        if (this.props.showSegmentControl === false) {
+            return null;
+        }
 
         return (
             <View>
@@ -138,7 +156,7 @@ class CategorieTagsDisplay extends React.PureComponent {
                 <View style={{ flexDirection: 'row', flex: 1 }}>
                     <CustomButton
                         onPress={this.setTagsDisplaySelf}
-                        title={this.state.tags.length + ' in this category'}
+                        title={this.state.tags.length + ' in this ' + global.hashtagUtil.getItemTypeCaption(this.props.itemType)}
                         style={[
                             CommonStyles.styles.standardButton,
                             styles.leftSegment,
@@ -147,14 +165,28 @@ class CategorieTagsDisplay extends React.PureComponent {
                     <CustomButton
                         onPress={this.setTagsDisplayAncestors}
                         deactivated={ancestorCategoriesTagCount == 0}
-                        title={ancestorCategoriesTagCount + ' from ancestors'}
+                        title={ancestorCategoriesTagCount + ' from ' + (this.itemType == global.CATEGORY_ITEM ? 'ancestors' : 'the category')}
                         style={[
                             CommonStyles.styles.standardButton,
                             styles.rightSegment,
                             this.state.tagsDisplayMode == TAGS_DISPLAY_ANCESTORS ? styles.selectedSegment : styles.unselectedSegment ]}
                     />
                 </View>
-                { this.renderTagContainers(ancestors) }
+            </View>
+        );
+    }
+    
+    render() {
+
+        // In case of a category item, get the count of tags from ancestor categories
+        const parentId = this.props.parentCategory;
+        const ancestors = parentId != null ? global.hashtagUtil.getAncestorCategories(parentId) : [];
+        const ancestorCategoriesTagCount = ancestors != null && ancestors.length > 0 ? ancestors.reduce((count, cat) => count + cat.hashtags.length, 0) : 0;
+
+        return (
+            <View>
+                { this.renderSegmentControl(ancestorCategoriesTagCount) }
+                { this.renderTagContainers(ancestors, ancestorCategoriesTagCount) }
             </View>
         );
     }
