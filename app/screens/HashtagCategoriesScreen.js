@@ -14,8 +14,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import LoadingIndicatorView from '../components/LoadingIndicator';
 import SearchInput from '../components/Search';
 import CategoryList from '../components/categorylist';
-
-
+import CustomButton from '../components/CustomButton';
 import CommonStyles from '../styles/common'; 
 
 function renderRightButtons(params) {
@@ -43,12 +42,15 @@ export default class HashtagCategoriesScreen extends React.Component {
         this.state = {
             isSwiping: false
         };
+
+        this.onAddCategory = this.onAddCategory.bind(this);
+        this.renderEmptyComponent = this.renderEmptyComponent.bind(this);
     }
 
     componentDidMount() {
         
         this.props.navigation.setParams({ 
-            onAddCategory: this.onAddCategory.bind(this)
+            onAddCategory: this.onAddCategory
         });
     }
 
@@ -63,11 +65,13 @@ export default class HashtagCategoriesScreen extends React.Component {
 
     renderEmptyComponent() {
         return (
-            <View style={{ flex: 1, justifyContent: 'center', padding: CommonStyles.GLOBAL_PADDING}}>
-                <Text style={ [CommonStyles.styles.mediumLabel, { marginBottom: CommonStyles.GLOBAL_PADDING} ]}>You didn't defined any category yet.</Text>
-                <Text style={ [CommonStyles.styles.mediumLabel, { marginBottom: CommonStyles.GLOBAL_PADDING} ]}>To create your first category, just click on <Ionicons name={'ios-add'} style={CommonStyles.styles.largeLabel} /> on the top of the screen.</Text>
+            <View style={{flex: 1, padding: CommonStyles.GLOBAL_PADDING}}>
+                <View style={[CommonStyles.styles.standardTile, { flex: 1, flexDirection: 'column' }]}>
+                    <Text style={CommonStyles.styles.mediumLabel}>You have not created any category yet.</Text>
+                </View>
+                <CustomButton style={CommonStyles.styles.standardButtonCentered} title={'Create your first category'} onPress={this.onAddCategory} />
             </View>
-        );
+       );
     }
 
     render() {

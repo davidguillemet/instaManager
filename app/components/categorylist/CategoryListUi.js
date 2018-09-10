@@ -153,7 +153,7 @@ class CategoryListUi extends React.PureComponent {
                             {
                                 this.state.displayType == DISPLAY_SELECTED ?
                                 'No selected items...' :
-                                'You didn\t defined any category yet.'
+                                'You have not created any category yet.'
                             }
                         </Text>
                     </View>

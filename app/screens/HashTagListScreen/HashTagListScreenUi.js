@@ -12,6 +12,7 @@ import {
 import { OrderedMap } from 'immutable';
 
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import CustomButton from '../../components/CustomButton';
 import SearchInput from '../../components/Search';
 import LoadingIndicatorView from '../../components/LoadingIndicator';
 import SectionListIndex from '../../components/SectionListIndex';
@@ -65,10 +66,14 @@ export default class HashTagListScreenUi extends React.Component {
 
         this.sectionListRef = null;
 
+        this.renderEmptyComponent = this.renderEmptyComponent.bind(this);
         this.renderListItem = this.renderListItem.bind(this);
         this.keyExtractor = this.keyExtractor.bind(this);
         this.setSearchResults = this.setSearchResults.bind(this);
 
+        this.onAddTag = this.onAddTag.bind(this);
+        this.onImport = this.onImport.bind(this);
+        this.onValidateSelection = this.onValidateSelection.bind(this);
         this.onEditTag = this.onEditTag.bind(this);
         this.onSelectTag = this.onSelectTag.bind(this);
         this.onArchiveTag = this.onArchiveTag.bind(this);
@@ -81,14 +86,14 @@ export default class HashTagListScreenUi extends React.Component {
     componentDidMount() {
 
         this.props.navigation.setParams({ 
-            onImport: this.onImport.bind(this),
-            onAddTag: this.onAddTag.bind(this),
-            onValidateSelection: this.onValidateSelection.bind(this)
+            onImport: this.onImport,
+            onAddTag: this.onAddTag,
+            onValidateSelection: this.onValidateSelection
         });
     }
 
     getSearchDataSource() {
-        return global.hashtagUtil.getHashtags().valueSeq();
+        return global.hashtagUtil.getHashtags().valueSeq().toArray();
     }
 
     setSearchResults(results) {
@@ -97,7 +102,9 @@ export default class HashTagListScreenUi extends React.Component {
 
     emptySearchResult() {
         return (
-            <Text style={CommonStyles.styles.singleListItem}>No results...</Text>
+            <View style={{ flex: 1, justifyContent: 'center', padding: CommonStyles.GLOBAL_PADDING}}>
+                <Text style={ [CommonStyles.styles.mediumLabel, { marginBottom: CommonStyles.GLOBAL_PADDING} ]}>No results...</Text>
+            </View>
         );
     }
 
@@ -231,10 +238,9 @@ export default class HashTagListScreenUi extends React.Component {
 
     renderEmptyComponent() {
         return (
-            <View style={{ flex: 1, justifyContent: 'center', padding: CommonStyles.GLOBAL_PADDING}}>
-                <Text style={ [CommonStyles.styles.mediumLabel, { marginBottom: CommonStyles.GLOBAL_PADDING} ]}>You didn't defined any hashtag yet.</Text>
-                <Text style={ [CommonStyles.styles.mediumLabel, { marginBottom: CommonStyles.GLOBAL_PADDING} ]}>To add a single hashtag, just click on <Ionicons name={'ios-add'} style={CommonStyles.styles.mediumLabel}/> on the top of the screen.</Text>
-                <Text style={ [CommonStyles.styles.mediumLabel, { marginBottom: CommonStyles.GLOBAL_PADDING} ]}>By clicking on <Ionicons name={'ios-cloud-download'} style={CommonStyles.styles.mediumLabel}/>, you can also import all the hashtags you have already used in your instagram posts.</Text>
+            <View style={{flex: 1, padding: CommonStyles.GLOBAL_PADDING}}>
+                <CustomButton style={CommonStyles.styles.standardButtonCentered} title={'Create your first tag'} onPress={this.onAddTag} />
+                <CustomButton style={CommonStyles.styles.standardButtonCentered} title={'Import tags from text'} onPress={this.onAddTag} />
             </View>
         );
     }

@@ -158,16 +158,16 @@ class CategorieTagsDisplay extends React.PureComponent {
                         onPress={this.setTagsDisplaySelf}
                         title={this.state.tags.length + ' in this ' + global.hashtagUtil.getItemTypeCaption(this.props.itemType)}
                         style={[
-                            CommonStyles.styles.standardButton,
+                            CommonStyles.styles.standardButtonCentered,
                             styles.leftSegment,
                             this.state.tagsDisplayMode == TAGS_DISPLAY_SELF ? styles.selectedSegment : styles.unselectedSegment]}
                     />
                     <CustomButton
                         onPress={this.setTagsDisplayAncestors}
                         deactivated={ancestorCategoriesTagCount == 0}
-                        title={ancestorCategoriesTagCount + ' from ' + (this.itemType == global.CATEGORY_ITEM ? 'ancestors' : 'the category')}
+                        title={ancestorCategoriesTagCount + ' from ' + (this.props.itemType == global.CATEGORY_ITEM ? 'ancestors' : 'the category')}
                         style={[
-                            CommonStyles.styles.standardButton,
+                            CommonStyles.styles.standardButtonCentered,
                             styles.rightSegment,
                             this.state.tagsDisplayMode == TAGS_DISPLAY_ANCESTORS ? styles.selectedSegment : styles.unselectedSegment ]}
                     />
@@ -207,7 +207,6 @@ const styles = StyleSheet.create(
     selectedSegment:
     {
         flex: 0.5,
-        justifyContent: 'center',
         fontSize: CommonStyles.SMALL_FONT_SIZE,
         borderColor: CommonStyles.SEPARATOR_COLOR,
         borderTopWidth: 0,
@@ -217,7 +216,6 @@ const styles = StyleSheet.create(
     unselectedSegment:
     {
         flex: 0.5,
-        justifyContent: 'center',
         fontSize: CommonStyles.SMALL_FONT_SIZE,
         borderColor: CommonStyles.SEPARATOR_COLOR,
         borderTopWidth: 1,

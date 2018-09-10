@@ -291,9 +291,9 @@ export default class HashtagCategoryEditScreenUi extends React.Component {
         return (
             <View style={[CommonStyles.styles.standardTile, { alignItems: 'center'} ]}>
                 <Ionicons name={'ios-information-circle'} style={[CommonStyles.styles.textIcon, { paddingLeft: 0}]}/>
-                <Text style={CommonStyles.styles.mediumLabel}>Click on </Text>
+                <Text style={CommonStyles.styles.smallLabel}>Click on </Text>
                 <Ionicons name={'ios-checkmark'} style={CommonStyles.styles.textIcon}/>
-                <Text style={CommonStyles.styles.mediumLabel}> to save the {this.itemTypeName}.</Text>
+                <Text style={CommonStyles.styles.smallLabel}> to save the {this.itemTypeName}.</Text>
             </View>
         );
     }

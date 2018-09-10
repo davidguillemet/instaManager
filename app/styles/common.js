@@ -22,6 +22,7 @@ export default CommonStyles = {
   DARK_GREEN: '#1D7334',
   MEDIUM_GREEN: '#2DCF59',
   LIGHT_GREEN: '#80ED9E',
+  BUTTON_COLOR: '#192b48',
 
   // Opacity
   NOTIFICATION_OPACITY: 0.8,
@@ -74,8 +75,8 @@ CommonStyles.styles = StyleSheet.create(
     flexDirection: 'row',
     backgroundColor: CommonStyles.LIGHT_GREEN,
     padding: CommonStyles.GLOBAL_PADDING,
-},
-largeLabel: {
+  },
+  largeLabel: {
     color: CommonStyles.TEXT_COLOR,
     fontSize: CommonStyles.LARGE_FONT_SIZE
   },
@@ -88,11 +89,19 @@ largeLabel: {
     fontSize: CommonStyles.SMALL_FONT_SIZE
   },
   standardButton: {
-    backgroundColor: CommonStyles.GLOBAL_FOREGROUND,
+    backgroundColor: CommonStyles.BUTTON_COLOR,
     color: CommonStyles.TEXT_COLOR,
     fontSize: CommonStyles.MEDIUM_FONT_SIZE,
     padding: CommonStyles.GLOBAL_PADDING,
     borderRadius: CommonStyles.BORDER_RADIUS
+  },
+  standardButtonCentered: {
+    backgroundColor: CommonStyles.BUTTON_COLOR,
+    color: CommonStyles.TEXT_COLOR,
+    fontSize: CommonStyles.MEDIUM_FONT_SIZE,
+    padding: CommonStyles.GLOBAL_PADDING,
+    borderRadius: CommonStyles.BORDER_RADIUS,
+    justifyContent: 'center',
   },
   navigationButtonIcon: {
     color: CommonStyles.TEXT_COLOR,
@@ -115,7 +124,7 @@ largeLabel: {
     flex: 1,
     justifyContent: 'center',
     height: CommonStyles.SECTION_HEADER_HEIGHT,
-    backgroundColor: '#192b48'
+    backgroundColor: CommonStyles.BUTTON_COLOR
   },
   sectionHeader: {
     color: CommonStyles.TEXT_COLOR,
