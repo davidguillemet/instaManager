@@ -81,7 +81,6 @@ const hiddenCategoriesSelector = (state, props) => props.hiddenCategories;
 const hierarchicalCategoriesSelector = createSelector([categoriesSelector, hiddenCategoriesSelector], _buildCategoryHierarchy);
 
 const mapStateToProps = (state, ownProps) => {
-    const rawCategories = state.get('categories');
     return {
         categories: hierarchicalCategoriesSelector(state, ownProps),
     }

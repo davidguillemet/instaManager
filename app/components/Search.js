@@ -42,7 +42,7 @@ export default class SearchInput extends React.PureComponent {
 
             function(resolve, reject) {
 
-                const dataList = that.props.dataSource();
+                const dataList = that.props.dataSource;
                 let results = [];
                 const upperCaseSearch = searchText.toUpperCase();
                 for (let data of dataList) {
@@ -69,7 +69,8 @@ export default class SearchInput extends React.PureComponent {
                     placeholder={this.props.placeholder ? this.props.placeholder : 'search text'}
                     placeholderTextColor={CommonStyles.PLACEHOLDER_COLOR}
                     clearButtonMode={'always'}
-                    autoCapitalize='none'>
+                    autoCapitalize='none'
+                    editable={this.props.dataSource != null && this.props.dataSource.length > 0}>
                 </TextInput>
             </View>
         );

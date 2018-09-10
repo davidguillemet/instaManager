@@ -8,6 +8,7 @@ function _buildSections(immutableHashtags, unavailableTags /* identifier set */)
     const sortedHashtags = immutableHashtags.toList().sort((t1, t2) => t1.name.localeCompare(t2.name));
 
     let sections = [];
+    let rawTags = [];
     let previousSectionTitle = null;
     let currentSectionData;
 
@@ -16,6 +17,8 @@ function _buildSections(immutableHashtags, unavailableTags /* identifier set */)
         if (unavailableTags && unavailableTags.has(hashtag.id)) {
             continue;
         }
+
+        rawTags.push(hashtag);
 
         let tagName = hashtag.name;
         let currentSectionTitle = tagName.charAt(0).toUpperCase();
@@ -33,7 +36,10 @@ function _buildSections(immutableHashtags, unavailableTags /* identifier set */)
         currentSectionData.push(hashtag.id);
     }
 
-    return sections;
+    return {
+        sections: sections,
+        rawTags: rawTags
+    };
 }
 
 const tagsSelector = (state, props) => state.get('tags');
@@ -41,10 +47,10 @@ const unavailableTagsSelector = (state, props) => props.navigation.state.params 
 const sectionsSelector = createSelector([tagsSelector, unavailableTagsSelector],  _buildSections);
 
 const mapStateToProps = (state, ownProps) => {
-    const tags = state.get('tags');
+    const { sections, rawTags } = sectionsSelector(state, ownProps);
     return {
-        tags: tags,
-        sections: sectionsSelector(state, ownProps)
+        sections: sections,
+        rawTags: rawTags
     }
 }
 

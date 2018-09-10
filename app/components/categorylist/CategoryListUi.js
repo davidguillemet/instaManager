@@ -40,15 +40,9 @@ class CategoryListUi extends React.PureComponent {
             displayType: DISPLAY_ALL
         };
         
-        // if (this.props.selection != null && this.props.selection.length > 0) {
-        //     this.state.displayType = DISPLAY_SELECTED;
-        //     this.state.selectedCategories = this.getSelectedCategories();
-        // }
-
         this.renderCategory = this.renderCategory.bind(this);
         this.renderEmptyComponent = this.renderEmptyComponent.bind(this);
         this.keyExtractor = this.keyExtractor.bind(this);
-        this.getSearchDataSource = this.getSearchDataSource.bind(this);
         this.setSearchResults = this.setSearchResults.bind(this);
 
         this.onPressCategory = this.onPressCategory.bind(this);
@@ -183,11 +177,6 @@ class CategoryListUi extends React.PureComponent {
         );
     }
 
-    getSearchDataSource() {
-
-        return this.props.categories;
-    }
-
     setSearchResults(results) {
 
         this.setState({
@@ -260,6 +249,21 @@ class CategoryListUi extends React.PureComponent {
 
     render() {
 
+        if (this.state.searchResults) {
+            let resultsModified = false;
+            // Remove tags which could have been removed...
+            for (let index = this.state.searchResults.length - 1; index >= 0; index--) {
+                if (!global.hashtagUtil.hasCat(this.state.searchResults[index].id)) {
+                    resultsModified = true;
+                    this.state.searchResults.splice(index, 1);
+                }
+            }
+
+            if (resultsModified) {
+                this.state.searchResults = [...this.state.searchResults];
+            }
+        }
+
         return (
             <View style={{ flex: 1 }}>
                 {   
@@ -279,7 +283,7 @@ class CategoryListUi extends React.PureComponent {
                 <View style={{padding: CommonStyles.GLOBAL_PADDING, backgroundColor: CommonStyles.MEDIUM_BACKGROUND}}>
                     <SearchInput
                         placeholder={'search category'}
-                        dataSource={this.getSearchDataSource}
+                        dataSource={this.props.categories}
                         resultsCallback={this.setSearchResults}
                         filterProperty={'name'}
                     />

@@ -90,10 +90,6 @@ export default class HashTagListScreenUi extends React.Component {
         });
     }
 
-    getSearchDataSource() {
-        return global.hashtagUtil.getHashtags().valueSeq().toArray();
-    }
-
     setSearchResults(results) {
         this.setState({ searchResults: results });
     }
@@ -136,7 +132,7 @@ export default class HashTagListScreenUi extends React.Component {
 
     onEditTag(itemId) {
 
-        let tagItem = this.props.tags.get(itemId);
+        let tagItem = global.hashtagUtil.getTagFromId(itemId);
         this.navigateToEditScreen(tagItem);
     }
 
@@ -288,6 +284,16 @@ export default class HashTagListScreenUi extends React.Component {
     }
 
     render() {
+   
+        if (this.state.searchResults) {
+            // Remove tags which could have been removed...
+            for (let index = this.state.searchResults.length - 1; index >= 0; index--) {
+                if (!global.hashtagUtil.hasTag(this.state.searchResults[index].id)) {
+                    this.state.searchResults.splice(index, 1);
+                }
+            }
+        }
+
         return(
             <View style={[CommonStyles.styles.standardPage, {padding: 0}]}>
                 {
@@ -298,7 +304,7 @@ export default class HashTagListScreenUi extends React.Component {
                             <View style={{padding: CommonStyles.GLOBAL_PADDING, backgroundColor: CommonStyles.MEDIUM_BACKGROUND}}>
                                 <SearchInput
                                     placeholder={'search hashtag'}
-                                    dataSource={this.getSearchDataSource}
+                                    dataSource={this.props.rawTags}
                                     resultsCallback={this.setSearchResults}
                                     filterProperty={'name'}
                                 />

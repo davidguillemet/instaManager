@@ -28,9 +28,19 @@ export default class HashtagUtil {
         return this.reduxStore.getState().get('tags').get(tagId);
     }
 
+    hasTag(tagId) {
+
+        return this.reduxStore.getState().get('tags').has(tagId);
+    }
+
     getCatFromId(catId) {
         
         return this.reduxStore.getState().get('categories').get(catId);
+    }
+
+    hasCat(catId) {
+        
+        return this.reduxStore.getState().get('categories').has(catId);
     }
 
     getAncestorCategories(catId) {
