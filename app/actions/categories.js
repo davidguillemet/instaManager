@@ -1,4 +1,4 @@
-import { OrderedMap } from 'immutable';
+import { Map } from 'immutable';
 
 export const CATEGORIES_LOADED = 'CATEGORIES_LOADED';
 export const ADD_CATEGORY = 'ADD_CATEGORY';
@@ -17,7 +17,7 @@ export function createLoadCategoriesAction() {
     return dispatch => {
         return global.hashtagPersistenceManager.getCategories()
         .then((categories) => {
-            const immutableMap = OrderedMap(categories.map(item => [item.id, item]));
+            const immutableMap = Map(categories.map(item => [item.id, item]));
             dispatch(createCategoriesLoadedAction(immutableMap));
         })
     }

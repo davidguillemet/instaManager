@@ -1,4 +1,4 @@
-import { OrderedMap, List, Record } from 'immutable';
+import { Map, List, Record } from 'immutable';
 import { combineReducers } from 'redux-immutable';
 import {
     CATEGORIES_LOADED,
@@ -16,15 +16,15 @@ import {
  * {
  *      categoriesLoaded: false|true,
  *      tagsLoaded: false|true,
- *      categories: OrderedMap(),
- *      tags: OrderedMap()
+ *      categories: Map(),
+ *      tags: Map()
  * }
  */
 
 /**
- * state is an immutable OrderedMap containing all the categories by Id 
+ * state is an immutable Map containing all the categories by Id 
  */
-function categoriesReducer(state = OrderedMap(), action) {
+function categoriesReducer(state = Map(), action) {
 
     switch (action.type) {
         case CATEGORIES_LOADED:
@@ -66,9 +66,9 @@ function categoriesReducer(state = OrderedMap(), action) {
 }
 
 /**
- * state is an immutable OrderedMap containing all the tags by Id 
+ * state is an immutable Map containing all the tags by Id 
  */
-function tagReducers(state = OrderedMap(), action) {
+function tagReducers(state = Map(), action) {
 
     switch (action.type) {
         case TAGS_LOADED:

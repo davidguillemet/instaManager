@@ -1,4 +1,4 @@
-import { OrderedMap, List } from 'immutable';
+import { Map, List } from 'immutable';
 
 export const TAGS_LOADED = 'TAGS_LOADED';
 export const ADD_TAG = 'ADD_TAG';
@@ -18,7 +18,7 @@ export function createLoadTagsAction() {
         return global.hashtagPersistenceManager.open()
         .then(() => {
             const hashtags = global.hashtagPersistenceManager.getHashtags();
-            const immutableTagsMap = OrderedMap(hashtags.map(item => [item.id, item]));
+            const immutableTagsMap = Map(hashtags.map(item => [item.id, item]));
             dispatch(createTagsLoadedAction(immutableTagsMap));
         })
     }

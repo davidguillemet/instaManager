@@ -3,9 +3,9 @@ import { createSelector } from 'reselect';
 import { createMultiUpdateAction } from '../../actions';
 import HashTagListScreenUi from './HashTagListScreenUi';
 
-function _buildSections(immutableSortedHashtags) {
+function _buildSections(immutableHashtags) {
 
-    const sortedHashtags = immutableSortedHashtags.values();
+    const sortedHashtags = immutableHashtags.toList().sort((t1, t2) => t1.name.localeCompare(t2.name));
 
     let sections = [];
     let previousSectionTitle = null;

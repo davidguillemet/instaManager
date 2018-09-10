@@ -9,8 +9,6 @@ import {
   Alert
 } from 'react-native';
 
-import { OrderedMap } from 'immutable';
-
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import CustomButton from '../../components/CustomButton';
 import SearchInput from '../../components/Search';

@@ -14,7 +14,7 @@ function _buildCategoryHierarchy(rawCategories, hiddenCategories) {
 
     // get sorted root categories
     let rootCategories = rawCategories.toList().filter(cat => cat.parent === null);
-    rootCategories.sort((c1, c2) => c1.name.localeCompare(c2.name));
+    rootCategories = rootCategories.sort((c1, c2) => c1.name.localeCompare(c2.name));
 
     for (let rootCat of rootCategories) {
         hierarchy.push(_getCatHierarchyNode(rootCat, 0));
