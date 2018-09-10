@@ -37,7 +37,7 @@ function _buildSections(immutableHashtags, unavailableTags /* identifier set */)
 }
 
 const tagsSelector = (state, props) => state.get('tags');
-const unavailableTagsSelector = (state, props) => props.navigation.state.params.unavailableTags;
+const unavailableTagsSelector = (state, props) => props.navigation.state.params ? props.navigation.state.params.unavailableTags : null;
 const sectionsSelector = createSelector([tagsSelector, unavailableTagsSelector],  _buildSections);
 
 const mapStateToProps = (state, ownProps) => {
