@@ -134,7 +134,6 @@ const styles = StyleSheet.create(
     indexTitleStyle: {
         color: CommonStyles.GLOBAL_FOREGROUND,
         fontWeight: "800",
-        fontStyle: 'italic',
         fontSize: CommonStyles.SMALL_FONT_SIZE,
         height: CommonStyles.INDEX_ITEM_HEIGHT
     }
