@@ -83,7 +83,7 @@ export default class PublicationSummaryScreen extends React.Component {
                     if (tagsValue.length > 0) {
                         tagsValue += ' ';
                     }
-                    tagsValue += '#' + tag.name;
+                    tagsValue += '#' + global.hashtagUtil.getTagFromId(tag).name;
                 });
         
                 let tagStream = global.settingsManager.getHeader()
