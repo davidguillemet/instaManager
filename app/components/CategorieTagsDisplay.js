@@ -43,7 +43,7 @@ class CategorieTagsDisplay extends React.PureComponent {
         };
 
         // Callbacks for tag management
-        this.onSelectCategoryTags = this.onSelectCategoryTags.bind(this);
+        this.onSelectTags = this.onSelectTags.bind(this);
         this.onTagSelectionValidated = this.onTagSelectionValidated.bind(this);
         this.onDeleteTag = this.onDeleteTag.bind(this);
         
@@ -63,11 +63,14 @@ class CategorieTagsDisplay extends React.PureComponent {
         this.props.onDeleteTag(tagId);
     }
 
-    onSelectCategoryTags() {
+    onSelectTags() {
+
+        const unavailableTags = this.ancestors.reduce((set, cat) => { cat.hashtags.forEach(tagId => set.add(tagId)); return set; }, new Set());
 
         const params = {
             mode: global.LIST_SELECTION_MODE,
             selection: this.state.tags,
+            unavailableTags: unavailableTags,
             onSelectionValidated: this.onTagSelectionValidated
         };
 
@@ -100,7 +103,13 @@ class CategorieTagsDisplay extends React.PureComponent {
         this.toggleTagsDisplay(TAGS_DISPLAY_ANCESTORS);
     }
 
-    renderTagContainers(ancestors, ancesorsTagCount) {
+    getAncestorsTagCount() {
+        return  this.ancestors != null && this.ancestors.length > 0 ?
+                this.ancestors.reduce((count, cat) => count + cat.hashtags.length, 0) :
+                0;
+    }
+
+    renderTagContainers() {
 
         if (this.state.tagsDisplayMode == TAGS_DISPLAY_SELF) {
 
@@ -114,20 +123,20 @@ class CategorieTagsDisplay extends React.PureComponent {
                     label={tagsCount + ' tag(s) in this ' + global.hashtagUtil.getItemTypeCaption(this.props.itemType)}
                     itemType={global.TAG_ITEM}
                     onDelete={this.onDeleteTag}
-                    onAdd={this.onSelectCategoryTags}
+                    onAdd={this.onSelectTags}
                     readOnly={false}
                     addSharp={true}
                 />
             );
         }
 
-        if (ancestors.length == 0) {
+        if (this.ancestors.length == 0) {
             // no parent...
             return null;
         }
 
         return (
-            ancestors.map(cat => {
+            this.ancestors.map(cat => {
                 return (
                     <TagContainer
                         style={{ marginTop: 10 }}
@@ -142,7 +151,9 @@ class CategorieTagsDisplay extends React.PureComponent {
         );
     }
 
-    renderSegmentControl(ancestorCategoriesTagCount) {
+    renderSegmentControl() {
+
+        const ancestorCategoriesTagCount = this.getAncestorsTagCount();
 
         if (this.props.showSegmentControl === false) {
             return null;
@@ -179,14 +190,12 @@ class CategorieTagsDisplay extends React.PureComponent {
     render() {
 
         // In case of a category item, get the count of tags from ancestor categories
-        const parentId = this.props.parentCategory;
-        const ancestors = parentId != null ? global.hashtagUtil.getAncestorCategories(parentId) : [];
-        const ancestorCategoriesTagCount = ancestors != null && ancestors.length > 0 ? ancestors.reduce((count, cat) => count + cat.hashtags.length, 0) : 0;
-
+        this.ancestors = this.props.parentCategory != null ? global.hashtagUtil.getAncestorCategories(this.props.parentCategory) : [];
+        
         return (
             <View>
-                { this.renderSegmentControl(ancestorCategoriesTagCount) }
-                { this.renderTagContainers(ancestors, ancestorCategoriesTagCount) }
+                { this.renderSegmentControl() }
+                { this.renderTagContainers() }
             </View>
         );
     }

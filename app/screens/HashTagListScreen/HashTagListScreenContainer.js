@@ -3,7 +3,7 @@ import { createSelector } from 'reselect';
 import { createMultiUpdateAction } from '../../actions';
 import HashTagListScreenUi from './HashTagListScreenUi';
 
-function _buildSections(immutableHashtags) {
+function _buildSections(immutableHashtags, unavailableTags /* identifier set */) {
 
     const sortedHashtags = immutableHashtags.toList().sort((t1, t2) => t1.name.localeCompare(t2.name));
 
@@ -12,6 +12,10 @@ function _buildSections(immutableHashtags) {
     let currentSectionData;
 
     for (let hashtag of sortedHashtags) {
+
+        if (unavailableTags && unavailableTags.has(hashtag.id)) {
+            continue;
+        }
 
         let tagName = hashtag.name;
         let currentSectionTitle = tagName.charAt(0).toUpperCase();
@@ -32,14 +36,15 @@ function _buildSections(immutableHashtags) {
     return sections;
 }
 
-const tagsSelector = state => state.get('tags');
-const sectionsSelector = createSelector(tagsSelector, _buildSections);
+const tagsSelector = (state, props) => state.get('tags');
+const unavailableTagsSelector = (state, props) => props.navigation.state.params.unavailableTags;
+const sectionsSelector = createSelector([tagsSelector, unavailableTagsSelector],  _buildSections);
 
-const mapStateToProps = state => {
+const mapStateToProps = (state, ownProps) => {
     const tags = state.get('tags');
     return {
         tags: tags,
-        sections: sectionsSelector(state)
+        sections: sectionsSelector(state, ownProps)
     }
 }
 
