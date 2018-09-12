@@ -19,6 +19,8 @@ export default class SearchInput extends React.PureComponent {
 
     constructor(props) {
         super(props);
+
+        this.shouldSearch = this.shouldSearch.bind(this);
     }
 
    shouldSearch(text) {
@@ -62,7 +64,7 @@ export default class SearchInput extends React.PureComponent {
             <View style={styles.searchContainer}>
                 <Ionicons name={'ios-search'} size={25} color={CommonStyles.TEXT_COLOR} style={{marginTop: 4}}/>
                 <TextInput
-                    onChangeText={this.shouldSearch.bind(this)}
+                    onChangeText={this.shouldSearch}
                     autoCorrect={false}
                     style={styles.searchInput}                
                     selectionColor={CommonStyles.TEXT_COLOR}

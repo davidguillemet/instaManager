@@ -231,6 +231,25 @@ export default class HashTagListScreenUi extends React.Component {
     }
 
     renderEmptyComponent() {
+        
+        if (this.mode == global.LIST_SELECTION_MODE) {
+
+            let emptyCaption;
+            if (global.hashtagUtil.getTagsCount() > 0) {
+                emptyCaption = 'All tags are used in parent categories.';
+            } else {
+                emptyCaption = 'You have not created any tags yet.';
+            }
+
+            return(
+                <View style={{flex: 1, padding: CommonStyles.GLOBAL_PADDING}}>
+                    <View style={[CommonStyles.styles.standardTile, { alignItems: 'center' } ]}>
+                        <Text style={[CommonStyles.styles.mediumLabel, {flex: 1, flexWrap: 'wrap'}]}>{emptyCaption}</Text>
+                    </View>                
+                </View>
+            );
+        }
+    
         return (
             <View style={{flex: 1, padding: CommonStyles.GLOBAL_PADDING}}>
                 <CustomButton style={CommonStyles.styles.standardButtonCentered} title={'Create your first tag'} onPress={this.onAddTag} />
@@ -291,6 +310,10 @@ export default class HashTagListScreenUi extends React.Component {
                 if (!global.hashtagUtil.hasTag(this.state.searchResults[index].id)) {
                     this.state.searchResults.splice(index, 1);
                 }
+            }
+
+            if (this.state.searchResults.length == 0) {
+                this.state.searchResults = null;
             }
         }
 

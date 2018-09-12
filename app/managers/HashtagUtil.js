@@ -14,33 +14,38 @@ export default class HashtagUtil {
 
         } else {
             
-            return this.reduxStore.getState().get('tags');
+            return this._getTagsFromStore();
         }
     }
 
     getCategories() {
 
-        return this.reduxStore.getState().get('categories');
+        return this._getCategoriesFromStore();
     }
 
     getTagFromId(tagId) {
 
-        return this.reduxStore.getState().get('tags').get(tagId);
+        return this._getTagsFromStore().get(tagId);
     }
 
     hasTag(tagId) {
 
-        return this.reduxStore.getState().get('tags').has(tagId);
+        return this._getTagsFromStore().has(tagId);
+    }
+    
+    getTagsCount() {
+
+        this._getTagsFromStore().size;
     }
 
     getCatFromId(catId) {
         
-        return this.reduxStore.getState().get('categories').get(catId);
+        return this._getCategoriesFromStore().get(catId);
     }
 
     hasCat(catId) {
         
-        return this.reduxStore.getState().get('categories').has(catId);
+        return this._getCategoriesFromStore().has(catId);
     }
 
     getAncestorCategories(catId) {
@@ -77,5 +82,15 @@ export default class HashtagUtil {
             default:
                 return '<unkonwn item type';
         }
+    }
+
+    _getTagsFromStore() {
+
+        return this._getTagsFromStore();
+    }
+
+    _getCategoriesFromStore() {
+
+        return this._getCategoriesFromStore();
     }
 }

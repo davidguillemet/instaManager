@@ -260,7 +260,11 @@ class CategoryListUi extends React.PureComponent {
             }
 
             if (resultsModified) {
-                this.state.searchResults = [...this.state.searchResults];
+                if (this.state.searchResults.length == 0) {
+                    this.state.searchResults = null;
+                } else {
+                    this.state.searchResults = [...this.state.searchResults];
+                }
             }
         }
 
