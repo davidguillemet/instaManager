@@ -86,11 +86,11 @@ export default class HashtagUtil {
 
     _getTagsFromStore() {
 
-        return this._getTagsFromStore();
+        return this.reduxStore.getState().get('tags');
     }
 
     _getCategoriesFromStore() {
 
-        return this._getCategoriesFromStore();
+        return this.reduxStore.getState().get('categories');
     }
 }
