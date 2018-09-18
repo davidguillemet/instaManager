@@ -7,6 +7,8 @@ import {
     TouchableOpacity
   } from 'react-native';
 
+import PropTypes from 'prop-types';
+
 import CommonStyles from '../styles/common';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Tag from './Tag';
@@ -14,20 +16,57 @@ import Tag from './Tag';
   
 /**
  * - tags = tag collection
- * - onDelete = callback when a tag is deleted
+ * - onPressTag = callback when a tag is pressed
  * - onAdd = callback when selecting a new tag
  * - readOnly = true if the display is readonly, what means we cannot remove the tag
  * - addSharp = true pour ajouter le prefix #
  * - itemType = type of the displayed item (global.CATEGORY_ITEM or global.TAG_ITEM)
+ * - hideIfEmpty = true to hide the contaner when the tag list is empty
+ * - iconName = name of the icon to use
  */
 export default class TagContainer extends React.PureComponent {
+
+    static propTypes = {
+        tags: PropTypes.array,          // tag collection
+        onPressTag: PropTypes.func,     // callback when a tag is pressed
+        onAdd: PropTypes.func,          // callback when selecting a new tag
+        readOnly: PropTypes.bool,       // true if the display is readonly, what means we cannot remove the tag
+        addSharp: PropTypes.bool,       // true pour ajouter le prefix #
+        itemType: PropTypes.string,     // type of the displayed item (global.CATEGORY_ITEM or global.TAG_ITEM)
+        hideIfEmpty: PropTypes.bool,    // true to hide the contaner when the tag list is empty
+        iconName: PropTypes.string      // name of the icon to use for each tag
+    };
+
+    static defaultProps = {
+        tags: [],
+        onPressTag: null,
+        onAdd: null,
+        readOnly: false,
+        addSharp: true,
+        itemType: global.TAG_ITEM,
+        hideIfEmpty: false,
+        iconName: 'ios-close-circle-outline'
+    };
 
     constructor(props) {
         super(props);
     }
     render() {
 
-        let tagList = this.props.tags.reduce((arr, id) => { arr.push(global.hashtagUtil.getTagFromId(id)); return arr; }, new Array());
+        let tagList =
+            this.props.asObject ?
+            this.props.tags :
+            this.props.tags.reduce((arr, id) => { arr.push(global.hashtagUtil.getTagFromId(id)); return arr; }, new Array());
+
+        if (tagList.length == 0 && this.props.hideIfEmpty) {
+            return null;
+        }
+
+        let tagContainerStyle = StyleSheet.flatten(styles.tagContainer);
+
+        if (this.props.label == null) {
+            tagContainerStyle = { borderTopLeftRadius: CommonStyles.BORDER_RADIUS, ...tagContainerStyle };
+        }
 
         return (
             <View style={this.props.style}>
@@ -36,14 +75,14 @@ export default class TagContainer extends React.PureComponent {
                     <View style={{ flexDirection: 'row', flex: 1, justifyContent: 'space-between'}}>
                         {
                             this.props.label ?
-                            <View style={styles.tagCcontainerLabel}>
+                            <View style={styles.tagContainerLabel}>
                                 <Text style={[CommonStyles.styles.mediumLabel]}>{this.props.label}</Text>
                             </View>
                             :
                             null
                         }
                         {
-                            this.props.readOnly ?
+                            this.props.readOnly || this.props.onAdd == null ?
                             null
                             :
                             <View style={styles.addTagButton}>
@@ -56,7 +95,7 @@ export default class TagContainer extends React.PureComponent {
                     :
                     null
                 }
-                <View style={styles.tagCcontainer}>
+                <View style={tagContainerStyle}>
                     {
                         tagList.sort((t1, t2) => t1.name.localeCompare(t2.name)).map(tag => {
                             return (
@@ -65,8 +104,8 @@ export default class TagContainer extends React.PureComponent {
                                     key={tag.id}
                                     id={tag.id}
                                     name={(this.props.addSharp ? '#' : '') + tag.name}
-                                    onPress={this.props.readOnly ? null : this.props.onDelete}
-                                    iconName={'ios-close-circle-outline'}
+                                    onPress={this.props.readOnly ? null : this.props.onPressTag}
+                                    iconName={this.props.iconName}
                                 />
                             );
                         })
@@ -86,25 +125,24 @@ const styles = StyleSheet.create(
         borderColor: CommonStyles.SEPARATOR_COLOR,
         borderRadius: 8,
         borderWidth: 1,
-        paddingLeft: 10,
+        paddingLeft: CommonStyles.GLOBAL_PADDING,
         paddingRight: 5,
         paddingVertical: 3
     },
-    tagCcontainerLabel: {
+    tagContainerLabel: {
         borderColor: CommonStyles.SEPARATOR_COLOR,
         borderWidth: 1,
         borderTopLeftRadius: CommonStyles.BORDER_RADIUS,
         borderTopRightRadius: CommonStyles.BORDER_RADIUS,
         borderBottomWidth: 0,
-        paddingHorizontal: 10,
+        paddingHorizontal: CommonStyles.GLOBAL_PADDING,
         paddingVertical: 4
     },
-    tagCcontainer: {
+    tagContainer: {
         flexDirection: 'row',
         flexWrap: 'wrap',
-        paddingBottom: 10,
-        paddingHorizontal: 10,
-        paddingTop: 20,
+        paddingTop: CommonStyles.GLOBAL_PADDING,
+        paddingHorizontal: CommonStyles.GLOBAL_PADDING,
         borderTopRightRadius: CommonStyles.BORDER_RADIUS,
         borderBottomLeftRadius: CommonStyles.BORDER_RADIUS,
         borderBottomRightRadius: CommonStyles.BORDER_RADIUS,

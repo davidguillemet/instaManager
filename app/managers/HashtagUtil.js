@@ -84,6 +84,49 @@ export default class HashtagUtil {
         }
     }
 
+    getTagsFromText(text) {
+        
+        const tags = new Set();
+        const invalidTags = new Set();
+
+        const regex = new RegExp("(#?([^#\\s]+))", "g");
+
+        while ((m = regex.exec(text)) !== null) {
+            
+            // This is necessary to avoid infinite loops with zero-width matches
+            if (m.index === regex.lastIndex) {
+                regex.lastIndex++;
+            }
+
+            // The result can be accessed through the `m`-variable.
+            // The tag itself, without '#' is the second group
+            const newTag = m[2].toLowerCase();
+
+            if (this.tagNameIsValid(newTag)) {
+                tags.add(newTag);
+            } else {
+                invalidTags.add(newTag);
+            }
+        }
+
+        return {
+            tags: [...tags],
+            errors: [...invalidTags] 
+        };
+    }
+
+    tagNameIsValid(tagName) {
+
+        const tagNameRegex = new RegExp("^[a-zA-Z]+[a-zA-Z0-9_]*$", "g");
+
+        return tagNameRegex.test(tagName);
+    }
+
+    getTagNameRule() {
+
+        return 'A tag can only contain a letter, a number or an underscore and must start by a letter.'
+    }
+
     _getTagsFromStore() {
 
         return this.reduxStore.getState().get('tags');

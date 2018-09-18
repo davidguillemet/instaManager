@@ -4,17 +4,14 @@ import {
   View,
   Text,
   TextInput,
-  TouchableOpacity,
   ScrollView,
   Clipboard
 } from 'react-native';
 
-import Ionicons from 'react-native-vector-icons/Ionicons';
 import CategorieTagsDisplay from '../components/CategorieTagsDisplay';
 import CustomButton from '../components/CustomButton';
 import CommonStyles from '../styles/common';
 import { NotificationType, BottomNotification } from '../components/BottomNotification';
-import ActivityIndicatorLoadingView from '../components/LoadingIndicator';
 
 export default class PublicationSummaryScreen extends React.Component {
 

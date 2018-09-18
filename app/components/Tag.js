@@ -37,6 +37,7 @@ export default class Tag extends React.PureComponent {
                 <TouchableOpacity
                   style={tagStyle}
                   onPress={this.onPress}
+                  disabled={this.props.onPress == null}
                 >
                     <Text style={styles.title}>{this.props.name}</Text>
                     {

@@ -51,8 +51,6 @@ export default class HashtagCategoryEditScreenUi extends React.Component {
     constructor(props) {
         super(props);
 
-        this.tagNameRegex = new RegExp("^[a-zA-Z]+[a-zA-Z0-9_]*$", "g");
-
         const { params } = this.props.navigation.state;
 
         this.itemType = params.itemType;
@@ -208,8 +206,8 @@ export default class HashtagCategoryEditScreenUi extends React.Component {
         }
 
         // 2. a tag name must not contain spaces or #
-        if (this.itemType === global.TAG_ITEM && this.tagNameRegex.test(this.state.itemName) == false) {
-            Alert.alert('Invalid tag name', `The tag name '${this.state.itemName}' is not valid.\nIt can only contain a letter, a number or an underscore and must start by a letter.`);
+        if (this.itemType === global.TAG_ITEM && !global.hashtagUtil.tagNameIsValid(this.state.itemName)) {
+            Alert.alert('Invalid tag', `The tag '${this.state.itemName}' is not valid.\n` + global.hashtagUtil.getTagNameRule());
             return false;
         }
 

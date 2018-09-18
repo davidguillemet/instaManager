@@ -15,6 +15,7 @@ import SearchInput from '../../components/Search';
 import LoadingIndicatorView from '../../components/LoadingIndicator';
 import SectionListIndex from '../../components/SectionListIndex';
 import TagListItem from './HashTagListItem';
+import { NotificationType, BottomNotification } from '../../components/BottomNotification';
 
 import CommonStyles from '../../styles/common'; 
 
@@ -59,7 +60,8 @@ export default class HashTagListScreenUi extends React.Component {
         this.state =
         { 
             isSwiping: false,
-            selection: new Set(selectionArray)
+            selection: new Set(selectionArray),
+            importNotification: params.importNotification
         };
 
         this.sectionListRef = null;
@@ -361,6 +363,16 @@ export default class HashTagListScreenUi extends React.Component {
                                         onPressIndex={this.onPressSectionIndex}
                                     />
                                 </View>
+                            }
+                            { 
+                                this.state.importNotification === true ?
+                                <BottomNotification
+                                    caption={'The tags have been saved successfully.'}
+                                    type={NotificationType.SUCCESS}
+                                    manuallyCloseable={true}
+                                />
+                                :
+                                null
                             }
                         </View>
                     )

@@ -10,7 +10,7 @@ import {
 import PropTypes from 'prop-types';
 import CommonStyles from '../styles/common';
 
-export default class CustomButton extends React.Component {
+export default class CustomButton extends React.PureComponent {
 
     static propTypes = {
         title: PropTypes.string.isRequired,     // Button caption
@@ -18,7 +18,7 @@ export default class CustomButton extends React.Component {
         onPress: PropTypes.func.isRequired,     // callback when the button is pressed if not deactivated
         showActivityIndicator: PropTypes.bool,  // true if we show the activity indicator when the button is pressed - optional - false by default
         running: PropTypes.bool,                // true if the action is running
-        register:PropTypes.array                 // array for registering the current button to calback setActionCompleted()
+        register: PropTypes.array                // array for registering the current button to calback setActionCompleted()
     };
 
     static defaultProps = {
@@ -80,13 +80,20 @@ export default class CustomButton extends React.Component {
 
         let touchableStyle = { ...defaultStyle, ...allOtherStyles };
         
+        const disabled = this.props.deactivated || this.state.running;
+
+        let finalColor =
+            disabled ?
+            CommonStyles.DEACTIVATED_BUTTON_TEXT_COLOR :
+            color ? color : CommonStyles.TEXT_COLOR;
+
         const textStyle = {
-            color: color ? color : CommonStyles.TEXT_COLOR,
+            color: finalColor,
             fontSize: fontSize ? fontSize : CommonStyles.MEDIUM_FONT_SIZE
         };
 
         return (
-            <TouchableOpacity style={touchableStyle} onPress={this.onPress} disabled={this.props.deactivated || this.state.running}>
+            <TouchableOpacity style={touchableStyle} onPress={this.onPress} disabled={disabled}>
                 {
                     this.state.running ?
                     <ActivityIndicator style={{ marginRight: 10 }} color={'white'} />

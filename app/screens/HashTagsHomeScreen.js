@@ -45,8 +45,8 @@ class HashTagsHomeScreenComponent extends React.Component {
             target: 'HashTagList'
         });
         hashtagMenuItems.push({
-            caption: 'Archived hashtags',
-            target: 'ArchivedHashTags'
+            caption: 'Import hashtags',
+            target: 'ImportFromText'
         });
         this.sections.push({
             title: 'Manage hashtags',
