@@ -94,7 +94,7 @@ export default class CategoryListItem extends React.PureComponent {
 
     renderTouchableContent() {
         return (
-            <TouchableOpacity onPress={this.props.deactivated ? null : this._onPress}>
+            <TouchableOpacity onPress={this.props.deactivated ? null : this._onPress} disabled={this.props.deactivated || false}>
                 { this.renderInnerItem() }
             </TouchableOpacity>
         );
