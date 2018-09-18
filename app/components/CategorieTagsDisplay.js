@@ -122,7 +122,7 @@ class CategorieTagsDisplay extends React.PureComponent {
                     tags={tags}
                     label={tagsCount + ' tag(s) in this ' + global.hashtagUtil.getItemTypeCaption(this.props.itemType)}
                     itemType={global.TAG_ITEM}
-                    onDelete={this.onDeleteTag}
+                    onPressTag={this.onDeleteTag}
                     onAdd={this.onSelectTags}
                     readOnly={false}
                     addSharp={true}
@@ -217,19 +217,13 @@ const styles = StyleSheet.create(
     {
         flex: 0.5,
         fontSize: CommonStyles.SMALL_FONT_SIZE,
-        borderColor: CommonStyles.SEPARATOR_COLOR,
-        borderTopWidth: 0,
         backgroundColor: CommonStyles.TEXT_COLOR,
         color: CommonStyles.GLOBAL_FOREGROUND
     },
     unselectedSegment:
     {
         flex: 0.5,
-        fontSize: CommonStyles.SMALL_FONT_SIZE,
-        borderColor: CommonStyles.SEPARATOR_COLOR,
-        borderTopWidth: 1,
-        backgroundColor: CommonStyles.GLOBAL_FOREGROUND,
-        color: CommonStyles.TEXT_COLOR
+        fontSize: CommonStyles.SMALL_FONT_SIZE
     },
     tagSegmentTitle: {
         marginTop: 15,
