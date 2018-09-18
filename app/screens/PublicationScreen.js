@@ -43,7 +43,7 @@ export default class PublicationScreen extends React.Component {
                         Once your publication contains all the desired tags, you will be able to copy them to the clipboard in order to paste them easily in your target social application.
                     </Text>
                 </View>
-                <CustomButton title={'Create a publication'} onPress={this.onCreatePublication} />
+                <CustomButton title={'Create a publication'} onPress={this.onCreatePublication} style={CommonStyles.styles.standardButtonCentered}/>
             </View>
         );
     }

@@ -138,6 +138,7 @@ class CategorieTagsDisplay extends React.PureComponent {
         return (
             this.ancestors.map(cat => {
                 return (
+                    cat.hashtags.length > 0 ?
                     <TagContainer
                         style={{ marginTop: 10 }}
                         label={cat.hashtags.length + ' tag(s) in ' + cat.name}
@@ -145,7 +146,10 @@ class CategorieTagsDisplay extends React.PureComponent {
                         tags={cat.hashtags}
                         itemType={global.TAG_ITEM}
                         readOnly={true}
-                        addSharp={true} />
+                        addSharp={true}
+                    />
+                    :
+                    null
                 );
             })
         );
@@ -155,34 +159,42 @@ class CategorieTagsDisplay extends React.PureComponent {
 
         const ancestorCategoriesTagCount = this.getAncestorsTagCount();
 
-        if (this.props.showSegmentControl === false) {
-            return null;
-        }
+        const remainingTags = global.settingsManager.getMaxNumberOfTags() - ancestorCategoriesTagCount - this.state.tags.length;
+        const error = remainingTags < 0;
+        const titleStatusStyle = error ? styles.errorTitle : styles.successTitle;
+        const textStatusStyle = error ? styles.errorText : styles.successText;
+        const tagCount = (ancestorCategoriesTagCount + this.state.tags.length) + ' Tag(s) in total - ';
+        const remainingTip = error ? `${-remainingTags} in excess` : `${remainingTags} remaining`;
 
         return (
             <View>
-                <View style={[CommonStyles.styles.standardTile, styles.tagSegmentTitle]}>
-                    <Text style={CommonStyles.styles.mediumLabel}>{ancestorCategoriesTagCount + this.state.tags.length} Tag(s) in total</Text>
+                <View style={[CommonStyles.styles.standardTile, styles.tagSegmentTitle, titleStatusStyle]}>
+                    <Text style={[CommonStyles.styles.smallLabel, textStatusStyle]}>{tagCount + remainingTip}</Text>
                 </View>
-                <View style={{ flexDirection: 'row', flex: 1 }}>
-                    <CustomButton
-                        onPress={this.setTagsDisplaySelf}
-                        title={this.state.tags.length + ' in this ' + global.hashtagUtil.getItemTypeCaption(this.props.itemType)}
-                        style={[
-                            CommonStyles.styles.standardButtonCentered,
-                            styles.leftSegment,
-                            this.state.tagsDisplayMode == TAGS_DISPLAY_SELF ? styles.selectedSegment : styles.unselectedSegment]}
-                    />
-                    <CustomButton
-                        onPress={this.setTagsDisplayAncestors}
-                        deactivated={ancestorCategoriesTagCount == 0}
-                        title={ancestorCategoriesTagCount + ' from ' + (this.props.itemType == global.CATEGORY_ITEM ? 'ancestors' : 'the category')}
-                        style={[
-                            CommonStyles.styles.standardButtonCentered,
-                            styles.rightSegment,
-                            this.state.tagsDisplayMode == TAGS_DISPLAY_ANCESTORS ? styles.selectedSegment : styles.unselectedSegment ]}
-                    />
-                </View>
+                {
+                    this.props.showSegmentControl === true ?
+                    <View style={{ flexDirection: 'row', flex: 1 }}>
+                        <CustomButton
+                            onPress={this.setTagsDisplaySelf}
+                            title={this.state.tags.length + ' in this ' + global.hashtagUtil.getItemTypeCaption(this.props.itemType)}
+                            style={[
+                                CommonStyles.styles.standardButtonCentered,
+                                styles.leftSegment,
+                                this.state.tagsDisplayMode == TAGS_DISPLAY_SELF ? styles.selectedSegment : styles.unselectedSegment]}
+                        />
+                        <CustomButton
+                            onPress={this.setTagsDisplayAncestors}
+                            deactivated={ancestorCategoriesTagCount == 0}
+                            title={ancestorCategoriesTagCount + ' from ' + (this.props.itemType == global.CATEGORY_ITEM ? 'ancestors' : 'the category')}
+                            style={[
+                                CommonStyles.styles.standardButtonCentered,
+                                styles.rightSegment,
+                                this.state.tagsDisplayMode == TAGS_DISPLAY_ANCESTORS ? styles.selectedSegment : styles.unselectedSegment ]}
+                        />
+                    </View>
+                    :
+                    null
+                }
             </View>
         );
     }
@@ -204,13 +216,11 @@ class CategorieTagsDisplay extends React.PureComponent {
 const styles = StyleSheet.create(
 {
     leftSegment: {
-        borderTopLeftRadius: 0,
         borderTopRightRadius: 0,
         borderBottomRightRadius: 0
     },
     rightSegment: {
         borderTopLeftRadius: 0,
-        borderTopRightRadius: 0,
         borderBottomLeftRadius: 0
     },
     selectedSegment:
@@ -227,10 +237,19 @@ const styles = StyleSheet.create(
     },
     tagSegmentTitle: {
         marginTop: 15,
-        marginBottom: 0,
-        justifyContent: 'center',
-        borderBottomLeftRadius: 0,
-        borderBottomRightRadius: 0
+        justifyContent: 'center'
+    },
+    errorText: {
+        color: CommonStyles.DARK_RED
+    },
+    successText: {
+        color: CommonStyles.DARK_GREEN
+    },
+    errorTitle: {
+        backgroundColor: CommonStyles.LIGHT_RED
+    },
+    successTitle: {
+        backgroundColor: CommonStyles.LIGHT_GREEN
     }
 });
     

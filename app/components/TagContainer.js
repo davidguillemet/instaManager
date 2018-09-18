@@ -147,7 +147,8 @@ const styles = StyleSheet.create(
         borderBottomLeftRadius: CommonStyles.BORDER_RADIUS,
         borderBottomRightRadius: CommonStyles.BORDER_RADIUS,
         borderColor: CommonStyles.SEPARATOR_COLOR,
-        borderWidth: 1
+        borderWidth: 1,
+        minHeight: 53
     },
     addTagButton: {
         justifyContent: 'center',

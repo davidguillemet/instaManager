@@ -61,7 +61,7 @@ export default class HashTagListScreenUi extends React.Component {
         { 
             isSwiping: false,
             selection: new Set(selectionArray),
-            importNotification: params.importNotification
+            importNotification: params ? params.importNotification : null
         };
 
         this.sectionListRef = null;
