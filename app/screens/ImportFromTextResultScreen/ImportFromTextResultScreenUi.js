@@ -9,12 +9,11 @@ import {
     Text
 } from 'react-native';
 
-import Ionicons from 'react-native-vector-icons/Ionicons';
-
 import CommonStyles from '../../styles/common';
 import CustomButton from '../../components/CustomButton';
 import LoadingIndicator from '../../components/LoadingIndicator';
 import TagContainer from '../../components/TagContainer';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
 const INVALID_TAGS = 'invalid';
 const DUPLICATE_TAGS = 'duplicated';
@@ -233,9 +232,8 @@ export default class ImportFromTextScreen extends React.PureComponent {
             <View
                 style={{
                     height: 1,
-                    width: "100%",
                     backgroundColor: CommonStyles.SEPARATOR_COLOR,
-                    marginLeft: CommonStyles.GLOBAL_PADDING
+                    marginLeft: CommonStyles.GLOBAL_PADDING*2
                 }}
             />
         );
@@ -293,7 +291,6 @@ export default class ImportFromTextScreen extends React.PureComponent {
 
         if (selected) {
             textStyle = { fontWeight: 'bold', ...textStyle };
-            containerViewStyle = { borderLeftColor: CommonStyles.GLOBAL_FOREGROUND, borderLeftWidth: 4, ...containerViewStyle};
         }
 
         if (disabled && !selected) {
@@ -303,8 +300,8 @@ export default class ImportFromTextScreen extends React.PureComponent {
         return (
             <TouchableOpacity onPress={() => this.switchSelectedItem(item.key)} disabled={disabled}>
                 <View style={containerViewStyle}>
+                    <Ionicons style={{color: selected ? CommonStyles.MEDIUM_GREEN : CommonStyles.GLOBAL_BACKGROUND}} name={'ios-arrow-forward'} size={CommonStyles.BIG_FONT_SIZE} />
                     <Text style={[CommonStyles.styles.mediumLabel, textStyle]}>{this.getItemTypeCaption(item.key)}</Text>
-                    <Ionicons style={{ color: textStyle.color || CommonStyles.TEXT_COLOR, paddingRight: 5 }} name='ios-arrow-forward' size={CommonStyles.MEDIUM_FONT_SIZE} />
                 </View>
             </TouchableOpacity>
         );
