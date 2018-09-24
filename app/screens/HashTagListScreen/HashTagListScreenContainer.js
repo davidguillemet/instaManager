@@ -1,7 +1,9 @@
 import { connect } from 'react-redux';
+import { compose } from 'redux';
 import { createSelector } from 'reselect';
 import { createMultiUpdateAction } from '../../actions';
 import HashTagListScreenUi from './HashTagListScreenUi';
+import withControlStatus from './../../components/WithControlStatus';
 
 function _buildSections(immutableHashtags, unavailableTags /* identifier set */) {
 
@@ -63,9 +65,10 @@ const mapDispatchToProps = dispatch => {
     }
 }
 
-const HashTagListScreen = connect(
-    mapStateToProps,
-    mapDispatchToProps
-)(HashTagListScreenUi);
+const HashTagListScreen = compose(
+        connect(mapStateToProps, mapDispatchToProps),
+        withControlStatus
+    )
+    (HashTagListScreenUi);
 
 export default HashTagListScreen;

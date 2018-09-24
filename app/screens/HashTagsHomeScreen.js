@@ -8,11 +8,13 @@ import {
   Alert
 } from 'react-native';
 
-import { connect } from 'react-redux'
+import { connect } from 'react-redux';
+import { compose } from 'redux';
 
 import LoadingIndicatorView from '../components/LoadingIndicator';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import CommonStyles from '../styles/common'; 
+import CommonStyles from '../styles/common';
+import withControlStatus from '../components/WithControlStatus';
 
 import { loadCategoriesIfNeeded, loadTagsIfNeeded } from '../actions';
 
@@ -129,7 +131,8 @@ class HashTagsHomeScreenComponent extends React.Component {
                         SectionSeparatorComponent={this.renderSectionSeparator}
                         ListFooterComponent={this.renderListFooter}
                         ListEmptyComponent={this.renderEmptyComponent}
-                        keyExtractor={(item, index) => item.target} />
+                        keyExtractor={(item, index) => item.target}
+                    />
                 </View>
             );
         } else {
@@ -162,4 +165,4 @@ const mapStateToProps = state => {
     }
 }
 
-export default connect(mapStateToProps)(HashTagsHomeScreenComponent)
+export default compose(connect(mapStateToProps), withControlStatus)(HashTagsHomeScreenComponent);

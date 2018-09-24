@@ -15,7 +15,9 @@ import LoadingIndicatorView from '../components/LoadingIndicator';
 import SearchInput from '../components/Search';
 import CategoryList from '../components/categorylist';
 import CustomButton from '../components/CustomButton';
-import CommonStyles from '../styles/common'; 
+import CommonStyles from '../styles/common';
+
+import withControlStatus from './../components/WithControlStatus';
 
 function renderRightButtons(params) {
 
@@ -26,7 +28,7 @@ function renderRightButtons(params) {
     );
 }
 
-export default class HashtagCategoriesScreen extends React.Component {
+class HashtagCategoriesScreenUi extends React.Component {
 
     static navigationOptions = ({ navigation }) => {
         const params = navigation.state.params || {};
@@ -87,3 +89,5 @@ export default class HashtagCategoriesScreen extends React.Component {
         );
     }
 }
+
+export default withControlStatus(HashtagCategoriesScreenUi);

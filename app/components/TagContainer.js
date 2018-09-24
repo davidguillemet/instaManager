@@ -28,6 +28,7 @@ export default class TagContainer extends React.PureComponent {
 
     static propTypes = {
         tags: PropTypes.array,          // tag collection
+        errors: PropTypes.object,       // set of tags which should be rendered as error
         onPressTag: PropTypes.func,     // callback when a tag is pressed
         onAdd: PropTypes.func,          // callback when selecting a new tag
         readOnly: PropTypes.bool,       // true if the display is readonly, what means we cannot remove the tag
@@ -39,6 +40,7 @@ export default class TagContainer extends React.PureComponent {
 
     static defaultProps = {
         tags: [],
+        errors: new Set(),
         onPressTag: null,
         onAdd: null,
         readOnly: false,
@@ -98,9 +100,10 @@ export default class TagContainer extends React.PureComponent {
                 <View style={tagContainerStyle}>
                     {
                         tagList.sort((t1, t2) => t1.name.localeCompare(t2.name)).map(tag => {
+                            const tagColorStyle = this.props.errors.has(tag.id) ? styles.tagErrColor : styles.tagStdColor;
                             return (
                                 <Tag
-                                    style={styles.tag}
+                                    style={[styles.tag, tagColorStyle]}
                                     key={tag.id}
                                     id={tag.id}
                                     name={(this.props.addSharp ? '#' : '') + tag.name}
@@ -121,13 +124,18 @@ const styles = StyleSheet.create(
     tag: {
         flexDirection: 'row',
         alignItems: 'center',
-        backgroundColor: CommonStyles.GLOBAL_FOREGROUND,
         borderColor: CommonStyles.SEPARATOR_COLOR,
         borderRadius: 8,
         borderWidth: 1,
         paddingLeft: CommonStyles.GLOBAL_PADDING,
         paddingRight: 5,
         paddingVertical: 3
+    },
+    tagStdColor: {
+        backgroundColor: CommonStyles.GLOBAL_FOREGROUND,
+    },
+    tagErrColor: {
+        backgroundColor: CommonStyles.DARK_RED,
     },
     tagContainerLabel: {
         borderColor: CommonStyles.SEPARATOR_COLOR,

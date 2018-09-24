@@ -1,4 +1,5 @@
-import { Map, List } from 'immutable';
+import { launchControls } from './control';
+import { Map } from 'immutable';
 
 export const TAGS_LOADED = 'TAGS_LOADED';
 export const ADD_TAG = 'ADD_TAG';
@@ -13,13 +14,14 @@ export function loadTagsIfNeeded() {
       }
 }
 
-export function createLoadTagsAction() {
+function createLoadTagsAction() {
     return dispatch => {
         return global.hashtagPersistenceManager.open()
         .then(() => {
             const hashtags = global.hashtagPersistenceManager.getHashtags();
             const immutableTagsMap = Map(hashtags.map(item => [item.id, item]));
             dispatch(createTagsLoadedAction(immutableTagsMap));
+            dispatch(launchControls());
         })
     }
 }

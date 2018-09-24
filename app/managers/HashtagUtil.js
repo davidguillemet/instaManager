@@ -127,6 +127,71 @@ export default class HashtagUtil {
         return 'A tag can only contain a letter, a number or an underscore and must start by a letter.'
     }
 
+    runControls() {
+
+        const that = this;
+
+        return new Promise(
+            function(resolve, reject) {
+
+                const errors = {
+                    duplicates: [],
+                    overflow: [] 
+                };
+
+                const rootCategories = that._getCategoriesFromStore().toList().filter(cat => cat.parent === null).map(cat => cat.id);
+                that._runCategoriesControl(rootCategories, new Set(), errors);
+                resolve(errors);
+            }
+        );
+    }
+
+    _runCategoriesControl(categories /* Array */, inheritedTags /* Set */, errors /* Array */) {
+
+        if (categories == null || categories.length == 0) {
+            return;
+        }
+
+        for (let catId of categories) {
+
+            const cat = this.getCatFromId(catId);
+
+            // Add an error if:
+            // - one of the tags from the current categorie exist in the inherited tags
+            const duplicates = [];
+            cat.hashtags.forEach(tagId => {
+                if (inheritedTags.has(tagId)) {
+                    duplicates.push(tagId);
+                }
+            });
+            if (duplicates.length > 0) {
+                this._addDuplicatedTagError(cat.id, duplicates, errors);
+            }
+
+            // - the consolidated number of tags (cat.hashtags + inheritedT.ags) exceeds the maximum number of tags
+            const categoryTagsCount = cat.hashtags.length - duplicates.length;
+            const consolidatedTagsCount = (inheritedTags ? inheritedTags.size : 0) + categoryTagsCount;
+            if (consolidatedTagsCount > global.settingsManager.getMaxNumberOfTags()) {
+                this._addOverflowError(cat.id, errors);
+            }
+
+            const catConsolidatedTags = new Set([...inheritedTags, ...cat.hashtags]);
+
+            this._runCategoriesControl(cat.children, catConsolidatedTags, errors);
+        }
+    }
+
+    _addDuplicatedTagError(catId, duplicates, errors) {
+        errors.duplicates.push({
+            category: catId,
+            duplicates: duplicates
+        });
+    }
+
+    _addOverflowError(catId, errors) {
+        errors.overflow.push(catId);
+    }
+
     _getTagsFromStore() {
 
         return this.reduxStore.getState().get('tags');

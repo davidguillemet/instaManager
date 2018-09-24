@@ -13,15 +13,16 @@ import CommonStyles from '../styles/common';
 export default class CustomButton extends React.PureComponent {
 
     static propTypes = {
-        title: PropTypes.string.isRequired,     // Button caption
+        title: PropTypes.string,                // Button caption - migh tbe ommited in case children are specified
         deactivated: PropTypes.bool,            // true if the button is deactivated - optional
         onPress: PropTypes.func.isRequired,     // callback when the button is pressed if not deactivated
         showActivityIndicator: PropTypes.bool,  // true if we show the activity indicator when the button is pressed - optional - false by default
         running: PropTypes.bool,                // true if the action is running
-        register: PropTypes.array                // array for registering the current button to calback setActionCompleted()
+        register: PropTypes.array               // array for registering the current button to calback setActionCompleted()
     };
 
     static defaultProps = {
+        title: '',
         deactivated: false,        // by default, the button is activated
         showActivityIndicator: false,
         running: false,
@@ -58,6 +59,20 @@ export default class CustomButton extends React.PureComponent {
             this.setState({
                 running: false
             });
+        }
+    }
+
+    renderChildrenWithStyle(style) {
+
+        if (this.props.children == null)
+        {
+            return null;
+        }
+        
+        if (Array.isArray(this.props.children)) {
+            return this.props.children.map(child => React.cloneElement(child, {style}));
+        } else {
+            return React.cloneElement(this.props.children, {style});
         }
     }
 
@@ -100,7 +115,11 @@ export default class CustomButton extends React.PureComponent {
                     :
                     null
                 }
-                <Text style={textStyle}>{this.props.title}</Text>
+                {
+                    this.props.children ?
+                    this.renderChildrenWithStyle(textStyle) :
+                    <Text style={textStyle}>{this.props.title}</Text>
+                }
             </TouchableOpacity>
         );
     }

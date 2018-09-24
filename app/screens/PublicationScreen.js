@@ -6,9 +6,10 @@ import {
 } from 'react-native';
 
 import CustomButton from '../components/CustomButton';
+import withControlStatus from './../components/WithControlStatus';
 import CommonStyles from '../styles/common';
 
-export default class PublicationScreen extends React.Component {
+class PublicationScreen extends React.Component {
 
     static navigationOptions = ({ navigation }) => {
         const params = navigation.state.params || {};
@@ -33,12 +34,10 @@ export default class PublicationScreen extends React.Component {
     render() {
         return(
             <View style={CommonStyles.styles.standardPage}>
-                <View style={CommonStyles.styles.standardTile}>
+                <View style={[CommonStyles.styles.standardTile, {flexDirection: 'column'}]}>
                     <Text style={CommonStyles.styles.smallLabel}>
                         When creating a publication, you will be able to define a set of tags by selecting a base category as well as additional single tags.
                     </Text>
-                </View>
-                <View style={CommonStyles.styles.standardTile}>
                     <Text style={CommonStyles.styles.smallLabel}>
                         Once your publication contains all the desired tags, you will be able to copy them to the clipboard in order to paste them easily in your target social application.
                     </Text>
@@ -48,3 +47,5 @@ export default class PublicationScreen extends React.Component {
         );
     }
 }
+
+export default withControlStatus(PublicationScreen);

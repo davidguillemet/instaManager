@@ -9,7 +9,9 @@ import {
     ADD_TAG,
     UPDATE_TAG,
     DELETE_TAG,
-    MULTI_UPDATE
+    MULTI_UPDATE,
+    CONTROLS_STARTED,
+    CONTROLS_COMPLETED
 } from './../actions';
 
 /**
@@ -126,9 +128,26 @@ function categoriesLoadingReducer(state = false, action) {
     }
 }
 
+function controlsReducer(state = Map({ running: false, errors: null }), action ) {
+    switch (action.type) {
+        case CONTROLS_STARTED:
+            return state.set('running', true);
+
+        case CONTROLS_COMPLETED:
+            return state.withMutations(map => {
+                map.set('running', false);
+                map.set('errors', action.errors);
+            });
+
+        default:
+            return state;
+    }
+}
+
 export const rootReducer = combineReducers({
     tagsLoaded: tagsLoadingReducer,
-    categoriesLoaded: categoriesLoadingReducer, 
+    categoriesLoaded: categoriesLoadingReducer,
+    controls: controlsReducer,
     categories: categoriesReducer,
     tags: tagReducers
 });
