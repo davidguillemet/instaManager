@@ -1,4 +1,6 @@
 import { connect } from 'react-redux';
+import { compose } from 'redux';
+import { withNavigation } from 'react-navigation';
 import ControlStatusUi from './ControlStatusUi';
 
 const mapStateToProps = (state, ownProps) => {
@@ -9,6 +11,6 @@ const mapStateToProps = (state, ownProps) => {
     }
 }
 
-const ControlStatus = connect(mapStateToProps)(ControlStatusUi);
+const ControlStatus = compose(withNavigation, connect(mapStateToProps))(ControlStatusUi);
 
 export default ControlStatus;

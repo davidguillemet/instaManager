@@ -1,4 +1,4 @@
-import React, { PureComponent } from 'react';
+import React from 'react';
 import {
     StyleSheet,
     View,
@@ -31,11 +31,15 @@ export default class Tag extends React.PureComponent {
     }
 
     render() {
-        let tagStyle = StyleSheet.flatten(this.props.style);
+        
+        const defaultTagStyle = StyleSheet.flatten(styles.defaultTagStyle);
+        const tagStylefromProps = StyleSheet.flatten(this.props.style);
+        const composedTagStyle = { ...defaultTagStyle, ...tagStylefromProps };
+
         return (
             <View style={styles.container}>
                 <TouchableOpacity
-                  style={tagStyle}
+                  style={composedTagStyle}
                   onPress={this.onPress}
                   disabled={this.props.onPress == null}
                 >
@@ -53,9 +57,19 @@ export default class Tag extends React.PureComponent {
 }
 
 const styles = {
+    defaultTagStyle: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        backgroundColor: CommonStyles.GLOBAL_FOREGROUND,
+        borderColor: CommonStyles.SEPARATOR_COLOR,
+        borderRadius: 8,
+        borderWidth: 1,
+        paddingLeft: CommonStyles.GLOBAL_PADDING,
+        paddingRight: 5,
+        paddingVertical: 3
+    },
     container: {
-      marginRight: 6,
-      height: 40
+      marginRight: 6
     },
     title: {
       color: '#FFFFFF',

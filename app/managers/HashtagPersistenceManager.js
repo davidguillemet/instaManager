@@ -238,6 +238,30 @@ export default class HashtagPersistenceManagerClass {
         
     }
 
+    removeTagFromCategory(categoryId, tagId) {
+
+        let updatedCats = [];
+        let updatedTags = [];
+
+        this.realm.write(() => {
+
+            const tagToUpdate = this.realm.objectForPrimaryKey(hashtagSchema, tagId);
+            const tagCategories = tagToUpdate.categories;
+            const catIndex = tagCategories.findIndex(cat => cat.id == categoryId);
+            if (catIndex >= 0) {
+                tagCategories.splice(catIndex, 1);
+            }
+        });
+
+        updatedTags.push(this._getTagProxyFromRealm(this.realm.objectForPrimaryKey(hashtagSchema, tagId)));
+        updatedCats.push(this._getCatProxyFromRealm(this.realm.objectForPrimaryKey(categorySchema, categoryId)))
+
+        return {
+            updatedTags: updatedTags,
+            updatedCats: updatedCats
+        }
+    }
+
     searchItem(itemType, filter) {
 
         const searchResults = this.realm.objects(this._getRealmTypeFromItemType(itemType)).filtered('name like[c] $0', filter);

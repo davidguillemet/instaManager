@@ -1,15 +1,12 @@
-import React, { PureComponent } from 'react';
+import React from 'react';
 import { withNavigation } from 'react-navigation';
 import {
   StyleSheet,
   View,
-  Text,
-  TouchableOpacity,
-  Alert
+  Text
 } from 'react-native';
 import PropTypes from 'prop-types';
 import { createSelector } from 'reselect';
-import Ionicons from 'react-native-vector-icons/Ionicons';
 
 import TagContainer from './TagContainer';
 import CustomButton from './CustomButton';
@@ -82,12 +79,19 @@ class CategorieTagsDisplay extends React.PureComponent {
                 }, new Set());
             }
         );
-                
+          
+    
+        // All selectors must have the same signature
+        // since only categoryOwnTagsSelector needs the stae, we define it as second parameter
+        // and here, we can ignore the first one, props:
+        this.categoryOwnTagsSelector = (_, state) => state.tags;
+
         this.getCategoryDuplicatedTags = createSelector(
             this.getAncestorsTags,
-            ancestorTags => {
+            this.categoryOwnTagsSelector,
+            (ancestorTags, categoryOwnTags) => {
                 const duplicates = new Set();
-                this.state.tags.forEach(tagId => {
+                categoryOwnTags.forEach(tagId => {
                     if (ancestorTags.has(tagId)) {
                         duplicates.add(tagId);
                     }
@@ -171,7 +175,7 @@ class CategorieTagsDisplay extends React.PureComponent {
                     onAdd={this.onSelectTags}
                     readOnly={false}
                     addSharp={true}
-                    errors={this.getCategoryDuplicatedTags(this.props)}
+                    errors={this.getCategoryDuplicatedTags(this.props, this.state)}
                 />
             );
         }
@@ -205,7 +209,7 @@ class CategorieTagsDisplay extends React.PureComponent {
 
     getCategoryOwnTagsCount() {
 
-        return this.state.tags.length - this.getCategoryDuplicatedTags(this.props).size;
+        return this.state.tags.length - this.getCategoryDuplicatedTags(this.props, this.state).size;
     }
 
     renderTagsCountCaption() {
@@ -229,7 +233,7 @@ class CategorieTagsDisplay extends React.PureComponent {
 
     renderDuplicatesError() {
 
-        const duplicates = this.getCategoryDuplicatedTags(this.props);
+        const duplicates = this.getCategoryDuplicatedTags(this.props, this.state);
 
         if (duplicates.size == 0) {
             return null;

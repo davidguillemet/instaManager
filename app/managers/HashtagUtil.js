@@ -172,7 +172,7 @@ export default class HashtagUtil {
             const categoryTagsCount = cat.hashtags.length - duplicates.length;
             const consolidatedTagsCount = (inheritedTags ? inheritedTags.size : 0) + categoryTagsCount;
             if (consolidatedTagsCount > global.settingsManager.getMaxNumberOfTags()) {
-                this._addOverflowError(cat.id, errors);
+                this._addOverflowError(cat.id, consolidatedTagsCount, errors);
             }
 
             const catConsolidatedTags = new Set([...inheritedTags, ...cat.hashtags]);
@@ -188,8 +188,11 @@ export default class HashtagUtil {
         });
     }
 
-    _addOverflowError(catId, errors) {
-        errors.overflow.push(catId);
+    _addOverflowError(catId, count, errors) {
+        errors.overflow.push({
+            category: catId,
+            count: count
+        });
     }
 
     _getTagsFromStore() {

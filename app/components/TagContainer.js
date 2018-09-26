@@ -2,7 +2,6 @@ import React, { PureComponent } from 'react';
 import {
     StyleSheet,
     View,
-    ScrollView,
     Text,
     TouchableOpacity
   } from 'react-native';
@@ -103,7 +102,7 @@ export default class TagContainer extends React.PureComponent {
                             const tagColorStyle = this.props.errors.has(tag.id) ? styles.tagErrColor : styles.tagStdColor;
                             return (
                                 <Tag
-                                    style={[styles.tag, tagColorStyle]}
+                                    style={tagColorStyle}
                                     key={tag.id}
                                     id={tag.id}
                                     name={(this.props.addSharp ? '#' : '') + tag.name}
@@ -121,16 +120,6 @@ export default class TagContainer extends React.PureComponent {
 
 const styles = StyleSheet.create(
 {
-    tag: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        borderColor: CommonStyles.SEPARATOR_COLOR,
-        borderRadius: 8,
-        borderWidth: 1,
-        paddingLeft: CommonStyles.GLOBAL_PADDING,
-        paddingRight: 5,
-        paddingVertical: 3
-    },
     tagStdColor: {
         backgroundColor: CommonStyles.GLOBAL_FOREGROUND,
     },
