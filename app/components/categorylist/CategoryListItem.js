@@ -85,7 +85,7 @@ export default class CategoryListItem extends React.PureComponent {
                     this.props.selected ?
                     <Ionicons style={{ color: CommonStyles.ARCHIVE_COLOR, paddingRight: CommonStyles.GLOBAL_PADDING }} name='ios-checkmark-circle-outline' size={CommonStyles.LARGE_FONT_SIZE} /> :
                     this.props.deactivated ?
-                    <Ionicons style={{ color: CommonStyles.WARNING_COLOR, paddingRight: CommonStyles.GLOBAL_PADDING }} name='ios-alert-outline' size={CommonStyles.LARGE_FONT_SIZE} /> :
+                    <Ionicons style={{ color: CommonStyles.LIGHT_RED, paddingRight: CommonStyles.GLOBAL_PADDING }} name='ios-remove-circle-outline' size={CommonStyles.LARGE_FONT_SIZE} /> :
                     null
                 }
             </View>
