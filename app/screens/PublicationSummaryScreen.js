@@ -30,14 +30,17 @@ export default class PublicationSummaryScreen extends React.Component {
         this.name = params.name;
         this.category = params.category;
         this.ownTags = params.tags;
-        this.tags = this.ownTags;
 
-        // Flatten tags and keepo a trace of the tags which are specific from this publication (outside category)
+        // Flatten tags and keep a trace of the tags which are specific from this publication (outside category)
         if (this.category) {
             const ancestors = global.hashtagUtil.getAncestorCategories(this.category);
-            ancestors.forEach(cat => {
-                this.tags = this.tags.concat(cat.hashtags);
-            });
+            const tagSet = ancestors.reduce((set, cat) => { 
+                cat.hashtags.forEach(tagId => set.add(tagId));
+                return set;
+            }, new Set(this.ownTags));
+            this.tags = [...tagSet];
+        } else {
+            this.tags = [...this.ownTags];
         }
    
         this.onDeleteTag = this.onDeleteTag.bind(this);
