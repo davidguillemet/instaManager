@@ -1,7 +1,7 @@
 import {
     TagCategorySchema,
     HashtagSchema
-} from '../model/realmSchemas';
+} from '../model/hashtagSchemas';
 
 const Realm = require('realm');
 
