@@ -35,7 +35,7 @@ export default class HashtagUtil {
     
     getTagsCount() {
 
-        this._getTagsFromStore().size;
+        return this._getTagsFromStore().size;
     }
 
     getCatFromId(catId) {
