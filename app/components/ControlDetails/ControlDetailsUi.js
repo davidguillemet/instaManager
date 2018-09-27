@@ -169,7 +169,7 @@ export default class ControlDetailsUi extends React.PureComponent {
 const styles = StyleSheet.create({
     sectionHeader: {
         paddingHorizontal: CommonStyles.GLOBAL_PADDING,
-        paddingVertical: 5,
+        paddingVertical: CommonStyles.GLOBAL_PADDING,
         backgroundColor: '#192b48',
         fontWeight: 'bold',
     }

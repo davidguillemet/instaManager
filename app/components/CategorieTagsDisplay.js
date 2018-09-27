@@ -8,6 +8,8 @@ import {
 import PropTypes from 'prop-types';
 import { createSelector } from 'reselect';
 
+import Ionicons from 'react-native-vector-icons/Ionicons';
+
 import TagContainer from './TagContainer';
 import CustomButton from './CustomButton';
 
@@ -188,20 +190,24 @@ class CategorieTagsDisplay extends React.PureComponent {
 
         return (
             ancestors.map(cat => {
+                if (cat.hashtags.length == 0) {
+                    return null;
+                }
+                
+                const duplicatedTags = this.getAncestorsDuplicatedTags({ parentCategory: cat.id });
+                const countWithoutDuplicated = cat.hashtags.reduce((count, tagId) => { return duplicatedTags.has(tagId) ? count : count + 1; } , 0);
+                
                 return (
-                    cat.hashtags.length > 0 ?
                     <TagContainer
                         style={{ marginTop: 10 }}
-                        label={cat.hashtags.length + ' tag(s) in ' + cat.name}
+                        label={countWithoutDuplicated + ' tag(s) in ' + cat.name}
                         key={cat.id}
                         tags={cat.hashtags}
                         itemType={global.TAG_ITEM}
                         readOnly={true}
                         addSharp={true}
-                        errors={this.getAncestorsDuplicatedTags(this.props)}
+                        errors={duplicatedTags}
                     />
-                    :
-                    null
                 );
             })
         );
@@ -240,11 +246,9 @@ class CategorieTagsDisplay extends React.PureComponent {
         }
 
         return (
-            <CustomButton
-                onPress={this.setTagsDisplaySelf}
-                title={'Some tags in this category that already belong to the parent category are ignored.'}
-                style={[CommonStyles.styles.standardButtonCentered, CommonStyles.styles.smallLabel, styles.errorTitle, styles.errorText]}
-            />
+            <View style={[CommonStyles.styles.standardTile, styles.errorTitle]}>
+                <Text style={[styles.errorText]}>{'Some tags in this category that already belong to the parent category are ignored.'}</Text>
+            </View>
         );
     }
 
@@ -257,11 +261,9 @@ class CategorieTagsDisplay extends React.PureComponent {
         }
         
         return (
-            <CustomButton
-                onPress={this.setTagsDisplayAncestors}
-                title={'The category hierarchy contains duplicated tags'}
-                style={[CommonStyles.styles.standardButtonCentered, CommonStyles.styles.smallLabel, styles.errorTitle, styles.errorText]}
-            />
+            <View style={[CommonStyles.styles.standardTile, styles.errorTitle]}>
+                <Text style={[styles.errorText]}>{'The category hierarchy contains duplicated tags.'}</Text>
+            </View>
         )        
     }
 
@@ -282,32 +284,44 @@ class CategorieTagsDisplay extends React.PureComponent {
     renderSegmentControl() {
 
         const ancestorCategoriesTagCount = this.getAncestorTagsCount(this.props);
+        const duplicates = this.getCategoryDuplicatedTags(this.props, this.state);
+        const ancestorDuplicates = this.getAncestorsDuplicatedTags(this.props);
 
         return (
             <View>
                 { this.renderTagsCountCaption() }
-                { this.renderAncestorDuplicatesError() }
-                { this.renderDuplicatesError() }
                 {
                     this.props.showSegmentControl === true ?
                     <View style={{ flexDirection: 'row', flex: 1 }}>
                         <CustomButton
                             onPress={this.setTagsDisplaySelf}
-                            title={this.getOwnTagsCountCaption()}
                             style={[
                                 CommonStyles.styles.standardButtonCentered,
                                 styles.leftSegment,
                                 this.state.tagsDisplayMode == TAGS_DISPLAY_SELF ? styles.selectedSegment : styles.unselectedSegment]}
-                        />
+                        >
+                            <Text key={'text'}>{this.getOwnTagsCountCaption()}</Text>
+                            {
+                                duplicates.size > 0 ?
+                                <Ionicons key={'icon'} style={{color: CommonStyles.DARK_RED, marginLeft: 5}} name={'ios-alert'} size={20} /> :
+                                null
+                            }
+                        </CustomButton>
                         <CustomButton
                             onPress={this.setTagsDisplayAncestors}
                             deactivated={ancestorCategoriesTagCount == 0}
-                            title={this.getAncestorTagsCountCaption()}
                             style={[
                                 CommonStyles.styles.standardButtonCentered,
                                 styles.rightSegment,
                                 this.state.tagsDisplayMode == TAGS_DISPLAY_ANCESTORS ? styles.selectedSegment : styles.unselectedSegment ]}
-                        />
+                        >
+                            <Text key={'text'}>{this.getAncestorTagsCountCaption()}</Text>
+                            {
+                                ancestorDuplicates.size > 0 ?
+                                <Ionicons key={'icon'} style={{color: CommonStyles.DARK_RED, marginLeft: 5}} name={'ios-alert'} size={20} /> :
+                                null
+                            }
+                        </CustomButton>
                     </View>
                     :
                     null
@@ -321,6 +335,7 @@ class CategorieTagsDisplay extends React.PureComponent {
         return (
             <View>
                 { this.renderSegmentControl() }
+                { this.state.tagsDisplayMode == TAGS_DISPLAY_SELF ? this.renderDuplicatesError() : this.renderAncestorDuplicatesError() }
                 { this.renderTagContainers() }
             </View>
         );

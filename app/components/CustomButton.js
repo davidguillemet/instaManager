@@ -70,7 +70,10 @@ export default class CustomButton extends React.PureComponent {
         }
         
         if (Array.isArray(this.props.children)) {
-            return this.props.children.map(child => React.cloneElement(child, {style}));
+            return this.props.children.map(child => {
+                if (child == null) return null;
+                return child.type.displayName === 'Text' ? React.cloneElement(child, {style}) : child;
+        });
         } else {
             return React.cloneElement(this.props.children, {style});
         }
@@ -82,6 +85,7 @@ export default class CustomButton extends React.PureComponent {
 
         const defaultStyle = {
             flexDirection: 'row',
+            justifyContent: 'center',
             backgroundColor: CommonStyles.GLOBAL_FOREGROUND,
             paddingVertical: CommonStyles.GLOBAL_PADDING,
             paddingHorizontal: CommonStyles.GLOBAL_PADDING * 2,

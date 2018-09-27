@@ -61,7 +61,7 @@ export default class HashtagUtil {
             parentCategoryId = parentCategory.parent;
         }
 
-        return ancestors;
+        return ancestors.reverse(); // From root to leaf
     }
 
     searchItem(itemType, filter) {
