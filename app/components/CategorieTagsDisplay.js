@@ -46,6 +46,7 @@ class CategorieTagsDisplay extends React.PureComponent {
         this.onSelectTags = this.onSelectTags.bind(this);
         this.onTagSelectionValidated = this.onTagSelectionValidated.bind(this);
         this.onDeleteTag = this.onDeleteTag.bind(this);
+        this.removeAllDuplicated = this.removeAllDuplicated.bind(this);
         
         // Callbacks for display management
         this.toggleTagsDisplay = this.toggleTagsDisplay.bind(this);
@@ -118,6 +119,17 @@ class CategorieTagsDisplay extends React.PureComponent {
         });
 
         this.props.onDeleteTag(tagId);
+    }
+
+    removeAllDuplicated() {
+
+        const dupplicatedTags = this.getCategoryDuplicatedTags(this.props, this.state);
+        let newSelection = this.state.tags.filter(id => !dupplicatedTags.has(id));
+        this.setState( {
+            tags: newSelection
+        });
+
+        dupplicatedTags.forEach(tagId => this.props.onDeleteTag(tagId));
     }
 
     onSelectTags() {
@@ -246,8 +258,13 @@ class CategorieTagsDisplay extends React.PureComponent {
         }
 
         return (
-            <View style={[CommonStyles.styles.standardTile, styles.errorTitle]}>
+            <View style={[CommonStyles.styles.standardTile, styles.errorTitle, {flexDirection: 'column', paddingBottom: 0}]}>
                 <Text style={[styles.errorText]}>{'Some tags in this category that already belong to the parent category are ignored.'}</Text>
+                <CustomButton
+                    style={[CommonStyles.standardButtonCentered, CommonStyles.styles.smallLabel, {marginTop: 5}]}
+                    title={'Remove all duplicated tags'}
+                    onPress={this.removeAllDuplicated}
+                />
             </View>
         );
     }
