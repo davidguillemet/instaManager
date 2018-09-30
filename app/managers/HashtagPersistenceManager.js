@@ -1,12 +1,14 @@
 import {
+    PublicationSchema,
     TagCategorySchema,
-    HashtagSchema
+    HashtagSchema 
 } from '../model/hashtagSchemas';
 
 const Realm = require('realm');
 
 const categorySchema = 'TagCategory';
 const hashtagSchema = 'Hashtag';
+const publicationSchema = 'Publication';
 
 export default class HashtagPersistenceManagerClass {
 
@@ -21,10 +23,11 @@ export default class HashtagPersistenceManagerClass {
             return Realm.open({
                 schema: [
                     TagCategorySchema,
-                    HashtagSchema
+                    HashtagSchema,
+                    PublicationSchema
                 ],
                 path: 'hashTagInfo.realm',
-                schemaVersion: 1
+                schemaVersion: 2
             }).then(realm => {
                 this.realm = realm;
             });
@@ -61,6 +64,19 @@ export default class HashtagPersistenceManagerClass {
         return tags.map((item, index, array) => {
             return this._getTagProxyFromRealm(item);
         });
+    }
+
+    getPublications() {
+        
+        return this.open()
+        .then(() => {
+
+            let publications = this.realm.objects(publicationSchema);
+
+            return publications.map(item => {
+                return this._getPubProxyFromRealm(item);
+            });
+        });       
     }
 
     saveTag(tag, update) {
@@ -127,6 +143,7 @@ export default class HashtagPersistenceManagerClass {
         // maintain a list of modified tags tp create the redux action with all updated objects (category + possible tags)
         let updatedTags = [];
         let updatedCats = [];
+        let updatedPubs = [];
 
         this.realm.write(() => {
             let parent = null; 
@@ -136,6 +153,15 @@ export default class HashtagPersistenceManagerClass {
 
             const previousCategory = update ? this.realm.objectForPrimaryKey(categorySchema, categoryToSave.id) : null;
             const prevParentId = previousCategory && previousCategory.parent ? previousCategory.parent.id : null;
+
+            // update publications if needed
+            if (update && previousCategory.name !== categoryToSave.name) {
+                const publicationsToUpdate = previousCategory.publications;
+                for (let publication of publicationsToUpdate) {
+                    publication.categoryName = categoryToSave.name;
+                    updatedPubs.push(this._getPubProxyFromRealm(publication));
+                }
+            }
 
             // We cannot update hashtags here since this property is of type LinkingObjects
             let updatedCategory = this.realm.create(categorySchema, { id: categoryToSave.id, name: categoryToSave.name, parent: parent }, update);
@@ -194,7 +220,8 @@ export default class HashtagPersistenceManagerClass {
 
         return {
             updatedTags: [ ...updatedTags],
-            updatedCats: updatedCats
+            updatedCats: updatedCats,
+            updatedPubs: updatedPubs
         }
     }
 
@@ -274,6 +301,64 @@ export default class HashtagPersistenceManagerClass {
             return searchResults.map((item, index, array) => {
                 return this._getCatProxyFromRealm(item);
             });
+        }
+    }
+
+    savePublication(rawPublication, update) {
+
+        return this.open()
+        .then(() => {
+
+            this.realm.write(() => {
+
+                const realmPublication = {
+                    id: rawPublication.id,
+                    name: rawPublication.name,
+                    description: rawPublication.description,
+                    creationDate: rawPublication.creationDate,
+                    tagNames: rawPublication.tagNames,
+                    category: rawPublication.category ? this.realm.objectForPrimaryKey(categorySchema, rawPublication.category) : null,
+                    categoryName: rawPublication.categoryName,
+                    archived: rawPublication.archived
+                };
+
+                this.realm.create(publicationSchema, realmPublication, update);
+            });
+        });
+    }
+
+    deletePublication(pubId) {
+        
+        this.realm.write(() => {
+
+            let publicationToDelete = this.realm.objectForPrimaryKey(publicationSchema, pubId);
+            this.realm.delete(publicationToDelete);
+            
+        });
+    }
+
+    _getPubProxyFromRealm(item) {
+
+        // properties: {
+        //      id: 'string',
+        //      name: 'string?',
+        //      description: 'string?',
+        //      creationDate: 'date',
+        //      tagNames: 'string[]', // contain the name of each tag (category + additional)
+        //      category: 'TagCategory?', // base category; optional since it could have been removed
+        //      categoryName: 'string',  // name of the referenced category (could have been removed)
+        //      archived: {type: 'bool',  default: false}
+        // }
+    
+        return {
+            id: item.id,
+            name: item.name,
+            description: item.description,
+            creationDate: item.creationDate,
+            tagNames: [...item.tagNames],
+            category: item.category ? item.category.id : null,
+            categoryName: item.categoryName,
+            archived: item.archived
         }
     }
 

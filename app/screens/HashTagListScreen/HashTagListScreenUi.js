@@ -1,12 +1,10 @@
 import React, { Component, PureComponent } from 'react';
-import PropTypes from 'prop-types';
 import {
-  View,
-  Text,
-  FlatList,
-  SectionList,
-  TouchableOpacity,
-  Alert
+    View,
+    Text,
+    FlatList,
+    SectionList,
+    TouchableOpacity,
 } from 'react-native';
 
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -105,7 +103,7 @@ export default class HashTagListScreenUi extends React.Component {
     }
 
     onImport() {
-        this.props.navigation.navigate('HashTagsImport');
+        this.props.navigation.navigate('ImportFromText' /* 'HashTagsImport' */);
     }
 
     navigateToEditScreen(tagToEdit) {
@@ -255,7 +253,7 @@ export default class HashTagListScreenUi extends React.Component {
         return (
             <View style={{flex: 1, padding: CommonStyles.GLOBAL_PADDING}}>
                 <CustomButton style={CommonStyles.styles.standardButtonCentered} title={'Create your first tag'} onPress={this.onAddTag} />
-                <CustomButton style={CommonStyles.styles.standardButtonCentered} title={'Import tags from text'} onPress={this.onAddTag} />
+                <CustomButton style={CommonStyles.styles.standardButtonCentered} title={'Import tags from text'} onPress={this.onImport} />
             </View>
         );
     }

@@ -281,7 +281,7 @@ export default class HashtagCategoryEditScreenUi extends React.Component {
             return (
                 <View style={[CommonStyles.styles.standardTile, { alignItems: 'center'} ]}>
                     <Ionicons name={'ios-information-circle'} style={[CommonStyles.styles.textIcon, { paddingLeft: 0}]}/>
-                    <Text style={[CommonStyles.styles.mediumLabel, {flex: 1, flexWrap: 'wrap'}]}>Select at least a category or some tags to initialize the publication</Text>
+                    <Text style={[CommonStyles.styles.mediumLabel, {flex: 1, flexWrap: 'wrap'}]}>Select a category to initialize the publication. You can also enter an optional name for your new publication.</Text>
                 </View>
             );
         }
@@ -368,6 +368,7 @@ export default class HashtagCategoryEditScreenUi extends React.Component {
                         onTagSelectionValidated={this.onTagSelectionValidated}
                         parentCategory={this.state.parentCategories && this.state.parentCategories.length > 0 ? this.state.parentCategories[0] : null}
                         itemType={this.itemType}
+                        initialDisplayMode= {this.itemType == global.PUBLICATION_ITEM ? 'ancestors' : 'self'}
                     />
                     : null
                 }

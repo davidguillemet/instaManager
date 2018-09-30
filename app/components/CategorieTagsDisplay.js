@@ -15,8 +15,8 @@ import CustomButton from './CustomButton';
 
 import CommonStyles from '../styles/common'; 
 
-const TAGS_DISPLAY_SELF = 0;
-const TAGS_DISPLAY_ANCESTORS = 1;
+const TAGS_DISPLAY_SELF = 'self';
+const TAGS_DISPLAY_ANCESTORS = 'ancestors';
 
 class CategorieTagsDisplay extends React.PureComponent {
 
@@ -25,13 +25,13 @@ class CategorieTagsDisplay extends React.PureComponent {
         onDeleteTag: PropTypes.func.isRequired,             // callback when deleting a tag
         onTagSelectionValidated: PropTypes.func.isRequired, // callback when the button is pressed if not deactivated
         parentCategory: PropTypes.string,                   // identifier of the parent category - optional
-        itemType: PropTypes.string.isRequired,              // item type - optional
-        showSegmentControl: PropTypes.bool                  // true to display the segment control - optional - default is true
+        itemType: PropTypes.string.isRequired,              // item type
+        initialDisplayMode: PropTypes.string.isRequired     // Initial display mode : 'self' or 'ancestors'
     };
 
     static defaultProps = {
         tags: [],
-        showSegmentControl: true
+        initialDisplayMode: 'self'
     };
 
     constructor(props) {
@@ -39,7 +39,7 @@ class CategorieTagsDisplay extends React.PureComponent {
         
         this.state = {
             tags: this.props.tags,
-            tagsDisplayMode: this.props.itemType == global.CATEGORY_ITEM || this.props.showSegmentControl == false ? TAGS_DISPLAY_SELF : TAGS_DISPLAY_ANCESTORS /* publication */,
+            tagsDisplayMode: this.props.initialDisplayMode
         };
 
         // Callbacks for tag management
@@ -305,10 +305,10 @@ class CategorieTagsDisplay extends React.PureComponent {
         const ancestorDuplicates = this.getAncestorsDuplicatedTags(this.props);
 
         return (
-            <View>
+            <View style={{marginTop: CommonStyles.GLOBAL_PADDING}}>
                 { this.renderTagsCountCaption() }
                 {
-                    this.props.showSegmentControl === true ?
+                    this.props.itemType !== global.PUBLICATION_ITEM ?
                     <View style={{ flexDirection: 'row', flex: 1 }}>
                         <CustomButton
                             onPress={this.setTagsDisplaySelf}

@@ -1,6 +1,7 @@
 export * from './categories';
 export * from './tags';
 export * from './control';
+export * from './publications';
 export const MULTI_UPDATE = 'MULTI_UPDATE';
 
 export function createMultiUpdateAction(updates) {

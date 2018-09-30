@@ -1,3 +1,5 @@
+import { Platform, NativeModules } from "react-native";
+
 import InstaFacadeClass from './managers/InstaFacade';
 import ServiceManagerClass from './services/ServiceManager';
 import UserManagerClass from './managers/UserManager';
@@ -39,3 +41,19 @@ global.uniqueID = () => {
       '-' + chr4() +
       '-' + chr4() + chr4() + chr4();
 }
+
+global._getLocale = () => {
+
+  let langRegionLocale = "en_US";
+
+  // If we have an Android phone
+  if (Platform.OS === "android") {
+    langRegionLocale = NativeModules.I18nManager.localeIdentifier || "";
+  } else if (Platform.OS === "ios") {
+    langRegionLocale = NativeModules.SettingsManager.settings.AppleLocale || "";
+  }
+  langRegionLocale = langRegionLocale.replace('_', '-');
+  return langRegionLocale;
+}
+
+global.locale = global._getLocale();

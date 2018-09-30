@@ -1,5 +1,6 @@
 import React from 'react';
 import { ActivityIndicator, StyleSheet, View } from 'react-native';
+import CommonStyles from '../styles/common';
 
 export default class ActivityIndicatorLoadingView extends React.Component {
     
@@ -8,8 +9,11 @@ export default class ActivityIndicatorLoadingView extends React.Component {
     }
 
     render() {
+
+        const backGroundColor = this.props.bgColor || CommonStyles.GLOBAL_BACKGROUND;
+
         return (
-            <View style={styles.ActivityIndicatorContainer}>
+            <View style={[styles.ActivityIndicatorContainer, {backgroundColor: backGroundColor}]}>
                 <View style={styles.ActivityIndicatorStyle} />
                 <ActivityIndicator size='large' />
             </View>

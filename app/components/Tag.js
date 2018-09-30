@@ -43,7 +43,7 @@ export default class Tag extends React.PureComponent {
                   onPress={this.onPress}
                   disabled={this.props.onPress == null}
                 >
-                    <Text style={styles.title}>{this.props.name}</Text>
+                    <Text style={styles.title} numberOfLines={1}>{this.props.name}</Text>
                     {
                         this.props.onPress == null ?
                         null
@@ -76,6 +76,7 @@ const styles = {
       fontFamily: 'Avenir',
       fontSize: 15,
       fontWeight: 'normal',
-      paddingRight: 5
+      paddingRight: 5,
+      maxWidth: 200 // TODO: manage very long tags in a more dynamic way...
     },
 };

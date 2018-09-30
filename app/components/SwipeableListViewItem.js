@@ -2,8 +2,7 @@ import React, { Component } from 'react';
 import {
   StyleSheet,
   View,
-  Text,
-  TouchableHighlight,
+  Text
 } from 'react-native';
 
 import Swipeable from 'react-native-swipeable';
@@ -19,6 +18,10 @@ import CommonStyles from '../styles/common';
  * - renderItem = function to render the item inside the swipeable wrapper
  */
 export default class SwipeableListViewItem extends React.Component {
+
+    static defaultProps = {
+        height: CommonStyles.LIST_ITEM_HEIGHT
+    };
 
     constructor(props) {
         super(props);
@@ -65,8 +68,7 @@ export default class SwipeableListViewItem extends React.Component {
         return (
             <View style={[
                     styles.swipeAction,
-                    CommonStyles.styles.singleListItemContainer,
-                    { backgroundColor: activated ? color : CommonStyles.DEACTIVATED_SWIPE_ACTION_COLOR, overflow: 'hidden' }
+                    { backgroundColor: activated ? color : CommonStyles.DEACTIVATED_SWIPE_ACTION_COLOR, overflow: 'hidden', height: this.props.height}
                 ]}
             >
                 {   
@@ -107,13 +109,12 @@ export default class SwipeableListViewItem extends React.Component {
     render() {
         return (
             <Swipeable
-                style={CommonStyles.styles.singleListItemContainer}
                 onRef={ref => this.swipeable = ref}
                 rightContent={this.props.rightAction ? this.getRightContent() : null }
                 leftContent={this.props.leftAction ? this.getLeftContent() : null }
 
-                rightActionActivationDistance={70}
-                leftActionActivationDistance={70}
+                rightActionActivationDistance={CommonStyles.SWIPE_ACTIVATION_DISTANCE}
+                leftActionActivationDistance={CommonStyles.SWIPE_ACTIVATION_DISTANCE}
 
                 onRightActionActivate={this.onRightActionActivate.bind(this)}
                 onRightActionDeactivate={this.onRightActionDeactivate.bind(this)}
@@ -126,9 +127,7 @@ export default class SwipeableListViewItem extends React.Component {
                 onSwipeStart={() => { if (this.props.onSwipeStart) this.props.onSwipeStart(); }} 
                 onSwipeRelease={() => { if (this.props.onSwipeRelease) this.props.onSwipeRelease(); }}
             >
-                <View style={{flex: 1, justifyContent: 'center'}}>
-                    { this.props.children }
-                </View>
+                { this.props.children }
             </Swipeable>
         );
     }

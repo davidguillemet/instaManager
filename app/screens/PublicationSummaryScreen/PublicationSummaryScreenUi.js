@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 import {
   StyleSheet,
   View,
@@ -8,12 +8,12 @@ import {
   Clipboard
 } from 'react-native';
 
-import CategorieTagsDisplay from '../components/CategorieTagsDisplay';
-import CustomButton from '../components/CustomButton';
-import CommonStyles from '../styles/common';
-import { NotificationType, BottomNotification } from '../components/BottomNotification';
+import CategorieTagsDisplay from '../../components/CategorieTagsDisplay';
+import CustomButton from '../../components/CustomButton';
+import CommonStyles from '../../styles/common';
+import { NotificationType, BottomNotification } from '../../components/BottomNotification';
 
-export default class PublicationSummaryScreen extends React.Component {
+export default class PublicationSummaryScreenUi extends React.Component {
 
     static navigationOptions = ({ navigation }) => {
         const params = navigation.state.params || {};
@@ -27,6 +27,7 @@ export default class PublicationSummaryScreen extends React.Component {
 
         const { params } = this.props.navigation.state;
 
+        this.id = null;
         this.name = params.name;
         this.category = params.category;
         this.ownTags = params.tags;
@@ -49,20 +50,22 @@ export default class PublicationSummaryScreen extends React.Component {
         this.onSavePublication = this.onSavePublication.bind(this);
 
         this.state = {
-            copyCompleted: false // true as soon as the tags have been exported to clipboard
+            copyCompleted: false, // true as soon as the tags have been exported to clipboard
+            saveCompleted: false  // true as soon as the publication has been saved
         }
 
         this.copyClipboardSubscriber = [];
+        this.saveSubscriber = [];
     }
 
-    onDeleteTag(tagId) {
+    onDeleteTag(deletedTagId) {
 
-        // TODO
+        this.tags = this.tags.filter(tagId => tagId != deletedTagId);
     }
 
     onTagSelectionValidated(selection) {
 
-        // TODO
+        this.tags = [...selection];
     }
 
     onCopyToClipboard() {
@@ -105,7 +108,44 @@ export default class PublicationSummaryScreen extends React.Component {
 
     onSavePublication() {
 
-        // TODO
+        // properties: {
+        //     id: 'string',
+        //     name: 'string?',
+        //     description: 'string?',
+        //     creationDate: 'date',
+        //     tagNames: 'string[]', // contain the name of each tag (category + additional)
+        //     category: 'TagCategory?', // base category; optional since it could have been removed
+        //     categoryName: 'string',  // name of the referenced category (could have been removed)
+        //     archived: {type: 'bool',  default: false}
+        // }
+
+        this.setState( {
+            saveCompleted: false,
+        });
+    
+        const update = this.id !== null;
+        if (this.id === null) {
+            this.id = global.uniqueID();
+        }
+
+        const newPublication = {
+            id: this.id,
+            name: this.name,
+            description: null, // not yet supported
+            creationDate: new Date(),
+            tagNames: this.tags.map(tagId => global.hashtagUtil.getTagFromId(tagId).name),
+            category: this.category,
+            categoryName: global.hashtagUtil.getCatFromId(this.category).name,
+            archived: false
+        }
+        
+        global.hashtagPersistenceManager.savePublication(newPublication, update).then(() => {
+            this.props.onSavePublication(newPublication);
+            this.setState( {
+                saveCompleted: true,
+            });
+            this.saveSubscriber.forEach(listener => listener.setActionCompleted());
+        });
     }
 
     render() {
@@ -120,10 +160,13 @@ export default class PublicationSummaryScreen extends React.Component {
                     showActivityIndicator={true}
                 />
 
+                { /* TODO: Update Publication => Update Publication as soon as it has been saved or Edit mode */ }
                 <CustomButton
                     style={[CommonStyles.styles.standardButton, {justifyContent: 'center', marginHorizontal: CommonStyles.GLOBAL_PADDING}]}
                     title={'Save the publication'}
                     onPress={this.onSavePublication}
+                    register={this.saveSubscriber}
+                    showActivityIndicator={true}
                 />
 
                 <ScrollView style={CommonStyles.styles.standardPage}>
@@ -142,7 +185,7 @@ export default class PublicationSummaryScreen extends React.Component {
                         <Text style={CommonStyles.styles.smallLabel}>Base category</Text>
                         <View style={{ width: 20 }}/>
                         <TextInput
-                            defaultValue={this.category ? global.hashtagUtil.getCatFromId(this.category).name  : '<no category>'}
+                            defaultValue={this.category ? global.hashtagUtil.getCatFromId(this.category).name  : 'category removed'}
                             style={styles.parameterInput}
                             selectionColor={CommonStyles.TEXT_COLOR}
                             editable={false}
@@ -154,7 +197,6 @@ export default class PublicationSummaryScreen extends React.Component {
                         onDeleteTag={this.onDeleteTag}
                         onTagSelectionValidated={this.onTagSelectionValidated}
                         itemType={global.PUBLICATION_ITEM}
-                        showSegmentControl={false}
                     />
 
                     <View style={{ height: 20 }}></View>
@@ -165,6 +207,16 @@ export default class PublicationSummaryScreen extends React.Component {
                     this.state.copyCompleted ?
                     <BottomNotification
                         caption={'The tags have been sent to the clipboard.'}
+                        type={NotificationType.SUCCESS}
+                        manuallyCloseable={true}
+                    />
+                    :
+                    null
+                }
+                { 
+                    this.state.saveCompleted ?
+                    <BottomNotification
+                        caption={'The publication has been saved.'}
                         type={NotificationType.SUCCESS}
                         manuallyCloseable={true}
                     />

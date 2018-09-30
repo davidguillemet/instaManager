@@ -11,7 +11,10 @@ import {
     DELETE_TAG,
     MULTI_UPDATE,
     CONTROLS_STARTED,
-    CONTROLS_COMPLETED
+    CONTROLS_COMPLETED,
+    PUBLICATIONS_LOADED,
+    ADD_PUBLICATION,
+    DELETE_PUBLICATION
 } from './../actions';
 
 /**
@@ -70,7 +73,7 @@ function categoriesReducer(state = Map(), action) {
 /**
  * state is an immutable Map containing all the tags by Id 
  */
-function tagReducers(state = Map(), action) {
+function tagReducer(state = Map(), action) {
 
     switch (action.type) {
         case TAGS_LOADED:
@@ -128,6 +131,15 @@ function categoriesLoadingReducer(state = false, action) {
     }
 }
 
+function publicationsLoadingReducer(state = false, action) {
+    switch (action.type) {
+        case PUBLICATIONS_LOADED:
+            return true;
+        default:
+            return state;
+    }
+}
+
 function controlsReducer(state = Map({ running: false, errors: null }), action ) {
     switch (action.type) {
         case CONTROLS_STARTED:
@@ -144,10 +156,43 @@ function controlsReducer(state = Map({ running: false, errors: null }), action )
     }
 }
 
+function publicationReducer(state = Map(), action) {
+    switch (action.type) {
+        case PUBLICATIONS_LOADED:
+            return action.publications;
+        
+        case ADD_PUBLICATION:
+            return state.set(action.publication.id, action.publication); 
+
+        case DELETE_PUBLICATION:
+            return state.delete(action.publication); 
+        
+        case MULTI_UPDATE:
+            // update possible categoryName
+            
+            if (action.updates.updatedPubs == null || action.updates.updatedPubs.length == 0) { 
+                return state;
+            }
+
+            return state.withMutations(map => {
+
+                action.updates.updatedPubs.forEach(pub => {
+                    map.set(pub.id, pub);
+                });
+                
+            });
+
+        default:
+            return state;
+    }
+}
+
 export const rootReducer = combineReducers({
     tagsLoaded: tagsLoadingReducer,
     categoriesLoaded: categoriesLoadingReducer,
+    publicationsLoaded: publicationsLoadingReducer,
     controls: controlsReducer,
     categories: categoriesReducer,
-    tags: tagReducers
+    tags: tagReducer,
+    publications: publicationReducer
 });

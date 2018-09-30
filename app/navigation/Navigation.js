@@ -3,8 +3,6 @@ import {
     SwitchNavigator
 } from 'react-navigation';
 
-import NavigationStyles from '../styles/navigation';
-
 import AuthLoadingScreen from '../screens/AuthLoadingScreen';
 import ApplicationStack from './ApplicationStack';
 import AuthenticationStack from './AuthenticationStack';

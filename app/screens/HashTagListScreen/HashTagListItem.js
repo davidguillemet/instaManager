@@ -76,11 +76,11 @@ export default class TagListItem extends React.PureComponent {
             >
                 <TouchableOpacity onPress={this._onPress}>
                     <View style={[
-                            CommonStyles.styles.singleListItemContainer, 
-                            { flex: 1, flexDirection: 'row', alignItems: 'center' }
+                            CommonStyles.styles.singleListItemContainer,
+                            { flex: 1, flexDirection: 'row', alignItems: 'center'}
                         ]}
                     >
-                        <Text style={[CommonStyles.styles.singleListItem, { flex: 1 }]}>{this.props.name}</Text>
+                        <Text style={[CommonStyles.styles.singleListItem, { flex: 1 }]} numberOfLines={1}>{this.props.name}</Text>
                         {
                             this.props.selected ?
                             <Ionicons style={{ color: CommonStyles.ARCHIVE_COLOR, paddingRight: CommonStyles.GLOBAL_PADDING + CommonStyles.INDEX_LIST_WIDTH }} name='ios-checkmark-circle-outline' size={CommonStyles.LARGE_FONT_SIZE} /> :

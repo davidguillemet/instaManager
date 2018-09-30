@@ -48,6 +48,11 @@ export default class HashtagUtil {
         return this._getCategoriesFromStore().has(catId);
     }
 
+    getPubFromId(pubId) {
+
+        return this._getPublicationsFromStore().get(pubId);
+    }
+
     getAncestorCategories(catId) {
 
         let ancestors = [];
@@ -204,4 +209,9 @@ export default class HashtagUtil {
 
         return this.reduxStore.getState().get('categories');
     }
+
+    _getPublicationsFromStore() {
+
+        return this.reduxStore.getState().get('publications');
+    } 
 }

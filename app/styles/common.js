@@ -42,7 +42,7 @@ export default CommonStyles = {
 
   LIST_ITEM_HEIGHT: 40,
   LIST_SEPARATOR_HEIGHT: 1,
-  SECTION_HEADER_HEIGHT: 30,
+  SECTION_HEADER_HEIGHT: 40,
   INDEX_LIST_WIDTH: 20,
   INDEX_ITEM_HEIGHT: 16,
   FOCUSED_ITEM_SIZE: 50,
@@ -56,7 +56,10 @@ export default CommonStyles = {
 
   // Padding
   GLOBAL_PADDING: 10,
-  HIERARCHY_INDENT: 30
+  HIERARCHY_INDENT: 30,
+
+  // Swipe
+  SWIPE_ACTIVATION_DISTANCE: 120
 }
 
   // Predifined StyleSheet:
