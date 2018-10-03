@@ -54,12 +54,13 @@ export default class TagContainer extends React.PureComponent {
     constructor(props) {
         super(props);
     }
+    
     render() {
 
         let tagList =
             this.props.asObject ?
             this.props.tags :
-            this.props.tags.reduce((arr, id) => { arr.push(global.hashtagUtil.getTagFromId(id)); return arr; }, new Array());
+            this.props.tags.map(id => global.hashtagUtil.getTagFromId(id) );
 
         if (tagList.length == 0 && this.props.hideIfEmpty) {
             return null;

@@ -15,6 +15,7 @@ import LoadingIndicatorView from '../components/LoadingIndicator';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import CommonStyles from '../styles/common';
 import withControlStatus from '../components/WithControlStatus';
+import ListItemSeparator from '../components/ListItemSeparator';
 
 import { loadCategoriesIfNeeded, loadTagsIfNeeded } from '../actions';
 
@@ -67,19 +68,6 @@ class HashTagsHomeScreenComponent extends React.Component {
         });
     }
 
-    renderItemSeparator() {
-        return (
-            <View
-                style={{
-                    height: 1,
-                    width: "100%",
-                    backgroundColor: CommonStyles.SEPARATOR_COLOR,
-                    marginLeft: CommonStyles.GLOBAL_PADDING
-                }}
-            />
-        );
-    }
-
     renderSectionSeparator() {
         return (
             <View style={{ height: 10 }} />
@@ -127,7 +115,7 @@ class HashTagsHomeScreenComponent extends React.Component {
                         sections={this.sections} 
                         renderItem={({item}) => this.renderListItem(item)}
                         renderSectionHeader={({section}) => this.renderSectionHeader(section)}
-                        ItemSeparatorComponent={this.renderItemSeparator}
+                        ItemSeparatorComponent={ListItemSeparator}
                         SectionSeparatorComponent={this.renderSectionSeparator}
                         ListFooterComponent={this.renderListFooter}
                         ListEmptyComponent={this.renderEmptyComponent}

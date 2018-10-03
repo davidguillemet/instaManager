@@ -11,6 +11,7 @@ import PropTypes from 'prop-types';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import DuplicatedListItem from './DuplicatesListItem';
 import OverflowListItem from './OverflowListItem';
+import ListItemSeparator from '../ListItemSeparator';
 
 export default class ControlDetailsUi extends React.PureComponent {
 
@@ -25,7 +26,6 @@ export default class ControlDetailsUi extends React.PureComponent {
         this.renderDuplicatesListItem = this.renderDuplicatesListItem.bind(this);
         this.renderOverflowListItem = this.renderOverflowListItem.bind(this);
         this.renderSectionHeader = this.renderSectionHeader.bind(this);
-        this.renderSeparator = this.renderSeparator.bind(this);
         this.onShowDuplicatesItemMenu = this.onShowDuplicatesItemMenu.bind(this);
         this.onShowOverflowItemMenu = this.onShowOverflowItemMenu.bind(this);
         this.navigateToCategory = this.navigateToCategory.bind(this);
@@ -135,19 +135,6 @@ export default class ControlDetailsUi extends React.PureComponent {
         }
     }
 
-    renderSeparator() {
-        return (
-            <View
-                style={{
-                    height: CommonStyles.LIST_SEPARATOR_HEIGHT,
-                    width: "100%",
-                    backgroundColor: CommonStyles.SEPARATOR_COLOR,
-                    marginLeft: CommonStyles.GLOBAL_PADDING
-                }}
-            />
-        );
-    }
-
     render() {
         return (
             <View style={{flex: 1}}>
@@ -159,7 +146,7 @@ export default class ControlDetailsUi extends React.PureComponent {
                     sections={this.props.sections} 
                     renderItem={this.renderListItem}
                     renderSectionHeader={this.renderSectionHeader}
-                    ItemSeparatorComponent={this.renderSeparator}
+                    ItemSeparatorComponent={ListItemSeparator}
                 />
             </View>
         );

@@ -13,6 +13,7 @@ import CommonStyles from '../../styles/common';
 import CustomButton from '../../components/CustomButton';
 import LoadingIndicator from '../../components/LoadingIndicator';
 import TagContainer from '../../components/TagContainer';
+import ListItemSeparator from '../../components/ListItemSeparator';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
 const INVALID_TAGS = 'invalid';
@@ -213,7 +214,7 @@ export default class ImportFromTextScreen extends React.PureComponent {
                         { key: SELECTED_TAGS }
                     ]}
                     renderItem={this.renderTagSummaryMenuItem}
-                    ItemSeparatorComponent={this.renderSeparator}
+                    ItemSeparatorComponent={ListItemSeparator}
                 />
                 {
                     tipCaption ?
@@ -224,18 +225,6 @@ export default class ImportFromTextScreen extends React.PureComponent {
                 }
                 { this.renderTags(tagsToDisplay, readOnly, onPressTag, iconName) }
             </ScrollView>
-        );
-    }
-
-    renderSeparator() {
-        return (
-            <View
-                style={{
-                    height: 1,
-                    backgroundColor: CommonStyles.SEPARATOR_COLOR,
-                    marginLeft: CommonStyles.GLOBAL_PADDING*2
-                }}
-            />
         );
     }
 

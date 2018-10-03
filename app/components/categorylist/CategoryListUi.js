@@ -12,6 +12,7 @@ import {
 import CategoryListItem from './CategoryListItem';
 import LoadingIndicatorView from '../LoadingIndicator';
 import SearchInput from '../Search';
+import ListItemSeparator from './../ListItemSeparator';
 
 import CommonStyles from '../../styles/common'; 
 
@@ -164,19 +165,6 @@ class CategoryListUi extends React.PureComponent {
         }
     }
 
-    renderSeparator() {
-        return (
-            <View
-                style={{
-                    height: 1,
-                    width: "100%",
-                    backgroundColor: CommonStyles.SEPARATOR_COLOR,
-                    marginLeft: CommonStyles.GLOBAL_PADDING
-                }}
-            />
-        );
-    }
-
     setSearchResults(results) {
 
         this.setState({
@@ -308,7 +296,7 @@ class CategoryListUi extends React.PureComponent {
                             keyExtractor={this.keyExtractor}
                             ListEmptyComponent={this.renderEmptyComponent}
                             renderItem={this.renderCategory}
-                            ItemSeparatorComponent={this.renderSeparator}
+                            ItemSeparatorComponent={ListItemSeparator}
                             style={ this.props.mode == global.LIST_SELECTION_MODE ? styles.categoryListWithBorder : null }
                         />
                     }

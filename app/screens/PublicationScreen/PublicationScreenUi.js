@@ -9,6 +9,7 @@ import {
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import LoadingIndicatorView from '../../components/LoadingIndicator';
 import CustomButton from '../../components/CustomButton';
+import ListItemSeparator from '../../components/ListItemSeparator';
 import CommonStyles from '../../styles/common';
 import PublicationListItem from './PublicationListItem';
 
@@ -66,19 +67,6 @@ export default class PublicationScreenUi extends React.Component {
     onCreatePublication() {
 
         this.props.navigation.navigate('PublicationWizard');
-    }
-
-    renderSeparator() {
-        return (
-            <View
-                style={{
-                    height: CommonStyles.LIST_SEPARATOR_HEIGHT,
-                    width: "100%",
-                    backgroundColor: CommonStyles.SEPARATOR_COLOR,
-                    marginLeft: CommonStyles.GLOBAL_PADDING
-                }}
-            />
-        );
     }
 
     renderSectionHeader({section}) {
@@ -152,7 +140,7 @@ export default class PublicationScreenUi extends React.Component {
                     sections={this.props.sections} 
                     renderItem={this.renderListItem}
                     renderSectionHeader={this.renderSectionHeader}
-                    ItemSeparatorComponent={this.renderSeparator}
+                    ItemSeparatorComponent={ListItemSeparator}
                     ListEmptyComponent={this.renderEmptyComponent}
                     keyExtractor={this.keyExtractor}
                 />

@@ -2,7 +2,6 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import {
     FlatList,
-    StyleSheet,
     Text,
     View
 } from 'react-native';
@@ -64,17 +63,10 @@ export default class Wizard extends React.PureComponent {
         super(props);
 
         this.renderStepItem = this.renderStepItem.bind(this);
-        this.renderSeparator = this.renderSeparator.bind(this);
     }
 
     onPressStep() {
 
-    }
-
-    renderSeparator() {
-        return (
-            <ListItemSeparator />
-        );
     }
 
     renderStepItem({item, index}) {
@@ -89,7 +81,7 @@ export default class Wizard extends React.PureComponent {
                 data={this.props.steps}
                 extraData={this.props.activeStep}
                 renderItem={this.renderStepItem}
-                ItemSeparatorComponent={this.renderSeparator} />
+                ItemSeparatorComponent={ListItemSeparator} />
         );
     }
 

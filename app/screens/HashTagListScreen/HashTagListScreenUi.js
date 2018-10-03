@@ -13,6 +13,7 @@ import SearchInput from '../../components/Search';
 import LoadingIndicatorView from '../../components/LoadingIndicator';
 import SectionListIndex from '../../components/SectionListIndex';
 import TagListItem from './HashTagListItem';
+import ListItemSeparator from '../../components/ListItemSeparator';
 import { NotificationType, BottomNotification } from '../../components/BottomNotification';
 
 import CommonStyles from '../../styles/common'; 
@@ -217,19 +218,6 @@ export default class HashTagListScreenUi extends React.Component {
         return this.sectionIndexes.has(index) ? CommonStyles.SECTION_HEADER_HEIGHT : CommonStyles.LIST_ITEM_HEIGHT;
     }
     
-    renderSeparator() {
-        return (
-            <View
-                style={{
-                    height: CommonStyles.LIST_SEPARATOR_HEIGHT,
-                    width: "100%",
-                    backgroundColor: CommonStyles.SEPARATOR_COLOR,
-                    marginLeft: CommonStyles.GLOBAL_PADDING
-                }}
-            />
-        );
-    }
-
     renderEmptyComponent() {
         
         if (this.mode == global.LIST_SELECTION_MODE) {
@@ -341,7 +329,7 @@ export default class HashTagListScreenUi extends React.Component {
                                     keyExtractor={this.keyExtractor}
                                     ListEmptyComponent={this.emptySearchResult}
                                     renderItem={this.renderListItem}
-                                    ItemSeparatorComponent={this.renderSeparator} />
+                                    ItemSeparatorComponent={ListItemSeparator} />
                                 :
                                 <View style={{ flex: 1, justifyContent: 'center'}}>
                                     <SectionList
@@ -351,7 +339,7 @@ export default class HashTagListScreenUi extends React.Component {
                                         sections={this.props.sections} 
                                         renderItem={this.renderListItem}
                                         renderSectionHeader={this.renderSectionHeader}
-                                        ItemSeparatorComponent={this.renderSeparator}
+                                        ItemSeparatorComponent={ListItemSeparator}
                                         ListEmptyComponent={this.renderEmptyComponent}
                                         keyExtractor={this.keyExtractor}
                                         getItemLayout={this.getItemLayout}
