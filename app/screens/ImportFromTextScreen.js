@@ -74,7 +74,7 @@ export default class ImportFromTextScreen extends React.Component {
         return (
             <View style={CommonStyles.styles.standardPage}>
                 <View style={CommonStyles.styles.standardTile}>
-                    <Text style={CommonStyles.styles.mediumLabel}>You can import your hastags by clicking on "Import tags" once you have pasted/entered a string as '#tag1 #tag2...' in the text area just below.</Text>
+                    <Text style={CommonStyles.styles.mediumLabel}>You can import your hastags by clicking on "Import tags" once you have entered a string containing a space-separated list of tags, which might start with '#' or not.</Text>
                 </View>
                 <CustomButton
                     style={CommonStyles.styles.standardButtonCentered}
@@ -88,7 +88,7 @@ export default class ImportFromTextScreen extends React.Component {
                     style={styles.textInputStyle}
                     onChangeText={this.onChangeText}
                     multiline={true}
-                    placeholder={'Paste or enter a string as \'#tag1 #tag2...\''}
+                    placeholder={'Enter your space-separated tag list here'}
                     placeholderTextColor={CommonStyles.PLACEHOLDER_COLOR}
                     autoCapitalize='none'
                 />
