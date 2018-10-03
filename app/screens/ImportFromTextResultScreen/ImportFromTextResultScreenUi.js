@@ -14,6 +14,7 @@ import CustomButton from '../../components/CustomButton';
 import LoadingIndicator from '../../components/LoadingIndicator';
 import TagContainer from '../../components/TagContainer';
 import ListItemSeparator from '../../components/ListItemSeparator';
+import WarningMessage from '../../components/WarningMessage';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
 const INVALID_TAGS = 'invalid';
@@ -98,12 +99,19 @@ export default class ImportFromTextScreen extends React.PureComponent {
         );
 
         promise.then((allTags) => {
+
+            const selected =
+                allTags.tags && allTags.tags.length > 0 ? SELECTED_TAGS :
+                allTags.duplicates && allTags.duplicates.length > 0 ? DUPLICATE_TAGS :
+                INVALID_TAGS; // Should not happen since it would mean we only have invalid tags...
+
             that.setState({
                 loading: false,
                 tags: allTags.tags,
                 duplicates: allTags.duplicates,
                 errors: allTags.errors,
-                rejected: allTags.rejected
+                rejected: allTags.rejected,
+                selected: selected
             });
         });
     }
@@ -124,9 +132,10 @@ export default class ImportFromTextScreen extends React.PureComponent {
         const newTags = [...this.state.tags];
         newTags.splice(tagIndex, 1);
 
+        let selected = this.state.selected;
         if (newTags.length == 0) {
-            Alert.alert(null, 'You cannot remove all tags from the selection.');
-            return;
+            // No more selected tags = selected item is "rejected tags"
+            selected = REJECTED_TAGS;
         }
 
         const newRejected = [...this.state.rejected];
@@ -134,7 +143,8 @@ export default class ImportFromTextScreen extends React.PureComponent {
 
         this.setState({
             tags: newTags,
-            rejected: newRejected
+            rejected: newRejected,
+            selected: selected
         });
     }
 
@@ -202,10 +212,15 @@ export default class ImportFromTextScreen extends React.PureComponent {
                     style={CommonStyles.styles.standardButtonCentered}
                     title={'Save Tags'}
                     onPress={this.onAddImportedTags}
-                    deactivated={this.state.empty}
+                    deactivated={this.state.tags.length == 0}
                     showActivityIndicator={true}
                     register={this.importSubscribers}
                 />
+                {
+                    this.state.tags.length == 0 ?
+                    <WarningMessage message={'There is no valid tag to save'} centered /> :
+                    null
+                }
                 <FlatList style={{ borderWidth: 0, borderColor: CommonStyles.SEPARATOR_COLOR }}
                     data={[
                         { key: INVALID_TAGS },
