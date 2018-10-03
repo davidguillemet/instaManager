@@ -4,11 +4,10 @@ import {
   View,
   Text,
   TextInput,
-  ScrollView,
-  Clipboard
+  ScrollView
 } from 'react-native';
 
-import CategorieTagsDisplay from '../../components/CategorieTagsDisplay';
+import TagContainer from '../../components/TagContainer';
 import CustomButton from '../../components/CustomButton';
 import CommonStyles from '../../styles/common';
 import { NotificationType, BottomNotification } from '../../components/BottomNotification';
@@ -27,45 +26,30 @@ export default class PublicationSummaryScreenUi extends React.Component {
 
         const { params } = this.props.navigation.state;
 
-        this.id = null;
-        this.name = params.name;
-        this.category = params.category;
-        this.ownTags = params.tags;
+        let pubId = params.id;
 
-        // Flatten tags and keep a trace of the tags which are specific from this publication (outside category)
-        if (this.category) {
-            const ancestors = global.hashtagUtil.getAncestorCategories(this.category);
-            const tagSet = ancestors.reduce((set, cat) => { 
-                cat.hashtags.forEach(tagId => set.add(tagId));
-                return set;
-            }, new Set(this.ownTags));
-            this.tags = [...tagSet];
-        } else {
-            this.tags = [...this.ownTags];
-        }
+        const publication = global.hashtagUtil.getPubFromId(pubId);
+        this.name = publication.name;
+        this.category = publication.category;
+        this.tags = publication.tagNames.map(tagName => this.getTagObject(tagName));
    
-        this.onDeleteTag = this.onDeleteTag.bind(this);
-        this.onTagSelectionValidated = this.onTagSelectionValidated.bind(this);
         this.onCopyToClipboard = this.onCopyToClipboard.bind(this);
-        this.onSavePublication = this.onSavePublication.bind(this);
 
         this.state = {
-            copyCompleted: false, // true as soon as the tags have been exported to clipboard
-            saveCompleted: false  // true as soon as the publication has been saved
+            copyCompleted: false // true as soon as the tags have been exported to clipboard
         }
 
         this.copyClipboardSubscriber = [];
         this.saveSubscriber = [];
     }
 
-    onDeleteTag(deletedTagId) {
+    getTagObject(tagName) {
 
-        this.tags = this.tags.filter(tagId => tagId != deletedTagId);
-    }
-
-    onTagSelectionValidated(selection) {
-
-        this.tags = [...selection];
+        return {
+            id: global.uniqueID(),
+            name: tagName,
+            categories: []
+        }
     }
 
     onCopyToClipboard() {
@@ -73,32 +57,8 @@ export default class PublicationSummaryScreenUi extends React.Component {
         this.setState( {
             copyCompleted: false,
         });
-        
-        const that = this;
 
-        const promise = new Promise(
-            function(resolve, reject) {
-
-                let tagsValue = '';
-
-                that.tags.forEach((tag) => {
-        
-                    if (tagsValue.length > 0) {
-                        tagsValue += ' ';
-                    }
-                    tagsValue += '#' + global.hashtagUtil.getTagFromId(tag).name;
-                });
-        
-                let tagStream = global.settingsManager.getHeader()
-                tagStream += tagsValue;
-                tagStream += global.settingsManager.getFooter();
-                Clipboard.setString(tagStream);
-                
-                resolve();
-            }
-        );
-
-        promise.then(() => {
+        global.hashtagUtil.copyToClipboard(this.tags).then(() => {
             this.setState( {
                 copyCompleted: true,
             });
@@ -106,46 +66,31 @@ export default class PublicationSummaryScreenUi extends React.Component {
         });
     }
 
-    onSavePublication() {
+    renderTagsCountCaption() {
 
-        // properties: {
-        //     id: 'string',
-        //     name: 'string?',
-        //     description: 'string?',
-        //     creationDate: 'date',
-        //     tagNames: 'string[]', // contain the name of each tag (category + additional)
-        //     category: 'TagCategory?', // base category; optional since it could have been removed
-        //     categoryName: 'string',  // name of the referenced category (could have been removed)
-        //     archived: {type: 'bool',  default: false}
-        // }
+        const remainingTags = global.settingsManager.getMaxNumberOfTags() - this.tags.length;
+        const remainingError = remainingTags < 0;
+        const tagCount = `${this.tags.length} Tag(s) in total - `;
+        const remainingTip = remainingError ? `${-remainingTags} in excess` : `${remainingTags} remaining`;
 
-        this.setState( {
-            saveCompleted: false,
-        });
-    
-        const update = this.id !== null;
-        if (this.id === null) {
-            this.id = global.uniqueID();
-        }
-
-        const newPublication = {
-            id: this.id,
-            name: this.name,
-            description: null, // not yet supported
-            creationDate: new Date(),
-            tagNames: this.tags.map(tagId => global.hashtagUtil.getTagFromId(tagId).name),
-            category: this.category,
-            categoryName: global.hashtagUtil.getCatFromId(this.category).name,
-            archived: false
-        }
-        
-        global.hashtagPersistenceManager.savePublication(newPublication, update).then(() => {
-            this.props.onSavePublication(newPublication);
-            this.setState( {
-                saveCompleted: true,
-            });
-            this.saveSubscriber.forEach(listener => listener.setActionCompleted());
-        });
+        return (
+            <View style={[
+                    CommonStyles.styles.standardTile,
+                    {
+                        justifyContent: 'center',
+                        backgroundColor: remainingError ? CommonStyles.LIGHT_RED : CommonStyles.LIGHT_GREEN
+                    }
+                    ]}>
+                <Text style={[
+                        CommonStyles.styles.smallLabel,
+                        {
+                            color: remainingError ? CommonStyles.DARK_RED : CommonStyles.DARK_GREEN
+                        }
+                        ]}>
+                    {tagCount + remainingTip}
+                </Text>
+            </View>
+        );
     }
 
     render() {
@@ -157,15 +102,6 @@ export default class PublicationSummaryScreenUi extends React.Component {
                     title={'Copy to clipboard'}
                     onPress={this.onCopyToClipboard}
                     register={this.copyClipboardSubscriber}
-                    showActivityIndicator={true}
-                />
-
-                { /* TODO: Update Publication => Update Publication as soon as it has been saved or Edit mode */ }
-                <CustomButton
-                    style={[CommonStyles.styles.standardButton, {justifyContent: 'center', marginHorizontal: CommonStyles.GLOBAL_PADDING}]}
-                    title={'Save the publication'}
-                    onPress={this.onSavePublication}
-                    register={this.saveSubscriber}
                     showActivityIndicator={true}
                 />
 
@@ -185,20 +121,21 @@ export default class PublicationSummaryScreenUi extends React.Component {
                         <Text style={CommonStyles.styles.smallLabel}>Base category</Text>
                         <View style={{ width: 20 }}/>
                         <TextInput
-                            defaultValue={this.category ? global.hashtagUtil.getCatFromId(this.category).name  : 'category removed'}
+                            defaultValue={this.category ? global.hashtagUtil.getCatFromId(this.category).name  : '<category removed>'}
                             style={styles.parameterInput}
                             selectionColor={CommonStyles.TEXT_COLOR}
                             editable={false}
                         />
                     </View>
                     <View style={{height: 20}}></View>
-                    <CategorieTagsDisplay
+                    { this.renderTagsCountCaption() }
+                    <TagContainer style={{ marginTop: 10 }}
                         tags={this.tags}
-                        onDeleteTag={this.onDeleteTag}
-                        onTagSelectionValidated={this.onTagSelectionValidated}
-                        itemType={global.PUBLICATION_ITEM}
+                        itemType={global.TAG_ITEM}
+                        readOnly={true}
+                        addSharp={true}
+                        asObject={true}
                     />
-
                     <View style={{ height: 20 }}></View>
 
                 </ScrollView>
@@ -207,16 +144,6 @@ export default class PublicationSummaryScreenUi extends React.Component {
                     this.state.copyCompleted ?
                     <BottomNotification
                         caption={'The tags have been sent to the clipboard.'}
-                        type={NotificationType.SUCCESS}
-                        manuallyCloseable={true}
-                    />
-                    :
-                    null
-                }
-                { 
-                    this.state.saveCompleted ?
-                    <BottomNotification
-                        caption={'The publication has been saved.'}
                         type={NotificationType.SUCCESS}
                         manuallyCloseable={true}
                     />

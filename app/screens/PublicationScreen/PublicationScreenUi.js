@@ -64,10 +64,8 @@ export default class PublicationScreenUi extends React.Component {
     }
 
     onCreatePublication() {
-        const params = {
-            itemType: global.PUBLICATION_ITEM
-        };
-        this.props.navigation.navigate('HashtagCategoryEdit', params);        
+
+        this.props.navigation.navigate('PublicationWizard');
     }
 
     renderSeparator() {

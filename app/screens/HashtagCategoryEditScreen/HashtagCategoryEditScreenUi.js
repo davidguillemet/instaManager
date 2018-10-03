@@ -23,18 +23,6 @@ function renderSaveButton(params) {
     );
 }
 
-function renderPublicationNextButton(params) {
-
-    return (
-        <View style={{ flexDirection: 'row'}}>
-            <TouchableOpacity onPress={params.onPublicationNext} style={{ flexDirection: 'row', alignItems: 'center'}}>
-                <Text style={CommonStyles.styles.mediumLabel}>Next</Text>
-                <Ionicons name={'ios-arrow-forward'} style={CommonStyles.styles.navigationButtonIcon}/>
-            </TouchableOpacity>
-        </View>
-    );
-}
-
 export default class HashtagCategoryEditScreenUi extends React.Component {
 
     static navigationOptions = ({ navigation }) => {
@@ -44,7 +32,7 @@ export default class HashtagCategoryEditScreenUi extends React.Component {
         headerTitle += global.hashtagUtil.getItemTypeCaption(params.itemType);
         return {
             headerTitle: headerTitle,
-            headerRight: params.itemType == global.PUBLICATION_ITEM ? renderPublicationNextButton(params) : renderSaveButton(params)
+            headerRight: renderSaveButton(params)
         }   
     };
 
@@ -78,7 +66,6 @@ export default class HashtagCategoryEditScreenUi extends React.Component {
                 
                 this.childrenTags = global.hashtagUtil.getHashtags(updateItem.id).map(tag => tag.id);
             }
-            // TODO... Add the case of publication edition
 
             parentCategoriesCaption = this.getCaptionFromItems(parentCategories, global.CATEGORY_ITEM);
         }
@@ -101,8 +88,7 @@ export default class HashtagCategoryEditScreenUi extends React.Component {
     componentDidMount() {
 
         this.props.navigation.setParams({ 
-            onSaveItem: this.onSaveItem.bind(this),
-            onPublicationNext: this.onPublicationNext.bind(this)
+            onSaveItem: this.onSaveItem.bind(this)
         });
     }
 
@@ -139,28 +125,6 @@ export default class HashtagCategoryEditScreenUi extends React.Component {
 
         return ((this.state.parentCategories === null || this.state.parentCategories.length == 0) &&
                 (this.childrenTags === null || this.childrenTags.length == 0));
-    }
-
-    onPublicationNext() {
-
-        if (this.hasNoTags()) {
-            Alert.alert('', 'The publication is empty...\nPlease, select a category or at least one tag.',
-            [
-                {
-                    text: 'OK'
-                }
-            ]);
-        }
-        else {
-
-            const params = {
-                name: this.state.itemName,
-                category: this.state.parentCategories != null && this.state.parentCategories.length > 0 ? this.state.parentCategories[0] : null,
-                tags: this.childrenTags
-            };
-            this.props.navigation.navigate('PublicationSummary', params);        
-        }
-
     }
 
     saveTag() {
@@ -277,15 +241,6 @@ export default class HashtagCategoryEditScreenUi extends React.Component {
 
     renderHeaderTip() {
 
-        if (this.itemType === global.PUBLICATION_ITEM) {
-            return (
-                <View style={[CommonStyles.styles.standardTile, { alignItems: 'center'} ]}>
-                    <Ionicons name={'ios-information-circle'} style={[CommonStyles.styles.textIcon, { paddingLeft: 0}]}/>
-                    <Text style={[CommonStyles.styles.mediumLabel, {flex: 1, flexWrap: 'wrap'}]}>Select a category to initialize the publication. You can also enter an optional name for your new publication.</Text>
-                </View>
-            );
-        }
-
         return (
             <View style={[CommonStyles.styles.standardTile, { alignItems: 'center'} ]}>
                 <Ionicons name={'ios-information-circle'} style={[CommonStyles.styles.textIcon, { paddingLeft: 0}]}/>
@@ -337,7 +292,6 @@ export default class HashtagCategoryEditScreenUi extends React.Component {
                         <Ionicons name={'ios-arrow-forward'} style={[CommonStyles.styles.textIcon, styles.iconSelect]}/>
                         {
                             this.itemType == global.CATEGORY_ITEM ||
-                            this.itemType == global.PUBLICATION_ITEM ||
                             this.state.parentCategories == null ||
                             this.state.parentCategories.length == 0 ?
 
@@ -361,15 +315,16 @@ export default class HashtagCategoryEditScreenUi extends React.Component {
                 </View>
                 
                 {
-                    this.itemType == global.CATEGORY_ITEM || this.itemType == global.PUBLICATION_ITEM ?
-                    <CategorieTagsDisplay
-                        tags={this.childrenTags}
-                        onDeleteTag={this.onDeleteTag}
-                        onTagSelectionValidated={this.onTagSelectionValidated}
-                        parentCategory={this.state.parentCategories && this.state.parentCategories.length > 0 ? this.state.parentCategories[0] : null}
-                        itemType={this.itemType}
-                        initialDisplayMode= {this.itemType == global.PUBLICATION_ITEM ? 'ancestors' : 'self'}
-                    />
+                    this.itemType == global.CATEGORY_ITEM ?
+                    <View style={{paddingTop: CommonStyles.GLOBAL_PADDING}}>
+                        <CategorieTagsDisplay
+                            tags={this.childrenTags}
+                            onDeleteTag={this.onDeleteTag}
+                            onTagSelectionValidated={this.onTagSelectionValidated}
+                            parentCategory={this.state.parentCategories && this.state.parentCategories.length > 0 ? this.state.parentCategories[0] : null}
+                            itemType={this.itemType}
+                        />
+                    </View>
                     : null
                 }
 

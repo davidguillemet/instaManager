@@ -72,7 +72,7 @@ export default class PublicationListItem extends React.PureComponent {
         return (
             <SwipeableListViewItem
                 itemId={this.props.id} 
-                height={55}
+                height={70}
                 rightAction={{ caption: 'Delete', icon: 'ios-trash', color: CommonStyles.DELETE_COLOR, callback: this._onDeleteTag }}
                 leftAction={{ caption: 'Archive', icon: 'ios-archive', color: CommonStyles.ARCHIVE_COLOR, callback: this._onArchiveTag }}
                 onSwipeStart={() => this.props.setParentState({isSwiping: true})}

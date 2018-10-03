@@ -10,6 +10,7 @@ import HashtagCategoryEditScreen from '../screens/HashtagCategoryEditScreen';
 import CategorySelectionScreen from '../screens/CategorySelectionScreen';
 import HashTagListScreen from '../screens/HashTagListScreen';
 import PublicationSummaryScreen from '../screens/PublicationSummaryScreen';
+import PublicationWizardScreen from '../screens/PublicationWizardScreen';
 
 export default PublicationStack = StackNavigator(
 {
@@ -17,7 +18,8 @@ export default PublicationStack = StackNavigator(
     HashtagCategoryEdit: { screen: HashtagCategoryEditScreen },
     CategorySelection: { screen: CategorySelectionScreen },
     HashTagList: { screen: HashTagListScreen },
-    PublicationSummary: { screen: PublicationSummaryScreen }
+    PublicationSummary: { screen: PublicationSummaryScreen },
+    PublicationWizard: { screen: PublicationWizardScreen }
 },
 {
     initialRouteName: 'PublicationHome',

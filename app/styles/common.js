@@ -9,6 +9,7 @@ export default CommonStyles = {
   KPI_COLOR: '#FFFFFF',
   TEXT_COLOR: '#CCCCCC',
   DEACTIVATED_TEXT_COLOR: '#999999',
+  SELECTED_TEXT_COLOR: '#FFFFFF',
   PLACEHOLDER_COLOR: '#999999',
   SEPARATOR_COLOR: '#666666',
   DELETE_COLOR: '#E64545',
@@ -26,6 +27,7 @@ export default CommonStyles = {
   DARK_RED: '#DE2323',
   BUTTON_COLOR: '#192b48',
   DEACTIVATED_BUTTON_TEXT_COLOR: '#666666',
+  COLOR_TRANSPARENT: '#00000000',
 
   // Opacity
   NOTIFICATION_OPACITY: 0.8,
@@ -142,6 +144,11 @@ CommonStyles.styles = StyleSheet.create(
   },
   singleListItem:  {
     color: CommonStyles.TEXT_COLOR,
+    fontSize: CommonStyles.MEDIUM_FONT_SIZE,
+    paddingHorizontal: CommonStyles.GLOBAL_PADDING
+  },
+  singleSelectedListItem:  {
+    color: CommonStyles.SELECTED_TEXT_COLOR,
     fontSize: CommonStyles.MEDIUM_FONT_SIZE,
     paddingHorizontal: CommonStyles.GLOBAL_PADDING
   },

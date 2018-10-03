@@ -94,6 +94,6 @@ const styles = StyleSheet.create(
         right: 5,
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: '#00000000' // transparent
+        backgroundColor: CommonStyles.COLOR_TRANSPARENT
     }
 });

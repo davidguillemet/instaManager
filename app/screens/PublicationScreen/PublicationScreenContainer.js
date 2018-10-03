@@ -27,10 +27,10 @@ function _buildSections(publicationsLoaded, immutablePublications) {
     }
 
     const sortedPublications = immutablePublications.toList().sort((p1, p2) => {
-        if (p1.creationDate > p2.creationDate) {
+        if (p1.creationDate < p2.creationDate) {
             return 1;
         }
-        if (p1.creationDate < p2.creationDate) {
+        if (p1.creationDate > p2.creationDate) {
             return -1;
         }
         return 0;

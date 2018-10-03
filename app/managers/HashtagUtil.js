@@ -1,3 +1,5 @@
+import { Clipboard } from 'react-native';
+
 export default class HashtagUtil {
 
     constructor(store) {
@@ -150,6 +152,47 @@ export default class HashtagUtil {
             }
         );
     }
+
+    getTagObjectsFromTagIdentifiers(tagIdentifiers) {
+
+        const that = this;
+
+        const promise = new Promise(
+            function (resolve, reject) {
+                const tagObjects = tagIdentifiers.map(id => that.getTagFromId(id));
+                resolve(tagObjects);
+            }
+        );
+
+        return promise;
+    }
+
+    copyToClipboard(tagObjects) {
+
+        const promise = new Promise(
+            function(resolve, reject) {
+
+                let tagsValue = '';
+
+                tagObjects.forEach((tag) => {
+        
+                    if (tagsValue.length > 0) {
+                        tagsValue += ' ';
+                    }
+                    tagsValue += '#' + tag.name;
+                });
+        
+                let tagStream = global.settingsManager.getHeader()
+                tagStream += tagsValue;
+                tagStream += global.settingsManager.getFooter();
+                Clipboard.setString(tagStream);
+                
+                resolve();
+            }
+        );
+
+        return promise;
+    }    
 
     _runCategoriesControl(categories /* Array */, inheritedTags /* Set */, errors /* Array */) {
 

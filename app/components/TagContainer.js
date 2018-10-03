@@ -34,7 +34,8 @@ export default class TagContainer extends React.PureComponent {
         addSharp: PropTypes.bool,       // true pour ajouter le prefix #
         itemType: PropTypes.string,     // type of the displayed item (global.CATEGORY_ITEM or global.TAG_ITEM)
         hideIfEmpty: PropTypes.bool,    // true to hide the contaner when the tag list is empty
-        iconName: PropTypes.string      // name of the icon to use for each tag
+        iconName: PropTypes.string,     // name of the icon to use for each tag
+        asObject: PropTypes.bool        // true if tag objects are passed as input parameters instead of identifiers
     };
 
     static defaultProps = {
@@ -46,7 +47,8 @@ export default class TagContainer extends React.PureComponent {
         addSharp: true,
         itemType: global.TAG_ITEM,
         hideIfEmpty: false,
-        iconName: 'ios-close-circle-outline'
+        iconName: 'ios-close-circle-outline',
+        asObject: false
     };
 
     constructor(props) {

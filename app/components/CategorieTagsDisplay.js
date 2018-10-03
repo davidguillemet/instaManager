@@ -181,7 +181,7 @@ class CategorieTagsDisplay extends React.PureComponent {
 
             // Return tags from the edited category
             return (
-                <TagContainer style={{ marginTop: 10 }}
+                <TagContainer
                     tags={tags}
                     label={tagsCount + ' tag(s) in this ' + global.hashtagUtil.getItemTypeCaption(this.props.itemType)}
                     itemType={global.TAG_ITEM}
@@ -211,7 +211,7 @@ class CategorieTagsDisplay extends React.PureComponent {
                 
                 return (
                     <TagContainer
-                        style={{ marginTop: 10 }}
+                        style={{ marginBottom: 10 }}
                         label={countWithoutDuplicated + ' tag(s) in ' + cat.name}
                         key={cat.id}
                         tags={cat.hashtags}
@@ -305,7 +305,7 @@ class CategorieTagsDisplay extends React.PureComponent {
         const ancestorDuplicates = this.getAncestorsDuplicatedTags(this.props);
 
         return (
-            <View style={{marginTop: CommonStyles.GLOBAL_PADDING}}>
+            <View>
                 { this.renderTagsCountCaption() }
                 {
                     this.props.itemType !== global.PUBLICATION_ITEM ?
