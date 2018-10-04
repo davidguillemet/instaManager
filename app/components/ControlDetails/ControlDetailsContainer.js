@@ -1,5 +1,7 @@
 import { connect } from 'react-redux';
+import { compose } from 'redux';
 import { createSelector } from 'reselect';
+import { withNavigation } from 'react-navigation';
 import { createMultiUpdateAction } from '../../actions';
 import ControlDetailsUi from './ControlDetailsUi';
 
@@ -62,6 +64,9 @@ const mapDispatchToProps = dispatch => {
     }
 }
 
-const ControlDetails = connect(mapStateToProps, mapDispatchToProps)(ControlDetailsUi);
+const ControlDetails = compose(
+    connect(mapStateToProps, mapDispatchToProps),
+    withNavigation
+    )(ControlDetailsUi);
 
 export default ControlDetails;

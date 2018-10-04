@@ -24,7 +24,7 @@ class HashTagsHomeScreenComponent extends React.Component {
     static navigationOptions = ({ navigation }) => {
         const params = navigation.state.params || {};
         return {
-            headerTitle: 'Hashtag Management'
+            headerTitle: 'Tag Management'
         }   
     };
 
@@ -108,7 +108,7 @@ class HashTagsHomeScreenComponent extends React.Component {
             return(
                 <View style={CommonStyles.styles.standardPage}>
                     <View style={CommonStyles.styles.standardTile}>
-                        <Text style={CommonStyles.styles.mediumLabel}>You can manage and organize your hashtags in hierarchical categories to quickly select all the tags you need for each of your publications.</Text>
+                        <Text style={CommonStyles.styles.mediumLabel}>You can manage and organize your tags in hierarchical way through categories to quickly select all the tags you need for each of your publications.</Text>
                     </View>
                     <View style={{ height: 10}}></View>
                     <SectionList

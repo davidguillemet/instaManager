@@ -2,6 +2,7 @@ import React from 'react';
 import {
     SectionList,
     ActionSheetIOS,
+    ProgressViewIOS,
     StyleSheet,
     View,
     Text,
@@ -15,10 +16,6 @@ import ListItemSeparator from '../ListItemSeparator';
 
 export default class ControlDetailsUi extends React.PureComponent {
 
-    static propTypes = {
-        onNavigate: PropTypes.func.isRequired
-    };
-
     constructor(props) {
         super(props);
 
@@ -26,9 +23,37 @@ export default class ControlDetailsUi extends React.PureComponent {
         this.renderDuplicatesListItem = this.renderDuplicatesListItem.bind(this);
         this.renderOverflowListItem = this.renderOverflowListItem.bind(this);
         this.renderSectionHeader = this.renderSectionHeader.bind(this);
+        this.renderEmptyComponent = this.renderEmptyComponent.bind(this);
         this.onShowDuplicatesItemMenu = this.onShowDuplicatesItemMenu.bind(this);
         this.onShowOverflowItemMenu = this.onShowOverflowItemMenu.bind(this);
         this.navigateToCategory = this.navigateToCategory.bind(this);
+        this.screenDidFocus = this.screenDidFocus.bind(this);
+        this.processClosingBreakdown = this.processClosingBreakdown.bind(this);
+
+        this.didFocusSubscription = this.props.navigation.addListener(
+            'didFocus',
+            this.screenDidFocus
+        );
+
+        const closingDelay = 5;
+
+        this.state = {
+            closingDelay: closingDelay,
+            closingInterval: 0.1,
+            closingProgress: closingDelay,
+            closing: false
+        }
+    }
+
+    componentDidMount() {
+
+        this.mounted = true;        
+    }
+
+    componentWillUnmount() {
+
+        this.didFocusSubscription.remove();
+        this.mounted = false;
     }
 
     navigateToCategory(catId) {
@@ -40,7 +65,7 @@ export default class ControlDetailsUi extends React.PureComponent {
             itemType: global.CATEGORY_ITEM
         };
 
-        this.props.onNavigate('HashtagCategoryEdit', params);        
+        this.props.navigation.navigate('HashtagCategoryEdit', params);        
     }
 
     onShowOverflowItemMenu(catId) {
@@ -135,18 +160,76 @@ export default class ControlDetailsUi extends React.PureComponent {
         }
     }
 
+    renderEmptyComponent() {
+
+        const remaining = this.state.closingProgress == this.state.closingDelay ? this.state.closingDelay : this.state.closingProgress + 1;
+
+        return (
+            <View>
+                <Message success centered message={`All issues have been fixed.\nThis screen will close in ${Math.floor(remaining)} seconds.`} />
+                <ProgressViewIOS
+                    progressViewStyle='default'
+                    progress={(this.state.closingDelay - this.state.closingProgress) / this.state.closingDelay}
+                    trackTintColor={CommonStyles.TEXT_COLOR}
+                    style={{width: '100%', height: CommonStyles.GLOBAL_PADDING}}/>
+            </View>
+        );
+    }
+
+    screenDidFocus(payload) {
+
+        this.startClosingBreakdownIfNeeded();
+    }
+
+    componentDidUpdate() {
+
+        this.startClosingBreakdownIfNeeded();
+    }
+
+    startClosingBreakdownIfNeeded() {
+        
+        if (this.props.sections.length == 0 && this.state.closing == false) {
+            this.state.closing = true;
+            setTimeout(this.processClosingBreakdown, this.state.closingInterval * 1000);
+        }
+    }
+
+    processClosingBreakdown() {
+
+        if (this.mounted == false) {
+            return;
+        }
+
+        this.setState({
+            closingProgress: this.state.closingProgress - this.state.closingInterval
+        });
+        
+        if (this.state.closingProgress <= 0) {
+            this.props.navigation.goBack(null);
+            return;
+        }
+
+        setTimeout(this.processClosingBreakdown, this.state.closingInterval * 1000);
+    }
+
     render() {
+
+        const noMoreErrors = this.props.sections.length == 0;
+
         return (
             <View style={{flex: 1}}>
-                <View style={{flexDirection: 'row', justifyContent: 'center', marginBottom: CommonStyles.GLOBAL_PADDING}}>
-                    <Ionicons style={{color: CommonStyles.LIGHT_RED}} name={'ios-alert'} size={40} />
-                </View>
+                {
+                    this.props.sections.length > 0 ?
+                    <Message error centered message={'Some issues haves been detected which you can fix by removing duplicated tags and/or editing categories.'} /> :
+                    null
+                }
                 <SectionList
                     style={{ flex: 1 }}
                     sections={this.props.sections} 
                     renderItem={this.renderListItem}
                     renderSectionHeader={this.renderSectionHeader}
                     ItemSeparatorComponent={ListItemSeparator}
+                    ListEmptyComponent={this.renderEmptyComponent}
                 />
             </View>
         );

@@ -12,7 +12,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 
 import TagContainer from './TagContainer';
 import CustomButton from './CustomButton';
-import WarningMessage from './WarningMessage';
+import Message from './Message';
 
 import CommonStyles from '../styles/common'; 
 
@@ -279,7 +279,7 @@ class CategorieTagsDisplay extends React.PureComponent {
         }
         
         return (
-            <WarningMessage message={'The category hierarchy contains duplicated tags.'} />
+            <Message message={'The category hierarchy contains duplicated tags.'} error />
         )        
     }
 

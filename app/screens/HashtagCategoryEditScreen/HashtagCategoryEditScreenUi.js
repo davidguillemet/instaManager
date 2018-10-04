@@ -117,7 +117,7 @@ export default class HashtagCategoryEditScreenUi extends React.Component {
                     break;
             }
 
-            this.props.navigation.goBack();
+            this.props.navigation.goBack(null);
         }
     }
 

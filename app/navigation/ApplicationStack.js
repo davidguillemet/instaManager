@@ -1,5 +1,6 @@
 import React from 'react';
 import {
+    StackNavigator,
     TabNavigator,
     TabBarBottom
 } from 'react-navigation';
@@ -12,6 +13,7 @@ import StatisticsStack from './SatisticsStack';
 import PublicationStack from './PublicationStack';
 import HashTagsStack from './HashTagsStack';
 import SettingsStack from './SettingsStack';
+import ControlDetailsStack from './ControlDetailsStack';
 
 function getRouteIcon(routeName, focused) {
     let iconName;
@@ -27,12 +29,12 @@ function getRouteIcon(routeName, focused) {
     return iconName;
 }
 
-export default ApplicationStack = TabNavigator(
+const ApplicationNavigator = TabNavigator(
 {
-    Statistics : { screen: StatisticsStack },
+    //Statistics : { screen: StatisticsStack },
     HashTags: { screen: HashTagsStack },
     Publication: { screen: PublicationStack },
-    Settings: { screen: SettingsStack }
+    Settings: { screen: SettingsStack },
 },
 {
     ////// TO REMOVE ONCE FACEBOOK CONNECTION IS BACK ///
@@ -59,6 +61,18 @@ export default ApplicationStack = TabNavigator(
     tabBarComponent: TabBarBottom,
     tabBarPosition: 'bottom',
     animationEnabled: false,
-    swipeEnabled: false,
+    swipeEnabled: false
+});
+
+export default Root = StackNavigator(
+{
+    ApplicationStack: { screen: ApplicationNavigator },
+    ControlDetailsModal: { screen: ControlDetailsStack }
+}
+,
+{
+    initialRouteName: 'ApplicationStack',
+    mode: 'modal',
+    headerMode: 'none',
 });
     

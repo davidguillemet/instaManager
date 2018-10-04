@@ -65,7 +65,27 @@ export default class TagListItem extends React.PureComponent {
         //////////
     }
 
-    render() {
+    renderTouchableContent() {
+
+        return (
+            <TouchableOpacity onPress={this._onPress}>
+                <View style={[
+                        CommonStyles.styles.singleListItemContainer,
+                        { flex: 1, flexDirection: 'row', alignItems: 'center'}
+                    ]}
+                >
+                    <Text style={[CommonStyles.styles.singleListItem, { flex: 1 }]} numberOfLines={1}>{this.props.name}</Text>
+                    {
+                        this.props.selected ?
+                        <Ionicons style={{ color: CommonStyles.ARCHIVE_COLOR, paddingRight: CommonStyles.GLOBAL_PADDING + CommonStyles.INDEX_LIST_WIDTH }} name='ios-checkmark-circle-outline' size={CommonStyles.LARGE_FONT_SIZE} /> :
+                        null
+                    }
+                </View>
+            </TouchableOpacity>
+        );
+    }
+
+    renderSwipeableContent() {
         return (
             <SwipeableListViewItem
                 itemId={this.props.id} 
@@ -74,21 +94,16 @@ export default class TagListItem extends React.PureComponent {
                 onSwipeStart={() => this.props.setParentState({isSwiping: true})}
                 onSwipeRelease={() => this.props.setParentState({isSwiping: false})}
             >
-                <TouchableOpacity onPress={this._onPress}>
-                    <View style={[
-                            CommonStyles.styles.singleListItemContainer,
-                            { flex: 1, flexDirection: 'row', alignItems: 'center'}
-                        ]}
-                    >
-                        <Text style={[CommonStyles.styles.singleListItem, { flex: 1 }]} numberOfLines={1}>{this.props.name}</Text>
-                        {
-                            this.props.selected ?
-                            <Ionicons style={{ color: CommonStyles.ARCHIVE_COLOR, paddingRight: CommonStyles.GLOBAL_PADDING + CommonStyles.INDEX_LIST_WIDTH }} name='ios-checkmark-circle-outline' size={CommonStyles.LARGE_FONT_SIZE} /> :
-                            null
-                        }
-                    </View>
-                </TouchableOpacity>
+                { this.renderTouchableContent() }
             </SwipeableListViewItem>
         );
+    }
+
+    render() {
+        if (this.props.mode == global.LIST_EDITION_MODE) {
+            return this.renderSwipeableContent();
+        } else {
+            return this.renderTouchableContent();
+        }
     }
 }

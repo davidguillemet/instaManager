@@ -14,7 +14,12 @@ import PublicationWizardScreen from '../screens/PublicationWizardScreen';
 
 export default PublicationStack = StackNavigator(
 {
-    PublicationHome: { screen: PublicationScreen },
+    PublicationHome: {
+        screen: PublicationScreen,
+        navigationOptions: () => ({
+            headerLeft: null
+        }),
+    },
     HashtagCategoryEdit: { screen: HashtagCategoryEditScreen },
     CategorySelection: { screen: CategorySelectionScreen },
     HashTagList: { screen: HashTagListScreen },

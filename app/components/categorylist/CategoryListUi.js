@@ -267,7 +267,7 @@ class CategoryListUi extends React.PureComponent {
                             this.setDisplayType(event.nativeEvent.selectedSegmentIndex);
                         }}
                         tintColor={CommonStyles.TEXT_COLOR}
-                        style={{ marginBottom: 0 }}
+                        style={{ margin: CommonStyles.GLOBAL_PADDING }}
                     />
                     :
                     null

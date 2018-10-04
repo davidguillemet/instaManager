@@ -26,7 +26,12 @@ const ImportStack = SwitchNavigator(
 
 export default HashTagsStack = StackNavigator(
     {
-        HashTagsHome: { screen: HashTagsHomeScreen },
+        HashTagsHome: {
+            screen: HashTagsHomeScreen,
+            navigationOptions: () => ({
+                headerLeft: null
+            }),
+        },
         HashTagList: { screen: HashTagListScreen },
         HashTagsImport: { screen: HashTagImportScreen },
         HashtagCategories: { screen: HashtagCategoriesScreen },

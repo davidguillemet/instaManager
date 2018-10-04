@@ -9,7 +9,12 @@ import SettingsScreen from '../screens/SettingsScreen';
 
 export default SettingsStack = StackNavigator(
 {
-    SettingsHome: { screen: SettingsScreen }
+    SettingsHome: {
+        screen: SettingsScreen,
+        navigationOptions: () => ({
+            headerLeft: null
+        }),
+    }
 },
 {
     initialRouteName: 'SettingsHome',

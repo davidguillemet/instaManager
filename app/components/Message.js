@@ -5,17 +5,20 @@ import {
     View
 } from 'react-native';
 
-import CommonStyles from './../styles/common';
+import CommonStyles from '../styles/common';
 
-export default WarningMessage = (props) => {
+export default Message = (props) => {
 
-    const containerStyles = [CommonStyles.styles.standardTile, styles.errorContainer];
+    const containerStyles = [CommonStyles.styles.standardTile, props.error ? styles.errorContainer : styles.successContainer];
     if (props.centered) {
         containerStyles.push(styles.centeredContainer);
     }
+
+    const textStyle = props.error ? styles.errorText : styles.successText;
+
     return (
         <View style={containerStyles}>
-            <Text style={styles.errorText}>{props.message}</Text>
+            <Text style={textStyle}>{props.message}</Text>
         </View>
     );
 
@@ -23,6 +26,12 @@ export default WarningMessage = (props) => {
 
 const styles = StyleSheet.create(
 {
+    successText: {
+        color: CommonStyles.DARK_GREEN
+    },
+    successContainer: {
+        backgroundColor: CommonStyles.LIGHT_GREEN
+    },
     errorText: {
         color: CommonStyles.DARK_RED
     },

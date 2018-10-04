@@ -14,7 +14,7 @@ import CustomButton from '../../components/CustomButton';
 import LoadingIndicator from '../../components/LoadingIndicator';
 import TagContainer from '../../components/TagContainer';
 import ListItemSeparator from '../../components/ListItemSeparator';
-import WarningMessage from '../../components/WarningMessage';
+import Message from '../../components/Message';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
 const INVALID_TAGS = 'invalid';
@@ -218,7 +218,7 @@ export default class ImportFromTextScreen extends React.PureComponent {
                 />
                 {
                     this.state.tags.length == 0 ?
-                    <WarningMessage message={'There is no valid tag to save'} centered /> :
+                    <Message message={'There is no valid tag to save'} centered error /> :
                     null
                 }
                 <FlatList style={{ borderWidth: 0, borderColor: CommonStyles.SEPARATOR_COLOR }}
