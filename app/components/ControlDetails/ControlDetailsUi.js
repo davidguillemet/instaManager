@@ -162,11 +162,9 @@ export default class ControlDetailsUi extends React.PureComponent {
 
     renderEmptyComponent() {
 
-        const remaining = this.state.closingProgress == this.state.closingDelay ? this.state.closingDelay : this.state.closingProgress + 1;
-
         return (
             <View>
-                <Message success centered message={`All issues have been fixed.\nThis screen will close in ${Math.floor(remaining)} seconds.`} />
+                <Message success centered message={`All issues have been fixed.\nThis screen will close in ${Math.ceil(this.state.closingProgress)} seconds.`} />
                 <ProgressViewIOS
                     progressViewStyle='default'
                     progress={(this.state.closingDelay - this.state.closingProgress) / this.state.closingDelay}
