@@ -18,7 +18,6 @@
 		133E29F31AD74F7200F7D852 /* libRCTLinking.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 78C398B91ACF4ADC00677621 /* libRCTLinking.a */; };
 		139105C61AF99C1200B5F7CC /* libRCTSettings.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 139105C11AF99BAD00B5F7CC /* libRCTSettings.a */; };
 		139FDEF61B0652A700C62182 /* libRCTWebSocket.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 139FDEF41B06529B00C62182 /* libRCTWebSocket.a */; };
-		13B07FBC1A68108700A75B9A /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.m */; };
 		13B07FBD1A68108700A75B9A /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB11A68108700A75B9A /* LaunchScreen.xib */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
@@ -33,7 +32,7 @@
 		30549AA720681B8A003F248B /* Bolts.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 30549AA620681B89003F248B /* Bolts.framework */; };
 		30549AA920681BA6003F248B /* FBSDKCoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 30549AA820681BA6003F248B /* FBSDKCoreKit.framework */; };
 		30549AAB20682175003F248B /* FBSDKLoginKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 30549AAA20682175003F248B /* FBSDKLoginKit.framework */; };
-		30FA95862167CFBE00EEABFD /* main.jsbundle in Resources */ = {isa = PBXBuildFile; fileRef = 008F07F21AC5B25A0029DE68 /* main.jsbundle */; };
+		30FA95AC2168C8FF00EEABFD /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.m */; };
 		317B2D0DD72C4B709046A868 /* Ionicons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 6B56FD5379A4453883EDD1CD /* Ionicons.ttf */; };
 		372E9D645D1E4786A4B59809 /* libRNVectorIcons.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 6779E66D6C334E2CA54DEE06 /* libRNVectorIcons.a */; };
 		3CA33E9436A24F02959BAF94 /* Zocial.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 684C594353B34F8EB17B6500 /* Zocial.ttf */; };
@@ -1104,7 +1103,6 @@
 				0294C59A322A436A8C9E6295 /* Entypo.ttf in Resources */,
 				BB786B8D46C440FDB83B8DD8 /* EvilIcons.ttf in Resources */,
 				CFD1BF203EC7483CAF86AD7D /* Feather.ttf in Resources */,
-				30FA95862167CFBE00EEABFD /* main.jsbundle in Resources */,
 				2537A389B3E3424D8B6438B0 /* FontAwesome.ttf in Resources */,
 				664F32CC964F4C01859C17C4 /* Foundation.ttf in Resources */,
 				317B2D0DD72C4B709046A868 /* Ionicons.ttf in Resources */,
@@ -1148,7 +1146,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				13B07FBC1A68108700A75B9A /* AppDelegate.m in Sources */,
+				30FA95AC2168C8FF00EEABFD /* AppDelegate.m in Sources */,
 				13B07FC11A68108700A75B9A /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
