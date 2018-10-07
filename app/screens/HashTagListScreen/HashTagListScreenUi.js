@@ -32,6 +32,7 @@ function renderSelectionRightButtons(params) {
 
     return (
         <View style={{ flexDirection: 'row'}}>
+            <TouchableOpacity onPress={params.onAddTag}><Ionicons name={'ios-add'} style={CommonStyles.styles.navigationButtonIcon}/></TouchableOpacity>
             <TouchableOpacity onPress={params.onValidateSelection}><Ionicons name={'ios-checkmark'} style={CommonStyles.styles.navigationButtonIcon}/></TouchableOpacity>
         </View>
     );
@@ -252,8 +253,7 @@ export default class HashTagListScreenUi extends React.Component {
 
     renderListItem({item}) {
         
-        const itemId = item.id || item;
-        const itemName = item.name || global.hashtagUtil.getTagFromId(item).name;
+        const itemObject = item.id ? item : global.hashtagUtil.getTagFromId(item);
 
         return (
             /**
@@ -267,9 +267,10 @@ export default class HashTagListScreenUi extends React.Component {
              * - onPress = callback when a tag is pressed
              */
             <TagListItem
-                id={itemId}
-                name={itemName}
-                selected={this.state.selection.has(itemId)}
+                id={itemObject.id}
+                name={itemObject.name}
+                used={itemObject.categories != null && itemObject.categories.length > 0}
+                selected={this.state.selection.has(itemObject.id)}
                 mode={this.mode}
                 setParentState={this.setStateProxy}
                 onDeleteTag={this.props.onDeleteTag}
@@ -288,6 +289,10 @@ export default class HashTagListScreenUi extends React.Component {
 
     keyExtractor(item, index) {
         return item.id || item;
+    }
+
+    renderSeparator() {
+        return <ListItemSeparator marginLeft={TagListItem.indicatorWidth + TagListItem.leftMargin * 2 }/>
     }
 
     render() {
@@ -339,7 +344,7 @@ export default class HashTagListScreenUi extends React.Component {
                                         sections={this.props.sections} 
                                         renderItem={this.renderListItem}
                                         renderSectionHeader={this.renderSectionHeader}
-                                        ItemSeparatorComponent={ListItemSeparator}
+                                        ItemSeparatorComponent={this.renderSeparator}
                                         ListEmptyComponent={this.renderEmptyComponent}
                                         keyExtractor={this.keyExtractor}
                                         getItemLayout={this.getItemLayout}

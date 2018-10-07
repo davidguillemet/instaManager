@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import {
   View,
   Text,
+  StyleSheet,
   TouchableOpacity,
   Alert
 } from 'react-native';
@@ -12,12 +13,12 @@ import SwipeableListViewItem from '../../components/SwipeableListViewItem';
 
 import CommonStyles from '../../styles/common'; 
 
-
 export default class TagListItem extends React.PureComponent {
 
     static propTypes = {
         id: PropTypes.string.isRequired,            // item identifier
         name: PropTypes.string.isRequired,          // item name
+        used: PropTypes.bool.isRequired,             // true when the tga is used in a category
         selected: PropTypes.bool,                   // initial selection state
         setParentState: PropTypes.func.isRequired,  // callback to change parent state
         onDeleteTag: PropTypes.func.isRequired,     // callback hwhen an item is deleted
@@ -25,8 +26,12 @@ export default class TagListItem extends React.PureComponent {
     };
 
     static defaultProps = {
-        selected: false         // by default, an item is not selected
+        selected: false,        // by default, an item is not selected
+        used: false
     };
+
+    static leftMargin = CommonStyles.GLOBAL_PADDING;
+    static indicatorWidth = 6;
 
     constructor(props) {
         super(props);
@@ -67,6 +72,11 @@ export default class TagListItem extends React.PureComponent {
 
     renderTouchableContent() {
 
+        let itemIndicatorStyles = [styles.itemIndicator];
+        if (this.props.used) {
+            itemIndicatorStyles.push(styles.usedItemIndicator);
+        }
+
         return (
             <TouchableOpacity onPress={this._onPress}>
                 <View style={[
@@ -74,6 +84,7 @@ export default class TagListItem extends React.PureComponent {
                         { flex: 1, flexDirection: 'row', alignItems: 'center'}
                     ]}
                 >
+                    <View style={itemIndicatorStyles} />
                     <Text style={[CommonStyles.styles.singleListItem, { flex: 1 }]} numberOfLines={1}>{this.props.name}</Text>
                     {
                         this.props.selected ?
@@ -107,3 +118,17 @@ export default class TagListItem extends React.PureComponent {
         }
     }
 }
+
+const styles = StyleSheet.create ({
+    itemIndicator: {
+        marginLeft: TagListItem.leftMargin,
+        width: TagListItem.indicatorWidth
+    },
+    usedItemIndicator: {
+        height: TagListItem.indicatorWidth,
+        borderRadius: TagListItem.indicatorWidth / 2,
+        borderColor: CommonStyles.LIGHT_GREEN,
+        borderWidth: 0,
+        backgroundColor: CommonStyles.LIGHT_GREEN,
+    }
+});   
