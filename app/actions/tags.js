@@ -5,6 +5,12 @@ export const TAGS_LOADED = 'TAGS_LOADED';
 export const ADD_TAG = 'ADD_TAG';
 export const UPDATE_TAG = 'UPDATE_TAG';
 export const DELETE_TAG = 'DELETE_TAG';
+export const SET_TAG_FILTER = 'SET_TAGS_FILTER';
+
+export const TagFilters = {
+    SHOW_ALL: 'SHOW_ALL',
+    SHOW_ORPHANS: 'SHOW_ORPHANS'
+  }
 
 export function loadTagsIfNeeded() {
     return (dispatch, getState) => {
@@ -51,5 +57,12 @@ export function createDeleteTagAction(tagId) {
     return {
         type: DELETE_TAG,
         tagId: tagId
+    };
+}
+
+export function createSetTagFilterAction(filter) {
+    return {
+        type: SET_TAG_FILTER,
+        filter: filter
     };
 }

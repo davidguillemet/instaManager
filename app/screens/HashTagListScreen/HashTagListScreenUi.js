@@ -4,6 +4,7 @@ import {
     Text,
     FlatList,
     SectionList,
+    SegmentedControlIOS,
     TouchableOpacity,
 } from 'react-native';
 
@@ -17,6 +18,9 @@ import ListItemSeparator from '../../components/ListItemSeparator';
 import { NotificationType, BottomNotification } from '../../components/BottomNotification';
 
 import CommonStyles from '../../styles/common'; 
+
+export const DISPLAY_ALL = 0;
+export const DISPLAY_ORPHANS = 1;
 
 function renderEditionRightButtons(params) {
 
@@ -70,6 +74,7 @@ export default class HashTagListScreenUi extends React.Component {
         this.renderListItem = this.renderListItem.bind(this);
         this.keyExtractor = this.keyExtractor.bind(this);
         this.setSearchResults = this.setSearchResults.bind(this);
+        this.setDisplayType = this.setDisplayType.bind(this);
 
         this.onAddTag = this.onAddTag.bind(this);
         this.onImport = this.onImport.bind(this);
@@ -295,6 +300,20 @@ export default class HashTagListScreenUi extends React.Component {
         return <ListItemSeparator marginLeft={TagListItem.indicatorWidth + TagListItem.leftMargin * 2 }/>
     }
 
+    setDisplayType(event) {
+
+        const filterIndex = event.nativeEvent.selectedSegmentIndex;
+        if (filterIndex == DISPLAY_ALL) {
+
+            this.props.onShowAllTags();
+
+        } else {
+
+            this.props.onShowOrphanTags();
+
+        }
+    }
+
     render() {
    
         if (this.state.searchResults) {
@@ -317,6 +336,13 @@ export default class HashTagListScreenUi extends React.Component {
                     <LoadingIndicatorView/> :
                     (
                         <View style={{ flex: 1 }}>
+                            <SegmentedControlIOS
+                                values={['All tags', 'Orphan tags']}
+                                selectedIndex={this.props.tagFilterIndex}
+                                onChange={this.setDisplayType}
+                                tintColor={CommonStyles.TEXT_COLOR}
+                                style={{ margin: CommonStyles.GLOBAL_PADDING }}
+                            />
                             <View style={{padding: CommonStyles.GLOBAL_PADDING, backgroundColor: CommonStyles.MEDIUM_BACKGROUND}}>
                                 <SearchInput
                                     placeholder={'search hashtag'}

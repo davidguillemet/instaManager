@@ -14,7 +14,9 @@ import {
     CONTROLS_COMPLETED,
     PUBLICATIONS_LOADED,
     ADD_PUBLICATION,
-    DELETE_PUBLICATION
+    DELETE_PUBLICATION,
+    SET_TAG_FILTER,
+    TagFilters,
 } from './../actions';
 
 /**
@@ -113,6 +115,16 @@ function tagReducer(state = Map(), action) {
     }
 }
 
+function tagFilterReducer(state = TagFilters.SHOW_ALL, action) {
+    switch (action.type) {
+        case SET_TAG_FILTER:
+            return action.filter;
+
+        default:
+            return state;
+    }
+}
+
 function tagsLoadingReducer(state = false, action) {
     switch (action.type) {
         case TAGS_LOADED:
@@ -194,5 +206,6 @@ export const rootReducer = combineReducers({
     controls: controlsReducer,
     categories: categoriesReducer,
     tags: tagReducer,
+    tagFilter: tagFilterReducer,
     publications: publicationReducer
 });
