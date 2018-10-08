@@ -329,70 +329,68 @@ export default class HashTagListScreenUi extends React.Component {
             }
         }
 
+        // In case we decide to make filtering an async. action, we will
+        // read filterProcessing from props
+        const filterProcessing = false;
+
         return(
             <View style={[CommonStyles.styles.standardPage, {padding: 0}]}>
+                <SegmentedControlIOS
+                    values={['All tags', 'Orphan tags']}
+                    selectedIndex={this.props.tagFilterIndex}
+                    onChange={this.setDisplayType}
+                    tintColor={CommonStyles.TEXT_COLOR}
+                    style={{ margin: CommonStyles.GLOBAL_PADDING }}
+                />
+                <View style={{padding: CommonStyles.GLOBAL_PADDING, backgroundColor: CommonStyles.MEDIUM_BACKGROUND}}>
+                    <SearchInput
+                        placeholder={'search hashtag'}
+                        dataSource={this.props.rawTags}
+                        resultsCallback={this.setSearchResults}
+                        filterProperty={'name'}
+                    />
+                </View>
                 {
-                    this.state.isLoading ? 
+                    filterProcessing == true ?
                     <LoadingIndicatorView/> :
-                    (
-                        <View style={{ flex: 1 }}>
-                            <SegmentedControlIOS
-                                values={['All tags', 'Orphan tags']}
-                                selectedIndex={this.props.tagFilterIndex}
-                                onChange={this.setDisplayType}
-                                tintColor={CommonStyles.TEXT_COLOR}
-                                style={{ margin: CommonStyles.GLOBAL_PADDING }}
-                            />
-                            <View style={{padding: CommonStyles.GLOBAL_PADDING, backgroundColor: CommonStyles.MEDIUM_BACKGROUND}}>
-                                <SearchInput
-                                    placeholder={'search hashtag'}
-                                    dataSource={this.props.rawTags}
-                                    resultsCallback={this.setSearchResults}
-                                    filterProperty={'name'}
-                                />
-                            </View>
-                            {
-                                this.state.searchResults ?
-                                <FlatList
-                                    style={{ flex: 1 }}
-                                    scrollEnabled={!this.state.isSwiping}
-                                    data={this.state.searchResults}
-                                    keyExtractor={this.keyExtractor}
-                                    ListEmptyComponent={this.emptySearchResult}
-                                    renderItem={this.renderListItem}
-                                    ItemSeparatorComponent={ListItemSeparator} />
-                                :
-                                <View style={{ flex: 1, justifyContent: 'center'}}>
-                                    <SectionList
-                                        ref={ref => this.sectionListRef = ref}
-                                        style={{ flex: 1 }}
-                                        scrollEnabled={!this.state.isSwiping}
-                                        sections={this.props.sections} 
-                                        renderItem={this.renderListItem}
-                                        renderSectionHeader={this.renderSectionHeader}
-                                        ItemSeparatorComponent={this.renderSeparator}
-                                        ListEmptyComponent={this.renderEmptyComponent}
-                                        keyExtractor={this.keyExtractor}
-                                        getItemLayout={this.getItemLayout}
-                                    />
-                                    <SectionListIndex
-                                        sections={this.props.sections}
-                                        onPressIndex={this.onPressSectionIndex}
-                                    />
-                                </View>
-                            }
-                            { 
-                                this.state.importNotification === true ?
-                                <BottomNotification
-                                    caption={'The tags have been saved successfully.'}
-                                    type={NotificationType.SUCCESS}
-                                    manuallyCloseable={true}
-                                />
-                                :
-                                null
-                            }
-                        </View>
-                    )
+                    this.state.searchResults ?
+                    <FlatList
+                        style={{ flex: 1 }}
+                        scrollEnabled={!this.state.isSwiping}
+                        data={this.state.searchResults}
+                        keyExtractor={this.keyExtractor}
+                        ListEmptyComponent={this.emptySearchResult}
+                        renderItem={this.renderListItem}
+                        ItemSeparatorComponent={ListItemSeparator} />
+                    :
+                    <View style={{ flex: 1, justifyContent: 'center'}}>
+                        <SectionList
+                            ref={ref => this.sectionListRef = ref}
+                            style={{ flex: 1 }}
+                            scrollEnabled={!this.state.isSwiping}
+                            sections={this.props.sections} 
+                            renderItem={this.renderListItem}
+                            renderSectionHeader={this.renderSectionHeader}
+                            ItemSeparatorComponent={this.renderSeparator}
+                            ListEmptyComponent={this.renderEmptyComponent}
+                            keyExtractor={this.keyExtractor}
+                            getItemLayout={this.getItemLayout}
+                        />
+                        <SectionListIndex
+                            sections={this.props.sections}
+                            onPressIndex={this.onPressSectionIndex}
+                        />
+                    </View>
+                }
+                { 
+                    this.state.importNotification === true ?
+                    <BottomNotification
+                        caption={'The tags have been saved successfully.'}
+                        type={NotificationType.SUCCESS}
+                        manuallyCloseable={true}
+                    />
+                    :
+                    null
                 }
             </View>
         );
