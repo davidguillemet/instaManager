@@ -7,6 +7,7 @@ import {
   ScrollView
 } from 'react-native';
 
+import Ionicons from 'react-native-vector-icons/Ionicons';
 import TagContainer from '../../components/TagContainer';
 import CustomButton from '../../components/CustomButton';
 import CommonStyles from '../../styles/common';
@@ -31,6 +32,7 @@ export default class PublicationSummaryScreenUi extends React.Component {
         const publication = global.hashtagUtil.getPubFromId(pubId);
         this.name = publication.name;
         this.category = publication.category;
+        this.categoryName = publication.categoryName;
         this.tags = publication.tagNames.map(tagName => this.getTagObject(tagName));
    
         this.onCopyToClipboard = this.onCopyToClipboard.bind(this);
@@ -94,6 +96,10 @@ export default class PublicationSummaryScreenUi extends React.Component {
     }
 
     render() {
+
+        const categoryRemoved = (this.category == null || this.category.length == 0) && this.categoryName.length > 0;
+        const categoryName = this.categoryName && this.categoryName.length > 0 ? this.categoryName : '<No category>';
+            
         return(
             <View style={[CommonStyles.styles.standardPage, { padding: 0 }]}>
                 
@@ -119,9 +125,13 @@ export default class PublicationSummaryScreenUi extends React.Component {
                     </View>
                     <View style={styles.parameterContainerView}>
                         <Text style={CommonStyles.styles.smallLabel}>Base category</Text>
-                        <View style={{ width: 20 }}/>
+                        {
+                            categoryRemoved ?
+                            <Ionicons name={'ios-remove-circle-outline'} style={{ color: CommonStyles.LIGHT_RED, paddingLeft: 5 }} size={CommonStyles.MEDIUM_FONT_SIZE} /> :
+                            <View style={{ width: 20 }}/>
+                        }
                         <TextInput
-                            defaultValue={this.category ? global.hashtagUtil.getCatFromId(this.category).name  : '<category removed>'}
+                            defaultValue={categoryName}
                             style={styles.parameterInput}
                             selectionColor={CommonStyles.TEXT_COLOR}
                             editable={false}

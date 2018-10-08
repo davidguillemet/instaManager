@@ -67,7 +67,7 @@ export default class PublicationListItem extends React.PureComponent {
 
         const numberOfTags = `${this.props.tagsCount} tags`;
         const publicationTime = `created at ${this.props.time}`;
-        const publicationCategory = `based on '${this.props.categoryName}'`;
+        const publicationCategory = this.props.categoryName.length > 0 ? `based on '${this.props.categoryName}'` : 'No category.';
 
         return (
             <SwipeableListViewItem

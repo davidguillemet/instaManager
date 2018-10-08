@@ -122,7 +122,7 @@ export default class PublicationWizardScreenUi extends React.PureComponent {
             creationDate: new Date(),
             tagNames: this.state.tags.map(tagId => global.hashtagUtil.getTagFromId(tagId).name),
             category: categoryId,
-            categoryName: categoryId ? global.hashtagUtil.getCatFromId(categoryId).name : null,
+            categoryName: categoryId ? global.hashtagUtil.getCatFromId(categoryId).name : '',
             archived: false
         }
         
