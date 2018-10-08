@@ -2,6 +2,7 @@ import React from 'react';
 import {
     ActionSheetIOS,
     Alert,
+    Dimensions,
     StyleSheet,
     View,
     Text,
@@ -73,7 +74,7 @@ export default class PublicationWizardScreenUi extends React.PureComponent {
                     menuItems: [
                         {
                             caption: 'Copy to clipboard',
-                            icon: 'ios-share',
+                            icon: 'ios-copy-outline',
                             action: this.onCopyToClipboard
                         }
                     ]
@@ -87,7 +88,7 @@ export default class PublicationWizardScreenUi extends React.PureComponent {
                     menuItems: [
                         {
                             caption: 'Copy to clipboard',
-                            icon: 'ios-share',
+                            icon: 'ios-copy-outline',
                             action: this.onCopyToClipboard
                         }
                     ]
@@ -159,11 +160,12 @@ export default class PublicationWizardScreenUi extends React.PureComponent {
     renderWizardStepMenu() {
 
         const menuItems = this.getActiveWizardStep().menuItems;
+        const buttonPositionX = (Dimensions.get('window').width - CommonStyles.WIZARD_BUTTON_SIZE) / 2;
         if (menuItems) {
             if (menuItems.length == 1) {
                 const menuItem = menuItems[0];
                 return (
-                    <CustomButton onPress={menuItem.action} style={[CommonStyles.styles.standardButton, styles.wizardStepButton]} title={menuItem.caption}>
+                    <CustomButton onPress={menuItem.action} style={[CommonStyles.styles.standardButton, styles.wizardStepButton, {left: buttonPositionX}]} title={menuItem.caption}>
                         {
                             menuItem.icon ?
                             <Ionicons name={menuItem.icon} style={CommonStyles.styles.navigationButtonIcon} size={CommonStyles.LARGE_FONT_SIZE} /> :
@@ -174,7 +176,7 @@ export default class PublicationWizardScreenUi extends React.PureComponent {
             }
             else {
                 return (
-                    <CustomButton onPress={this.onShowActiveWizardStepMenu} style={[CommonStyles.styles.standardButton, styles.wizardStepButton]}>
+                    <CustomButton onPress={this.onShowActiveWizardStepMenu} style={[CommonStyles.styles.standardButton, styles.wizardStepButton, {left: buttonPositionX}]}>
                         <Ionicons name={'ios-more'} style={CommonStyles.styles.navigationButtonIcon} size={CommonStyles.LARGE_FONT_SIZE} />
                     </CustomButton>
                 );
@@ -306,12 +308,14 @@ export default class PublicationWizardScreenUi extends React.PureComponent {
         }
 
         return (
-            <CategorieTagsDisplay
-                tags={this.state.tags}
-                onDeleteTag={this.onDeleteTag}
-                onTagSelectionValidated={this.onTagSelectionValidated}
-                itemType={global.PUBLICATION_ITEM}
-            />
+            <View style={CommonStyles.styles.standardPage}>
+                <CategorieTagsDisplay
+                    tags={this.state.tags}
+                    onDeleteTag={this.onDeleteTag}
+                    onTagSelectionValidated={this.onTagSelectionValidated}
+                    itemType={global.PUBLICATION_ITEM}
+                />
+            </View>
         );
     }
 
@@ -321,21 +325,23 @@ export default class PublicationWizardScreenUi extends React.PureComponent {
 
     renderSavePublication() {
         return (
-            <View style={styles.parameterContainerView}>
-                <Text style={CommonStyles.styles.smallLabel}>Name</Text>
-                <View style={{ width: 20 }}/>
-                <TextInput
-                    defaultValue={this.state.name }
-                    autoFocus={true}
-                    keyboardType='default'
-                    autoCapitalize='none'
-                    style={styles.parameterInput}
-                    placeholder={`Enter a publication name`}
-                    selectionColor={CommonStyles.TEXT_COLOR}
-                    placeholderTextColor={CommonStyles.PLACEHOLDER_COLOR}
-                    clearButtonMode={'always'}
-                    onChangeText={this.onChangeName}
-                />
+            <View style={CommonStyles.styles.standardPage}>
+                <View style={styles.parameterContainerView}>
+                    <Text style={CommonStyles.styles.smallLabel}>Name</Text>
+                    <View style={{ width: 20 }}/>
+                    <TextInput
+                        defaultValue={this.state.name }
+                        autoFocus={true}
+                        keyboardType='default'
+                        autoCapitalize='none'
+                        style={styles.parameterInput}
+                        placeholder={`Enter a publication name`}
+                        selectionColor={CommonStyles.TEXT_COLOR}
+                        placeholderTextColor={CommonStyles.PLACEHOLDER_COLOR}
+                        clearButtonMode={'always'}
+                        onChangeText={this.onChangeName}
+                    />
+                </View>
             </View>
         );
     }
@@ -365,46 +371,22 @@ export default class PublicationWizardScreenUi extends React.PureComponent {
         return(
             <View style={[CommonStyles.styles.standardPage, { padding: 0, justifyContent: 'space-between'}]}>
                 
-                <View style={{padding: CommonStyles.GLOBAL_PADDING}}>
+                <View>
                     <Wizard steps={this.wizardConfig.steps} activeStep={this.state.wizardStep} />
                 </View>
 
-                <ScrollView style={CommonStyles.styles.standardPage} ref={ref => this.stepScrollView = ref}>
+                <ScrollView style={[CommonStyles.styles.standardPage, {padding: 0}]} ref={ref => this.stepScrollView = ref}>
 
-                    <View>
+                    <View style={{alignItems: 'stretch'}}>
                         { this.getActiveWizardStep().renderStep() }
-                        <View style={{height: 100}}></View>
+                        <View style={{height: 60}}></View>
                     </View>
 
                 </ScrollView>
 
-                <View style={{
-                        position: 'absolute',
-                        padding: CommonStyles.GLOBAL_PADDING,
-                        bottom: CommonStyles.GLOBAL_PADDING,
-                        right: CommonStyles.GLOBAL_PADDING,
-                        left: CommonStyles.GLOBAL_PADDING,
-                        flexDirection: 'row',
-                        justifyContent: 'space-between',
-                        paddingHorizontal: CommonStyles.GLOBAL_PADDING,
-                        backgroundColor: CommonStyles.COLOR_TRANSPARENT
-                    }}>
-                    <View style={{
-                            position: 'absolute',
-                            top: 0,
-                            right: 0,
-                            left: 0,
-                            bottom: 0,
-                            backgroundColor: 'black',
-                            opacity: 0.15,
-                            borderRadius: CommonStyles.BORDER_RADIUS,
-                            borderWidth: 1,
-                            borderColor: CommonStyles.COLOR_TRANSPARENT
-                            }}>
-                    </View>
                     <CustomButton
                         onPress={this.onPreviousStep}
-                        style={[CommonStyles.styles.standardButton, styles.wizardStepButton]}
+                        style={[CommonStyles.styles.standardButton, styles.wizardStepButton, styles.wizardStepButtonLeft]}
                         deactivated={this.state.wizardStep == 0}>
                         <Ionicons name={'ios-arrow-back'} style={CommonStyles.styles.navigationButtonIcon}/>
                     </CustomButton>
@@ -413,7 +395,7 @@ export default class PublicationWizardScreenUi extends React.PureComponent {
 
                     <CustomButton
                         onPress={this.onNextStep}
-                        style={[CommonStyles.styles.standardButton, styles.wizardStepButton]}
+                        style={[CommonStyles.styles.standardButton, styles.wizardStepButton, styles.wizardStepButtonRight]}
                         title={this.wizardConfig.complete.caption}>
                         {
                             this.state.wizardStep < this.wizardConfig.steps.length - 1 ?
@@ -421,7 +403,6 @@ export default class PublicationWizardScreenUi extends React.PureComponent {
                             null
                         }
                     </CustomButton>
-                </View>
                 
                 { 
                     this.state.copyCompleted ?
@@ -456,6 +437,22 @@ const styles = StyleSheet.create(
         padding: CommonStyles.GLOBAL_PADDING
     },
     wizardStepButton: {
+        position: 'absolute',
+        borderRadius: CommonStyles.WIZARD_BUTTON_SIZE / 2,
+        height: CommonStyles.WIZARD_BUTTON_SIZE,
+        minWidth: CommonStyles.WIZARD_BUTTON_SIZE,
+        bottom: CommonStyles.GLOBAL_PADDING,
+        paddingVertical: 5,
+        opacity: 0.8,
         marginBottom: 0
-    } 
+    }, 
+    wizardStepButtonLeft: {
+        left: CommonStyles.GLOBAL_PADDING
+    },
+    wizardStepButtonRight: {
+        right: CommonStyles.GLOBAL_PADDING
+    },
+    scrollViewFooter: {
+        height: CommonStyles.WIZARD_BUTTON_SIZE + CommonStyles.GLOBAL_PADDING
+    }
 });

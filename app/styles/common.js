@@ -48,6 +48,7 @@ export default CommonStyles = {
   INDEX_LIST_WIDTH: 20,
   INDEX_ITEM_HEIGHT: 16,
   FOCUSED_ITEM_SIZE: 50,
+  WIZARD_BUTTON_SIZE: 40,
 
   // Fonts
   FONT_NORMAL: 'Arial',

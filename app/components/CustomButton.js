@@ -86,6 +86,7 @@ export default class CustomButton extends React.PureComponent {
         const defaultStyle = {
             flexDirection: 'row',
             justifyContent: 'center',
+            alignItems: 'center',
             backgroundColor: CommonStyles.GLOBAL_FOREGROUND,
             paddingVertical: CommonStyles.GLOBAL_PADDING,
             paddingHorizontal: CommonStyles.GLOBAL_PADDING * 2,

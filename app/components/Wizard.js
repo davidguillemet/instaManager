@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import {
     FlatList,
+    StyleSheet,
     Text,
     View
 } from 'react-native';
@@ -22,7 +23,10 @@ class WizardStep extends React.PureComponent {
 
     render() {
 
-        const itemStyle = this.props.active ? CommonStyles.styles.singleSelectedListItem : CommonStyles.styles.deacivatedSingleListItem;
+        let itemStyle = StyleSheet.flatten(this.props.active ? CommonStyles.styles.singleSelectedListItem : CommonStyles.styles.deacivatedSingleListItem);
+        if (this.props.active == false) {
+            itemStyle = {...itemStyle, fontSize: CommonStyles.SMALL_FONT_SIZE};
+        }
         const itemBorder = {
             borderLeftWidth: this.props.active ? 6 : 4,
             borderColor: this.props.active ? CommonStyles.SELECTED_TEXT_COLOR : CommonStyles.DEACTIVATED_TEXT_COLOR
@@ -63,10 +67,6 @@ export default class Wizard extends React.PureComponent {
         super(props);
 
         this.renderStepItem = this.renderStepItem.bind(this);
-    }
-
-    onPressStep() {
-
     }
 
     renderStepItem({item, index}) {
