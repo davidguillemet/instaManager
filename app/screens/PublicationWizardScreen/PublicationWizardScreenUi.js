@@ -357,6 +357,10 @@ export default class PublicationWizardScreenUi extends React.PureComponent {
         return false;
     }
 
+    componentDidUpdate() {
+        this.stepScrollView.scrollTo({y: 0, animated: false});
+    }
+
     render() {
         return(
             <View style={[CommonStyles.styles.standardPage, { padding: 0, justifyContent: 'space-between'}]}>
@@ -365,7 +369,7 @@ export default class PublicationWizardScreenUi extends React.PureComponent {
                     <Wizard steps={this.wizardConfig.steps} activeStep={this.state.wizardStep} />
                 </View>
 
-                <ScrollView style={CommonStyles.styles.standardPage}>
+                <ScrollView style={CommonStyles.styles.standardPage} ref={ref => this.stepScrollView = ref}>
 
                     <View>
                         { this.getActiveWizardStep().renderStep() }
