@@ -133,7 +133,7 @@ export default class HashTagListScreenUi extends React.Component {
         if (this.onSelectionValidated) {
 
             this.onSelectionValidated([...this.state.selection]);
-            this.props.navigation.goBack();
+            this.props.navigation.goBack(null);
         }
     }
 
