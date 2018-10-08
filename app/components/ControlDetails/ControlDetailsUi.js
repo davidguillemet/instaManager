@@ -70,19 +70,8 @@ export default class ControlDetailsUi extends React.PureComponent {
 
     onShowOverflowItemMenu(catId) {
 
-        ActionSheetIOS.showActionSheetWithOptions(
-            {
-                options: ['Cancel', 'View category'],
-                cancelButtonIndex: 0,
-                title: 'Quick Fix'
-            },
-            (buttonIndex) => {
-                if (buttonIndex === 1) {
-                    // navigate to category
-                    this.navigateToCategory(catId);        
-                }
-            }
-        );
+        // no menu, just navigate to category
+        this.navigateToCategory(catId);        
     }
 
     onShowDuplicatesItemMenu(catId, tagId) {

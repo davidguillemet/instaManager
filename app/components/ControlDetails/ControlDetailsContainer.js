@@ -32,7 +32,7 @@ function _buildSections({ duplicates, overflow }) {
 
     if (overflow && overflow.length > 0) {
         sections.push({
-            title: `Tags in excess (${global.settingsManager.getMaxNumberOfTags()} max)`,
+            title: 'Overfilled categories',
             data: overflow.map(element => {
                 return { 
                     type: 'overflow',
