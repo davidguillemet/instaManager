@@ -120,6 +120,7 @@ class HashTagsHomeScreenComponent extends React.Component {
                         ListFooterComponent={this.renderListFooter}
                         ListEmptyComponent={this.renderEmptyComponent}
                         keyExtractor={(item, index) => item.target}
+                        stickySectionHeadersEnabled={false}
                     />
                 </View>
             );
