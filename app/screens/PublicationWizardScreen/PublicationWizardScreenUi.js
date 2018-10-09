@@ -327,8 +327,7 @@ export default class PublicationWizardScreenUi extends React.PureComponent {
         return (
             <View style={CommonStyles.styles.standardPage}>
                 <View style={styles.parameterContainerView}>
-                    <Text style={CommonStyles.styles.smallLabel}>Name</Text>
-                    <View style={{ width: 20 }}/>
+                    <Text style={[CommonStyles.styles.smallLabel, styles.parameterLabel]}>Name</Text>
                     <TextInput
                         defaultValue={this.state.name }
                         autoFocus={true}
@@ -423,18 +422,19 @@ export default class PublicationWizardScreenUi extends React.PureComponent {
 const styles = StyleSheet.create(
 {
     parameterContainerView: {
-        flexDirection: 'row',
-        alignItems: 'center',
+        flexDirection: 'column',
         borderBottomColor: CommonStyles.SEPARATOR_COLOR,
-        borderBottomWidth: 1,
-        paddingLeft: CommonStyles.GLOBAL_PADDING
+        borderBottomWidth: 1
     },
     parameterInput: {
         flex: 1,
-        textAlign: 'right',
         fontSize: CommonStyles.MEDIUM_FONT_SIZE,
         color: CommonStyles.KPI_COLOR,
         padding: CommonStyles.GLOBAL_PADDING
+    },
+    parameterLabel: {
+        flex: 1,
+        paddingLeft: CommonStyles.GLOBAL_PADDING,
     },
     wizardStepButton: {
         position: 'absolute',
@@ -443,7 +443,7 @@ const styles = StyleSheet.create(
         minWidth: CommonStyles.WIZARD_BUTTON_SIZE,
         bottom: CommonStyles.GLOBAL_PADDING,
         paddingVertical: 5,
-        opacity: 0.8,
+        opacity: 0.9,
         marginBottom: 0
     }, 
     wizardStepButtonLeft: {

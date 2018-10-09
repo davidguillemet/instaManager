@@ -39,7 +39,7 @@ class WizardStep extends React.PureComponent {
                         flex: 1,
                         flexDirection: 'column',
                         justifyContent: 'center',
-                        paddingVertical: CommonStyles.GLOBAL_PADDING,
+                        paddingVertical: this.props.active ? CommonStyles.GLOBAL_PADDING : CommonStyles.GLOBAL_PADDING / 2,
                         backgroundColor: CommonStyles.BUTTON_COLOR
                     }]}>
                 <Text style={itemStyle}>{this.props.step.caption}</Text>
