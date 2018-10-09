@@ -7,7 +7,6 @@ import {
   ScrollView
 } from 'react-native';
 
-import Ionicons from 'react-native-vector-icons/Ionicons';
 import TagContainer from '../../components/TagContainer';
 import CustomButton from '../../components/CustomButton';
 import CommonStyles from '../../styles/common';
@@ -99,6 +98,11 @@ export default class PublicationSummaryScreenUi extends React.Component {
 
         const categoryRemoved = (this.category == null || this.category.length == 0) && this.categoryName.length > 0;
         const categoryName = this.categoryName && this.categoryName.length > 0 ? this.categoryName : '<No category>';
+
+        let baseCategoryParameterLabel = 'Base category';
+        if (categoryRemoved) {
+            baseCategoryParameterLabel += ' (removed)';
+        }
             
         return(
             <View style={[CommonStyles.styles.standardPage, { padding: 0 }]}>
@@ -114,8 +118,7 @@ export default class PublicationSummaryScreenUi extends React.Component {
                 <ScrollView style={CommonStyles.styles.standardPage}>
 
                     <View style={styles.parameterContainerView}>
-                        <Text style={CommonStyles.styles.smallLabel}>Name</Text>
-                        <View style={{ width: 20 }}/>
+                        <Text style={[CommonStyles.styles.smallLabel, styles.parameterLabel]}>Name</Text>
                         <TextInput
                             defaultValue={this.name || '<no name>'}
                             style={styles.parameterInput}
@@ -124,12 +127,7 @@ export default class PublicationSummaryScreenUi extends React.Component {
                         />
                     </View>
                     <View style={styles.parameterContainerView}>
-                        <Text style={CommonStyles.styles.smallLabel}>Base category</Text>
-                        {
-                            categoryRemoved ?
-                            <Ionicons name={'ios-remove-circle-outline'} style={{ color: CommonStyles.LIGHT_RED, paddingLeft: 5 }} size={CommonStyles.MEDIUM_FONT_SIZE} /> :
-                            <View style={{ width: 20 }}/>
-                        }
+                        <Text style={[CommonStyles.styles.smallLabel, styles.parameterLabel]}>{baseCategoryParameterLabel}</Text>
                         <TextInput
                             defaultValue={categoryName}
                             style={styles.parameterInput}
@@ -168,18 +166,19 @@ export default class PublicationSummaryScreenUi extends React.Component {
 const styles = StyleSheet.create(
 {
     parameterContainerView: {
-        flexDirection: 'row',
-        alignItems: 'center',
+        flexDirection: 'column',
         borderBottomColor: CommonStyles.SEPARATOR_COLOR,
         borderBottomWidth: 1,
-        paddingTop: CommonStyles.GLOBAL_PADDING,
-        paddingLeft: CommonStyles.GLOBAL_PADDING
+        paddingTop: CommonStyles.GLOBAL_PADDING
     },
     parameterInput: {
         flex: 1,
-        textAlign: 'right',
         fontSize: CommonStyles.MEDIUM_FONT_SIZE,
         color: CommonStyles.KPI_COLOR,
         padding: CommonStyles.GLOBAL_PADDING
-    }
+    },
+    parameterLabel: {
+        flex: 1,
+        paddingLeft: CommonStyles.GLOBAL_PADDING,
+    },
 });

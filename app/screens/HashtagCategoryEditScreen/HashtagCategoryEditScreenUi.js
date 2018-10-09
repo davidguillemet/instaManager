@@ -74,11 +74,12 @@ export default class HashtagCategoryEditScreenUi extends React.Component {
         
         this.state = {
             itemId: updateItem ? updateItem.id : global.uniqueID(),
-            itemName: updateItem ? updateItem.name : null,
+            itemName: updateItem ? updateItem.name : '',
             parentCategories: parentCategories, // List of identifiers
             parentCategoriesCaption: parentCategoriesCaption
         };
 
+        this.onChangeText = this.onChangeText.bind(this);
         this.onCategoriesSelected = this.onCategoriesSelected.bind(this);
         this.onTagSelectionValidated = this.onTagSelectionValidated.bind(this);
         this.onSelectParentCategory = this.onSelectParentCategory.bind(this);
@@ -104,16 +105,18 @@ export default class HashtagCategoryEditScreenUi extends React.Component {
 
     onSaveItem() {
 
-        if (this.validateItem()) {
+        const itemName = this.state.itemName.trim();
+
+        if (this.validateItem(itemName)) {
 
             switch (this.itemType) {
 
                 case global.TAG_ITEM:
-                    this.saveTag();
+                    this.saveTag(itemName);
                     break;
 
                 case global.CATEGORY_ITEM:
-                    this.saveCategory();
+                    this.saveCategory(itemName);
                     break;
             }
 
@@ -127,7 +130,7 @@ export default class HashtagCategoryEditScreenUi extends React.Component {
                 (this.childrenTags === null || this.childrenTags.length == 0));
     }
 
-    saveTag() {
+    saveTag(itemName) {
 
         let tagCategories = this.state.parentCategories;
         if (tagCategories == null) {
@@ -137,14 +140,14 @@ export default class HashtagCategoryEditScreenUi extends React.Component {
 
         const tagToSave = {
             id: this.state.itemId,
-            name: this.state.itemName,
+            name: itemName,
             categories: tagCategories
         };
 
         this.props.onSaveTag(tagToSave, this.editorMode === global.UPDATE_MODE);
     }
 
-    saveCategory() {
+    saveCategory(itemName) {
     
         let parent = null;
         if (this.state.parentCategories != null && this.state.parentCategories.length > 0) {
@@ -153,7 +156,7 @@ export default class HashtagCategoryEditScreenUi extends React.Component {
 
         const categoryToSave = {
             id: this.state.itemId,
-            name: this.state.itemName,
+            name: itemName,
             parent: parent,
             hashtags: this.childrenTags // useless...cannot be updated directly (type is "LinkingObjects")
         };
@@ -161,23 +164,23 @@ export default class HashtagCategoryEditScreenUi extends React.Component {
         this.props.onSaveCategory(categoryToSave, this.editorMode === global.UPDATE_MODE);
     }
 
-    validateItem() {
+    validateItem(itemName) {
         
         // 1. Check the category name has been entered
-        if (this.state.itemName == null || this.state.itemName.length == 0) {
+        if (itemName == null || itemName.length == 0) {
             Alert.alert('', `Please enter a ${this.itemTypeName} name.`);
             return false;
         }
 
         // 2. a tag name must not contain spaces or #
-        if (this.itemType === global.TAG_ITEM && !global.hashtagUtil.tagNameIsValid(this.state.itemName)) {
-            Alert.alert('Invalid tag', `The tag '${this.state.itemName}' is not valid.\n` + global.hashtagUtil.getTagNameRule());
+        if (this.itemType === global.TAG_ITEM && !global.hashtagUtil.tagNameIsValid(itemName)) {
+            Alert.alert('Invalid tag', `The tag '${itemName}' is not valid.\n` + global.hashtagUtil.getTagNameRule());
             return false;
         }
 
         
         // 3. Check category does not already exist
-        const itemsWithSameName = global.hashtagUtil.searchItem(this.itemType, this.state.itemName);
+        const itemsWithSameName = global.hashtagUtil.searchItem(this.itemType, itemName);
         let nameAlreadyExists = false;
         if (itemsWithSameName.length > 0) {
             
@@ -199,7 +202,7 @@ export default class HashtagCategoryEditScreenUi extends React.Component {
         }
         
         if (nameAlreadyExists === true) {
-            Alert.alert('', `The ${this.itemTypeName} '${this.state.itemName}' already exists.`);
+            Alert.alert('', `The ${this.itemTypeName} '${itemName}' already exists.`);
             return false;
         }
 
@@ -256,24 +259,26 @@ export default class HashtagCategoryEditScreenUi extends React.Component {
             <ScrollView style={CommonStyles.styles.standardPage}>
                 { this.renderHeaderTip() }
                 <View style={styles.parameterContainerView}>
-                    <Text style={CommonStyles.styles.smallLabel}>Name</Text>
-                    <View style={{ width: 20 }}/>
+                    <Text style={[CommonStyles.styles.smallLabel, styles.parameterLabel]}>Name</Text>
                     <TextInput
-                        defaultValue={this.state.itemName ? this.state.itemName : null }
+                        defaultValue={this.state.itemName}
                         autoFocus={this.editorMode == global.CREATE_MODE}
                         keyboardType='default'
-                        autoCapitalize='none'
                         style={styles.parameterInput}
                         placeholder={`Enter a ${this.itemTypeName} name`}
                         selectionColor={CommonStyles.TEXT_COLOR}
                         placeholderTextColor={CommonStyles.PLACEHOLDER_COLOR}
                         clearButtonMode={'always'}
-                        onChangeText={this.onChangeText.bind(this)}
+                        onChangeText={this.onChangeText}
+                        autoCapitalize='none'
+                        returnKeyType={'done'}
+                        textContentType={'none'}
+                        autoCorrect={false}
+                        blurOnSubmit={true}
                     />
                 </View>
                 <View style={styles.parameterContainerView}>
-                    <Text style={CommonStyles.styles.smallLabel}>{this.itemType === global.TAG_ITEM ? 'Categories' : this.itemType === global.CATEGORY_ITEM ? 'Parent' : 'Category'}</Text>
-                    <View style={{ width: 20 }}/>
+                    <Text style={[CommonStyles.styles.smallLabel, styles.parameterLabel]}>{this.itemType === global.TAG_ITEM ? 'Categories' : this.itemType === global.CATEGORY_ITEM ? 'Parent' : 'Category'}</Text>
                     <TouchableOpacity onPress={this.onSelectParentCategory} style={{ flex: 1, flexDirection: 'row', alignItems: 'center' }}>
                         <Text
                             style={this.state.parentCategories && this.state.parentCategories.length > 0 ? styles.parameterInput : styles.parentParameter }
@@ -337,29 +342,23 @@ export default class HashtagCategoryEditScreenUi extends React.Component {
 const styles = StyleSheet.create(
 {
     parameterContainerView: {
-        flexDirection: 'row',
-        alignItems: 'center',
+        flexDirection: 'column',
         borderBottomColor: CommonStyles.SEPARATOR_COLOR,
         borderBottomWidth: 1,
         paddingTop: CommonStyles.GLOBAL_PADDING,
-        paddingLeft: CommonStyles.GLOBAL_PADDING
-    },
-    parameterContainerColView: {
-        borderBottomColor: CommonStyles.SEPARATOR_COLOR,
-        borderBottomWidth: 1,
-        paddingTop: CommonStyles.GLOBAL_PADDING,
-        paddingLeft: CommonStyles.GLOBAL_PADDING
     },
     parameterInput: {
         flex: 1,
-        textAlign: 'right',
         fontSize: CommonStyles.MEDIUM_FONT_SIZE,
         color: CommonStyles.KPI_COLOR,
         padding: CommonStyles.GLOBAL_PADDING
     },
+    parameterLabel: {
+        flex: 1,
+        paddingLeft: CommonStyles.GLOBAL_PADDING,
+    },
     parentParameter: {
         flex: 1,
-        textAlign: 'right',
         fontSize: CommonStyles.MEDIUM_FONT_SIZE,
         color: CommonStyles.PLACEHOLDER_COLOR,
         padding: CommonStyles.GLOBAL_PADDING
