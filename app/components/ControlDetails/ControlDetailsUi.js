@@ -23,26 +23,17 @@ export default class ControlDetailsUi extends React.PureComponent {
         this.renderDuplicatesListItem = this.renderDuplicatesListItem.bind(this);
         this.renderOverflowListItem = this.renderOverflowListItem.bind(this);
         this.renderSectionHeader = this.renderSectionHeader.bind(this);
-        this.renderEmptyComponent = this.renderEmptyComponent.bind(this);
         this.onShowDuplicatesItemMenu = this.onShowDuplicatesItemMenu.bind(this);
         this.onShowOverflowItemMenu = this.onShowOverflowItemMenu.bind(this);
         this.navigateToCategory = this.navigateToCategory.bind(this);
         this.screenDidFocus = this.screenDidFocus.bind(this);
-        this.processClosingBreakdown = this.processClosingBreakdown.bind(this);
 
         this.didFocusSubscription = this.props.navigation.addListener(
             'didFocus',
             this.screenDidFocus
         );
 
-        const closingDelay = 5;
 
-        this.state = {
-            closingDelay: closingDelay,
-            closingInterval: 0.1,
-            closingProgress: closingDelay,
-            closing: false
-        }
     }
 
     componentDidMount() {
@@ -92,6 +83,23 @@ export default class ControlDetailsUi extends React.PureComponent {
                 }
             }
         );
+    }
+    
+    screenDidFocus(payload) {
+
+        this.startClosingBreakdownIfNeeded();
+    }
+
+    componentDidUpdate() {
+
+        this.startClosingBreakdownIfNeeded();
+    }
+
+    startClosingBreakdownIfNeeded() {
+        
+        if (this.props.sections.length == 0) {
+            this.props.navigation.goBack(null);
+        }
     }
 
     renderSectionHeader({section}) {
@@ -149,59 +157,7 @@ export default class ControlDetailsUi extends React.PureComponent {
         }
     }
 
-    renderEmptyComponent() {
-
-        return (
-            <View>
-                <Message success centered message={`All issues have been fixed.\nThis screen will close in ${Math.ceil(this.state.closingProgress)} seconds.`} />
-                <ProgressViewIOS
-                    progressViewStyle='default'
-                    progress={(this.state.closingDelay - this.state.closingProgress) / this.state.closingDelay}
-                    trackTintColor={CommonStyles.TEXT_COLOR}
-                    style={{width: '100%', height: CommonStyles.GLOBAL_PADDING}}/>
-            </View>
-        );
-    }
-
-    screenDidFocus(payload) {
-
-        this.startClosingBreakdownIfNeeded();
-    }
-
-    componentDidUpdate() {
-
-        this.startClosingBreakdownIfNeeded();
-    }
-
-    startClosingBreakdownIfNeeded() {
-        
-        if (this.props.sections.length == 0 && this.state.closing == false) {
-            this.state.closing = true;
-            setTimeout(this.processClosingBreakdown, this.state.closingInterval * 1000);
-        }
-    }
-
-    processClosingBreakdown() {
-
-        if (this.mounted == false) {
-            return;
-        }
-
-        this.setState({
-            closingProgress: this.state.closingProgress - this.state.closingInterval
-        });
-        
-        if (this.state.closingProgress <= 0) {
-            this.props.navigation.goBack(null);
-            return;
-        }
-
-        setTimeout(this.processClosingBreakdown, this.state.closingInterval * 1000);
-    }
-
     render() {
-
-        const noMoreErrors = this.props.sections.length == 0;
 
         return (
             <View style={{flex: 1}}>
@@ -216,7 +172,6 @@ export default class ControlDetailsUi extends React.PureComponent {
                     renderItem={this.renderListItem}
                     renderSectionHeader={this.renderSectionHeader}
                     ItemSeparatorComponent={ListItemSeparator}
-                    ListEmptyComponent={this.renderEmptyComponent}
                 />
             </View>
         );

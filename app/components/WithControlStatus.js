@@ -6,6 +6,7 @@ import {
 } from 'react-native';
 
 import ControlStatus from './ControlStatus';
+import ControlBottomNotification from './ControlBottomNotification';
 
 export default function withControlStatus(WrappedComponent) {
 
@@ -19,6 +20,7 @@ export default function withControlStatus(WrappedComponent) {
             <View style={{flex: 1}}>
                 <WrappedComponent {...this.props} />
                 <ControlStatus />
+                <ControlBottomNotification />
             </View>
         );
       }
