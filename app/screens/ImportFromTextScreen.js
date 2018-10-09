@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
 import {
-  StyleSheet,
-  View,
-  Text,
-  TextInput,
-  Alert
+    KeyboardAvoidingView,
+    StyleSheet,
+    View,
+    Text,
+    TextInput,
+    Alert
 } from 'react-native';
-
 import CommonStyles from '../styles/common';
 import CustomButton from '../components/CustomButton';
 
@@ -47,14 +47,14 @@ export default class ImportFromTextScreen extends React.Component {
         const promise = new Promise(
             function(resolve, reject) {
                 
-                const tags = global.hashtagUtil.getTagsFromText(that.state.text);
+                const tags = global.hashtagUtil.getTagsFromText(that.state.text.trim());
                 resolve(tags);
             }
         );
 
         promise.then((importedTags) => {
             this.tagsImportedSubscriber.forEach(listener => listener.setActionCompleted());
-            if (importedTags.errors.length > 0 && importedTags.tags.length == 0) {
+            if (importedTags.tags.length == 0) {
                 // All tags are invalid
                 Alert.alert('Warning', 'No vadid tags have been found.\n' + global.hashtagUtil.getTagNameRule());
             } else {
@@ -72,7 +72,7 @@ export default class ImportFromTextScreen extends React.Component {
     render() {
 
         return (
-            <View style={CommonStyles.styles.standardPage}>
+            <KeyboardAvoidingView style={[CommonStyles.styles.standardPage, {padding: 0}]} contentContainerStyle={CommonStyles.styles.standardPage} behavior={'position'} enabled>
                 <View style={CommonStyles.styles.standardTile}>
                     <Text style={CommonStyles.styles.mediumLabel}>You can import your hastags by clicking on "Import tags" once you have entered a string containing a space-separated list of tags, which might start with '#' or not.</Text>
                 </View>
@@ -91,8 +91,12 @@ export default class ImportFromTextScreen extends React.Component {
                     placeholder={'Enter your space-separated tag list here'}
                     placeholderTextColor={CommonStyles.PLACEHOLDER_COLOR}
                     autoCapitalize='none'
+                    returnKeyType={'done'}
+                    textContentType={'none'}
+                    autoCorrect={false}
+                    blurOnSubmit={true}
                 />
-            </View>
+            </KeyboardAvoidingView>
         );
     }
 }
