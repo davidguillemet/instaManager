@@ -16,8 +16,8 @@ export default class SettingsScreen extends React.Component {
       };
   
     _onDisconnect() {
-        global.instaFacade.closeCurrentSession();
-        this.props.navigation.navigate('AuthLoading');
+        // global.instaFacade.closeCurrentSession();
+        // this.props.navigation.navigate('AuthLoading');
     }
 
     _onclearData() {
