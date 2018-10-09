@@ -260,7 +260,7 @@ export default class HashtagCategoryEditScreenUi extends React.Component {
                     <View style={{ width: 20 }}/>
                     <TextInput
                         defaultValue={this.state.itemName ? this.state.itemName : null }
-                        autoFocus={true}
+                        autoFocus={this.editorMode == global.CREATE_MODE}
                         keyboardType='default'
                         autoCapitalize='none'
                         style={styles.parameterInput}
