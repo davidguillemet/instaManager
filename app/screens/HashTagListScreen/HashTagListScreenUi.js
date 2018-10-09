@@ -1,5 +1,6 @@
 import React, { Component, PureComponent } from 'react';
 import {
+    Alert,
     View,
     Text,
     FlatList,
@@ -77,6 +78,7 @@ export default class HashTagListScreenUi extends React.Component {
         this.setDisplayType = this.setDisplayType.bind(this);
 
         this.onAddTag = this.onAddTag.bind(this);
+        this.onQuickAddTag = this.onQuickAddTag.bind(this);
         this.onImport = this.onImport.bind(this);
         this.onValidateSelection = this.onValidateSelection.bind(this);
         this.onEditTag = this.onEditTag.bind(this);
@@ -162,6 +164,27 @@ export default class HashTagListScreenUi extends React.Component {
         ///////////
         // TODO
         ///////////
+    }
+
+    onQuickAddTag(tagName) {
+        
+        const tagToSave = {
+            id: global.uniqueID(),
+            name: tagName,
+            categories: []
+        };
+
+        this.props.onAddTag(tagToSave);
+    }
+
+    onValidateQuickAdd(tagName) {
+
+        if (!global.hashtagUtil.tagNameIsValid(tagName)) {
+            Alert.alert('Invalid tag name', `The tag '${tagName}' is not valid.\n` + global.hashtagUtil.getTagNameRule());
+            return false;
+        }
+
+        return true;
     }
 
     onPressSectionIndex(sectionTitle) {
@@ -323,10 +346,6 @@ export default class HashTagListScreenUi extends React.Component {
                     this.state.searchResults.splice(index, 1);
                 }
             }
-
-            if (this.state.searchResults.length == 0) {
-                this.state.searchResults = null;
-            }
         }
 
         // In case we decide to make filtering an async. action, we will
@@ -348,6 +367,8 @@ export default class HashTagListScreenUi extends React.Component {
                         dataSource={this.props.rawTags}
                         resultsCallback={this.setSearchResults}
                         filterProperty={'name'}
+                        onAdd={this.onQuickAddTag}
+                        onValidateAdd={this.onValidateQuickAdd}
                     />
                 </View>
                 {

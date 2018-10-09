@@ -1,7 +1,13 @@
 import { connect } from 'react-redux';
 import { compose } from 'redux';
 import { createSelector } from 'reselect';
-import { createMultiUpdateAction, createSetTagFilterAction, TagFilters } from '../../actions';
+
+import {
+    createMultiUpdateAction,
+    createSetTagFilterAction,
+    TagFilters
+} from '../../actions';
+
 import HashTagListScreenUi from './HashTagListScreenUi';
 import { DISPLAY_ALL, DISPLAY_ORPHANS } from './HashTagListScreenUi';
 import withControlStatus from './../../components/WithControlStatus';
@@ -73,6 +79,10 @@ const mapStateToProps = (state, ownProps) => {
 
 const mapDispatchToProps = dispatch => {
     return {
+        onAddTag: newTag => {
+            const updates = global.hashtagPersistenceManager.saveTag(newTag, false);
+            dispatch(createMultiUpdateAction(updates));
+        },
         onDeleteTag: tagId => {
             const updates = global.hashtagPersistenceManager.deleteTag(tagId);
             dispatch(createMultiUpdateAction(updates));

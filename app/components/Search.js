@@ -5,9 +5,10 @@ import {
     StyleSheet
 } from 'react-native';
 
+import PropTypes from 'prop-types';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-
 import CommonStyles from '../styles/common';
+import CustomButton from './CustomButton';
 
 /**
  * - placeholder (optional = 'search text' by default)
@@ -17,10 +18,23 @@ import CommonStyles from '../styles/common';
  */
 export default class SearchInput extends React.PureComponent {
 
+    static propTypes = {
+        placeholder: PropTypes.string,                  // Placeholder for the input field
+        dataSource: PropTypes.array.isRequired,         // an iterable object
+        resultsCallback: PropTypes.func.isRequired,     // the method to call when the search completes
+        filterProperty: PropTypes.string.isRequired,    // The name of property to use for the search process
+        onValidateAdd: PropTypes.func,                  // A method to call to validate the input string when clicking on "Add"
+        onAdd: PropTypes.func                           // Th emethod to call to add the object from the typed search string
+    };
+
     constructor(props) {
         super(props);
 
+        this.state = {
+            tagToAdd: null
+        };
         this.shouldSearch = this.shouldSearch.bind(this);
+        this.onAdd = this.onAdd.bind(this);
     }
 
    shouldSearch(text) {
@@ -29,9 +43,15 @@ export default class SearchInput extends React.PureComponent {
             let that = this;
             this.processSearch(text)
             .then((results) => {
+                if (results.length == 0) {
+                    this.setState({ tagToAdd: text});
+                } else {
+                    this.setState({ tagToAdd: null});
+                }
                 that.props.resultsCallback(results);
             });
         } else {
+            this.setState({ tagToAdd: null});
             this.props.resultsCallback(null);
         }
     }
@@ -59,6 +79,41 @@ export default class SearchInput extends React.PureComponent {
         );
     }
 
+    onAdd() {
+
+        if (this.props.onValidateAdd == null || this.props.onValidateAdd(this.state.tagToAdd)) {
+
+            this.props.onAdd(this.state.tagToAdd);
+        }
+    }
+
+    renderAddButton() {
+
+        if (this.state.tagToAdd == null || this.props.onAdd == null) {
+            return null;
+        }
+
+        return (
+            <CustomButton   title={'Add'}
+                            onPress={this.onAdd}
+                            style={[
+                                CommonStyles.styles.standardButton,
+                                CommonStyles.styles.smallLabel,
+                                {
+                                    marginBottom: 0,
+                                    paddingVertical: 0,
+                                    paddingHorizontal: CommonStyles.GLOBAL_PADDING
+                                }]} />
+        );
+    }
+
+    componentDidUpdate() {
+
+        if (this.state.tagToAdd != null) {
+            this.shouldSearch(this.state.tagToAdd);
+        }
+    }
+
     render() {
         return(
             <View style={styles.searchContainer}>
@@ -74,6 +129,7 @@ export default class SearchInput extends React.PureComponent {
                     autoCapitalize='none'
                     editable={this.props.dataSource != null && this.props.dataSource.length > 0}>
                 </TextInput>
+                { this.renderAddButton() }
             </View>
         );
     }
@@ -83,7 +139,7 @@ const styles = StyleSheet.create(
 {
     searchContainer: {
         flexDirection: 'row',
-        alignItems: 'center',
+        alignItems: 'stretch',
         borderRadius: CommonStyles.SEARCH_INPUT_BORDER_RADIUS,
         paddingHorizontal: 15,
         paddingVertical: 5,
