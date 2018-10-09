@@ -11,7 +11,7 @@ import {
 
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import CategorieTagsDisplay from '../../components/CategorieTagsDisplay';
-
+import CustomButton from '../../components/CustomButton';
 import CommonStyles from '../../styles/common';
 
 function renderSaveButton(params) {
@@ -50,7 +50,7 @@ export default class HashtagCategoryEditScreenUi extends React.Component {
         let parentCategoriesCaption = null;
         
         // children tags are not stored in state since it is managed/displayed by CategoryTagsDisplay component
-        this.childrenTags = [];
+        let childrenTags = [];
 
         if (updateItem != null) {
 
@@ -64,7 +64,7 @@ export default class HashtagCategoryEditScreenUi extends React.Component {
                     parentCategories = [updateItem.parent];
                 }
                 
-                this.childrenTags = global.hashtagUtil.getHashtags(updateItem.id).map(tag => tag.id);
+                childrenTags = global.hashtagUtil.getHashtags(updateItem.id).map(tag => tag.id);
             }
 
             parentCategoriesCaption = this.getCaptionFromItems(parentCategories, global.CATEGORY_ITEM);
@@ -73,10 +73,12 @@ export default class HashtagCategoryEditScreenUi extends React.Component {
         this.editorMode = updateItem ? global.UPDATE_MODE : global.CREATE_MODE;
         
         this.state = {
+            dirty: false,
             itemId: updateItem ? updateItem.id : global.uniqueID(),
             itemName: updateItem ? updateItem.name : '',
             parentCategories: parentCategories, // List of identifiers
-            parentCategoriesCaption: parentCategoriesCaption
+            parentCategoriesCaption: parentCategoriesCaption,
+            childrenTags: childrenTags
         };
 
         this.onChangeText = this.onChangeText.bind(this);
@@ -84,12 +86,16 @@ export default class HashtagCategoryEditScreenUi extends React.Component {
         this.onTagSelectionValidated = this.onTagSelectionValidated.bind(this);
         this.onSelectParentCategory = this.onSelectParentCategory.bind(this);
         this.onDeleteTag = this.onDeleteTag.bind(this);
+        this.onSaveItem = this.onSaveItem.bind(this);
+        this.isDirty = this.isDirty.bind(this);
+
+        this.saveSubscriber = [];
     }
     
     componentDidMount() {
 
         this.props.navigation.setParams({ 
-            onSaveItem: this.onSaveItem.bind(this)
+            onSaveItem: this.onSaveItem
         });
     }
 
@@ -107,27 +113,29 @@ export default class HashtagCategoryEditScreenUi extends React.Component {
 
         const itemName = this.state.itemName.trim();
 
-        if (this.validateItem(itemName)) {
-
-            switch (this.itemType) {
-
-                case global.TAG_ITEM:
-                    this.saveTag(itemName);
-                    break;
-
-                case global.CATEGORY_ITEM:
-                    this.saveCategory(itemName);
-                    break;
-            }
-
-            this.props.navigation.goBack(null);
+        if (this.validateItem(itemName) == false) {
+            this.saveSubscriber.forEach(listener => listener.setActionCompleted());
+            return;
         }
+
+        switch (this.itemType) {
+
+            case global.TAG_ITEM:
+                this.saveTag(itemName);
+                break;
+
+            case global.CATEGORY_ITEM:
+                this.saveCategory(itemName);
+                break;
+        }
+
+        this.props.navigation.goBack(null);
     }
 
     hasNoTags() {
 
         return ((this.state.parentCategories === null || this.state.parentCategories.length == 0) &&
-                (this.childrenTags === null || this.childrenTags.length == 0));
+                (this.state.childrenTags === null || this.state.childrenTags.length == 0));
     }
 
     saveTag(itemName) {
@@ -158,7 +166,7 @@ export default class HashtagCategoryEditScreenUi extends React.Component {
             id: this.state.itemId,
             name: itemName,
             parent: parent,
-            hashtags: this.childrenTags // useless...cannot be updated directly (type is "LinkingObjects")
+            hashtags: this.state.childrenTags // useless...cannot be updated directly (type is "LinkingObjects")
         };
 
         this.props.onSaveCategory(categoryToSave, this.editorMode === global.UPDATE_MODE);
@@ -210,11 +218,15 @@ export default class HashtagCategoryEditScreenUi extends React.Component {
     }
 
     onChangeText(text) {
-        this.state.itemName = text;
+        this.setState({
+            dirty: true,
+            itemName: text
+        });
     }
 
     onCategoriesSelected(categories) {
         this.setState( {
+            dirty: true,
             parentCategories: categories,
             parentCategoriesCaption: this.getCaptionFromItems(categories, global.CATEGORY_ITEM)
         });
@@ -234,107 +246,116 @@ export default class HashtagCategoryEditScreenUi extends React.Component {
 
     onTagSelectionValidated(selection) {
 
-        this.childrenTags = selection;
+        this.setState({
+            dirty: true,
+            childrenTags: selection
+        });
     }
 
     onDeleteTag(tagId) {
 
-        this.childrenTags = this.childrenTags.filter(id => id != tagId);
+        this.setState({
+            dirty: true,
+            childrenTags: this.state.childrenTags.filter(id => id != tagId)
+        });
     }
 
-    renderHeaderTip() {
-
-        return (
-            <View style={[CommonStyles.styles.standardTile, { alignItems: 'center'} ]}>
-                <Ionicons name={'ios-information-circle'} style={[CommonStyles.styles.textIcon, { paddingLeft: 0}]}/>
-                <Text style={CommonStyles.styles.smallLabel}>Click on </Text>
-                <Ionicons name={'ios-checkmark'} style={CommonStyles.styles.textIcon}/>
-                <Text style={CommonStyles.styles.smallLabel}> to save the {this.itemTypeName}.</Text>
-            </View>
-        );
+    isDirty() {
+        return this.state.dirty && this.state.itemName.trim().length > 0;
     }
 
     render() {
         return (
-            <ScrollView style={CommonStyles.styles.standardPage}>
-                { this.renderHeaderTip() }
-                <View style={styles.parameterContainerView}>
-                    <Text style={[CommonStyles.styles.smallLabel, styles.parameterLabel]}>Name</Text>
-                    <TextInput
-                        defaultValue={this.state.itemName}
-                        autoFocus={this.editorMode == global.CREATE_MODE}
-                        keyboardType='default'
-                        style={styles.parameterInput}
-                        placeholder={`Enter a ${this.itemTypeName} name`}
-                        selectionColor={CommonStyles.TEXT_COLOR}
-                        placeholderTextColor={CommonStyles.PLACEHOLDER_COLOR}
-                        clearButtonMode={'always'}
-                        onChangeText={this.onChangeText}
-                        autoCapitalize='none'
-                        returnKeyType={'done'}
-                        textContentType={'none'}
-                        autoCorrect={false}
-                        blurOnSubmit={true}
-                    />
-                </View>
-                <View style={styles.parameterContainerView}>
-                    <Text style={[CommonStyles.styles.smallLabel, styles.parameterLabel]}>{this.itemType === global.TAG_ITEM ? 'Categories' : this.itemType === global.CATEGORY_ITEM ? 'Parent' : 'Category'}</Text>
-                    <TouchableOpacity onPress={this.onSelectParentCategory} style={{ flex: 1, flexDirection: 'row', alignItems: 'center' }}>
-                        <Text
-                            style={this.state.parentCategories && this.state.parentCategories.length > 0 ? styles.parameterInput : styles.parentParameter }
-                            numberOfLines={1}
-                        >
-                            {
-                                this.state.parentCategoriesCaption && this.state.parentCategoriesCaption.length > 0 ? 
-                                this.state.parentCategoriesCaption : 
-                                this.itemType === global.TAG_ITEM ?
-                                'Press to select categories' :
-                                this.itemType === global.CATEGORY_ITEM ?
-                                'Press to select a parent' :
-                                'Press to select a category'
-                            }
-                        </Text>
-                        <Ionicons name={'ios-arrow-forward'} style={[CommonStyles.styles.textIcon, styles.iconSelect]}/>
-                        {
-                            this.itemType == global.CATEGORY_ITEM ||
-                            this.state.parentCategories == null ||
-                            this.state.parentCategories.length == 0 ?
+            <View style={CommonStyles.styles.standardPage}>
+            
+                <CustomButton
+                    title={'Save'}
+                    onPress={this.onSaveItem}
+                    showActivityIndicator={true}
+                    style={CommonStyles.styles.standardButton}
+                    deactivated={this.isDirty() == false}
+                    register={this.saveSubscriber}
+                />
 
-                            null :
-
-                            <View style={{
-                                position: 'absolute',
-                                right: 30,
-                                top: -3,
-                                width: 24,
-                                height: 24,
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                backgroundColor: CommonStyles.ARCHIVE_COLOR,
-                                borderRadius: 12,
-                            }}>
-                                <Text style={{ fontSize: CommonStyles.SMALL_FONT_SIZE }}>{this.state.parentCategories.length}</Text>
-                            </View>            
-                        }
-                    </TouchableOpacity>
-                </View>
-                
-                {
-                    this.itemType == global.CATEGORY_ITEM ?
-                    <View style={{paddingTop: CommonStyles.GLOBAL_PADDING}}>
-                        <CategorieTagsDisplay
-                            tags={this.childrenTags}
-                            onDeleteTag={this.onDeleteTag}
-                            onTagSelectionValidated={this.onTagSelectionValidated}
-                            parentCategory={this.state.parentCategories && this.state.parentCategories.length > 0 ? this.state.parentCategories[0] : null}
-                            itemType={this.itemType}
+                <ScrollView style={[CommonStyles.styles.standardPage, {padding: 0}]}>
+                    <View style={styles.parameterContainerView}>
+                        <Text style={[CommonStyles.styles.smallLabel, styles.parameterLabel]}>Name</Text>
+                        <TextInput
+                            defaultValue={this.state.itemName}
+                            autoFocus={this.editorMode == global.CREATE_MODE}
+                            keyboardType='default'
+                            style={styles.parameterInput}
+                            placeholder={`Enter a ${this.itemTypeName} name`}
+                            selectionColor={CommonStyles.TEXT_COLOR}
+                            placeholderTextColor={CommonStyles.PLACEHOLDER_COLOR}
+                            clearButtonMode={'always'}
+                            onChangeText={this.onChangeText}
+                            autoCapitalize='none'
+                            returnKeyType={'done'}
+                            textContentType={'none'}
+                            autoCorrect={false}
+                            blurOnSubmit={true}
                         />
                     </View>
-                    : null
-                }
+                    <View style={styles.parameterContainerView}>
+                        <Text style={[CommonStyles.styles.smallLabel, styles.parameterLabel]}>{this.itemType === global.TAG_ITEM ? 'Categories' : this.itemType === global.CATEGORY_ITEM ? 'Parent' : 'Category'}</Text>
+                        <TouchableOpacity onPress={this.onSelectParentCategory} style={{ flex: 1, flexDirection: 'row', alignItems: 'center' }}>
+                            <Text
+                                style={this.state.parentCategories && this.state.parentCategories.length > 0 ? styles.parameterInput : styles.parentParameter }
+                                numberOfLines={1}
+                            >
+                                {
+                                    this.state.parentCategoriesCaption && this.state.parentCategoriesCaption.length > 0 ? 
+                                    this.state.parentCategoriesCaption : 
+                                    this.itemType === global.TAG_ITEM ?
+                                    'Press to select categories' :
+                                    this.itemType === global.CATEGORY_ITEM ?
+                                    'Press to select a parent' :
+                                    'Press to select a category'
+                                }
+                            </Text>
+                            <Ionicons name={'ios-arrow-forward'} style={[CommonStyles.styles.textIcon, styles.iconSelect]}/>
+                            {
+                                this.itemType == global.CATEGORY_ITEM ||
+                                this.state.parentCategories == null ||
+                                this.state.parentCategories.length == 0 ?
 
-                <View style={{ height: 20 }}></View>
-            </ScrollView>
+                                null :
+
+                                <View style={{
+                                    position: 'absolute',
+                                    right: 30,
+                                    top: -3,
+                                    width: 24,
+                                    height: 24,
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    backgroundColor: CommonStyles.ARCHIVE_COLOR,
+                                    borderRadius: 12,
+                                }}>
+                                    <Text style={{ fontSize: CommonStyles.SMALL_FONT_SIZE }}>{this.state.parentCategories.length}</Text>
+                                </View>            
+                            }
+                        </TouchableOpacity>
+                    </View>
+                    
+                    {
+                        this.itemType == global.CATEGORY_ITEM ?
+                        <View style={{paddingTop: CommonStyles.GLOBAL_PADDING}}>
+                            <CategorieTagsDisplay
+                                tags={this.state.childrenTags}
+                                onDeleteTag={this.onDeleteTag}
+                                onTagSelectionValidated={this.onTagSelectionValidated}
+                                parentCategory={this.state.parentCategories && this.state.parentCategories.length > 0 ? this.state.parentCategories[0] : null}
+                                itemType={this.itemType}
+                            />
+                        </View>
+                        : null
+                    }
+
+                    <View style={{ height: 20 }}></View>
+                </ScrollView>
+            </View>
         );
     }
 }
