@@ -44,6 +44,7 @@ class CategorieTagsDisplay extends React.PureComponent {
         };
 
         // Callbacks for tag management
+        this.onNavigateToCategory = this.onNavigateToCategory.bind(this);
         this.onSelectTags = this.onSelectTags.bind(this);
         this.onTagSelectionValidated = this.onTagSelectionValidated.bind(this);
         this.onDeleteTag = this.onDeleteTag.bind(this);
@@ -147,6 +148,14 @@ class CategorieTagsDisplay extends React.PureComponent {
         this.props.navigation.navigate('HashTagList', params);
     }
 
+    onNavigateToCategory(catId) {
+        const params = {
+            updateItem: global.hashtagUtil.getCatFromId(catId),
+            itemType: global.CATEGORY_ITEM
+        };
+        this.props.navigation.navigate('HashtagCategoryEdit', params);
+    }
+
     onTagSelectionValidated(selection) {
 
         this.setState( {
@@ -220,6 +229,8 @@ class CategorieTagsDisplay extends React.PureComponent {
                         readOnly={true}
                         addSharp={true}
                         errors={duplicatedTags}
+                        categoryId={cat.id}
+                        onNavigateToCategory={this.onNavigateToCategory}
                     />
                 );
             })

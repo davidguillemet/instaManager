@@ -26,16 +26,18 @@ import Tag from './Tag';
 export default class TagContainer extends React.PureComponent {
 
     static propTypes = {
-        tags: PropTypes.array,          // tag collection
-        errors: PropTypes.object,       // set of tags which should be rendered as error
-        onPressTag: PropTypes.func,     // callback when a tag is pressed
-        onAdd: PropTypes.func,          // callback when selecting a new tag
-        readOnly: PropTypes.bool,       // true if the display is readonly, what means we cannot remove the tag
-        addSharp: PropTypes.bool,       // true pour ajouter le prefix #
-        itemType: PropTypes.string,     // type of the displayed item (global.CATEGORY_ITEM or global.TAG_ITEM)
-        hideIfEmpty: PropTypes.bool,    // true to hide the contaner when the tag list is empty
-        iconName: PropTypes.string,     // name of the icon to use for each tag
-        asObject: PropTypes.bool        // true if tag objects are passed as input parameters instead of identifiers
+        tags: PropTypes.array,                  // tag collection
+        errors: PropTypes.object,               // set of tags which should be rendered as error
+        onPressTag: PropTypes.func,             // callback when a tag is pressed
+        onAdd: PropTypes.func,                  // callback when selecting a new tag
+        readOnly: PropTypes.bool,               // true if the display is readonly, what means we cannot remove the tag
+        addSharp: PropTypes.bool,               // true pour ajouter le prefix #
+        itemType: PropTypes.string,             // type of the displayed item (global.CATEGORY_ITEM or global.TAG_ITEM)
+        hideIfEmpty: PropTypes.bool,            // true to hide the contaner when the tag list is empty
+        iconName: PropTypes.string,             // name of the icon to use for each tag
+        asObject: PropTypes.bool,               // true if tag objects are passed as input parameters instead of identifiers
+        categoryId: PropTypes.string,           // Optional category identifier
+        onNavigateToCategory: PropTypes.func    // Callback function to navigate to category...
     };
 
     static defaultProps = {
@@ -53,6 +55,13 @@ export default class TagContainer extends React.PureComponent {
 
     constructor(props) {
         super(props);
+        this.navigateToCategory = this.navigateToCategory.bind(this);
+    }
+
+    navigateToCategory() {
+        if (this.props.categoryId && this.props.onNavigateToCategory) {
+            this.props.onNavigateToCategory(this.props.categoryId);
+        }
     }
     
     render() {
@@ -80,7 +89,7 @@ export default class TagContainer extends React.PureComponent {
                         {
                             this.props.label ?
                             <View style={styles.tagContainerLabel}>
-                                <Text style={[CommonStyles.styles.mediumLabel]}>{this.props.label}</Text>
+                                <Text style={[CommonStyles.styles.smallLabel]}>{this.props.label}</Text>
                             </View>
                             :
                             null
@@ -94,6 +103,16 @@ export default class TagContainer extends React.PureComponent {
                                     <Ionicons style={{color: CommonStyles.MEDIUM_GREEN}} name={'ios-add-circle'} size={30} />
                                 </TouchableOpacity>
                             </View>
+                        }
+                        {
+                            this.props.categoryId && this.props.onNavigateToCategory ?
+                            <View style={styles.addTagButton}>
+                                <TouchableOpacity onPress={this.navigateToCategory}>
+                                    <Ionicons style={{color: CommonStyles.MEDIUM_GREEN}} name={'ios-eye'} size={30} />
+                                </TouchableOpacity>
+                            </View>
+                            :
+                            null
                         }
                     </View>
                     :
@@ -130,13 +149,13 @@ const styles = StyleSheet.create(
         backgroundColor: CommonStyles.DARK_RED,
     },
     tagContainerLabel: {
+        justifyContent: 'center',
         borderColor: CommonStyles.SEPARATOR_COLOR,
         borderWidth: 1,
         borderTopLeftRadius: CommonStyles.BORDER_RADIUS,
         borderTopRightRadius: CommonStyles.BORDER_RADIUS,
         borderBottomWidth: 0,
-        paddingHorizontal: CommonStyles.GLOBAL_PADDING,
-        paddingVertical: 4
+        paddingHorizontal: CommonStyles.GLOBAL_PADDING
     },
     tagContainer: {
         flexDirection: 'row',
