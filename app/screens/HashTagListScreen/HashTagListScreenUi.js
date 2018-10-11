@@ -118,7 +118,7 @@ export default class HashTagListScreenUi extends React.Component {
     navigateToEditScreen(tagToEdit) {
 
         const params = {
-            updateItem: tagToEdit,
+            itemId: tagToEdit.id,
             itemType: global.TAG_ITEM
         };
 

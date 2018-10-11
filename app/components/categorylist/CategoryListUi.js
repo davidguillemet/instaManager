@@ -52,7 +52,7 @@ class CategoryListUi extends React.PureComponent {
 
     navigateToEditScreen(categoryToEdit) {
         const params = {
-            updateItem: categoryToEdit,
+            itemId: categoryToEdit.id,
             itemType: global.CATEGORY_ITEM
         };
         this.props.navigation.navigate('HashtagCategoryEdit', params);

@@ -10,16 +10,16 @@ import { createSelector } from 'reselect';
 
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
-import TagContainer from './TagContainer';
-import CustomButton from './CustomButton';
-import Message from './Message';
+import TagContainer from '../TagContainer';
+import CustomButton from '../CustomButton';
+import Message from '../Message';
 
-import CommonStyles from '../styles/common'; 
+import CommonStyles from '../../styles/common'; 
 
 const TAGS_DISPLAY_SELF = 'self';
 const TAGS_DISPLAY_ANCESTORS = 'ancestors';
 
-class CategorieTagsDisplay extends React.PureComponent {
+class CategorieTagsDisplayUi extends React.PureComponent {
 
     static propTypes = {
         tags: PropTypes.array,                              // Tags from the current category/publication - might be null or empty
@@ -56,34 +56,9 @@ class CategorieTagsDisplay extends React.PureComponent {
         this.setTagsDisplaySelf = this.setTagsDisplaySelf.bind(this);
         this.getCategoryOwnTagsCount = this.getCategoryOwnTagsCount.bind(this);
         
-        this.parentCategorySelector = props => props.parentCategory;
-        this.getAncestorCategories = createSelector(
-            this.parentCategorySelector,
-            parentCategory => parentCategory != null ? global.hashtagUtil.getAncestorCategories(parentCategory) : []
-        );
-
-        this.getAncestorsTags = createSelector(
-            this.getAncestorCategories,
-            ancestors => { 
-                return ancestors.reduce((set, cat) => { cat.hashtags.forEach(tagId => set.add(tagId)); return set; }, new Set());
-            }
-        );
-
-        this.getAncestorsDuplicatedTags = createSelector(
-            this.getAncestorCategories,
-            ancestors => {
-                const allTags = new Set();
-                return ancestors.reduce((set, cat) => {
-                    cat.hashtags.forEach(tagId => {
-                        if (allTags.has(tagId)) {
-                            set.add(tagId);
-                        }
-                        allTags.add(tagId);
-                    });
-                    return set;
-                }, new Set());
-            }
-        );
+        this.getAncestorCategories = props => props.ancestorCategories;
+        this.getAncestorsTags = props => props.ancestorTags;
+        this.getAncestorsDuplicatedTags = props => props.ancestorsDuplicatedTags;
           
     
         // All selectors must have the same signature
@@ -150,7 +125,7 @@ class CategorieTagsDisplay extends React.PureComponent {
 
     onNavigateToCategory(catId) {
         const params = {
-            updateItem: global.hashtagUtil.getCatFromId(catId),
+            itemId: catId,
             itemType: global.CATEGORY_ITEM
         };
         this.props.navigation.navigate('HashtagCategoryEdit', params);
@@ -204,7 +179,7 @@ class CategorieTagsDisplay extends React.PureComponent {
             );
         }
 
-        const ancestors = this.getAncestorCategories(this.props);
+        const ancestors = this.props.ancestorCategories;
         if (ancestors.length == 0) {
             // no parent...
             return null;
@@ -216,7 +191,7 @@ class CategorieTagsDisplay extends React.PureComponent {
                     return null;
                 }
                 
-                const duplicatedTags = this.getAncestorsDuplicatedTags({ parentCategory: cat.id });
+                const duplicatedTags = this.props.onGetAncestorDuplicatedTags({ parentCategory: cat.id });
                 const countWithoutDuplicated = cat.hashtags.reduce((count, tagId) => { return duplicatedTags.has(tagId) ? count : count + 1; } , 0);
                 
                 return (
@@ -409,4 +384,4 @@ const styles = StyleSheet.create(
 });
     
 
-export default withNavigation(CategorieTagsDisplay);
+export default withNavigation(CategorieTagsDisplayUi);

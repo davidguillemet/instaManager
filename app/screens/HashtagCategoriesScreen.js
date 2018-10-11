@@ -59,7 +59,7 @@ class HashtagCategoriesScreenUi extends React.Component {
     onAddCategory() {
     
         const params = {
-            updateItem: null,
+            itemId: null,
             itemType: global.CATEGORY_ITEM
         };
         this.props.navigation.navigate('HashtagCategoryEdit', params);

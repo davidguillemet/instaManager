@@ -49,10 +49,8 @@ export default class ControlDetailsUi extends React.PureComponent {
 
     navigateToCategory(catId) {
 
-        const category = global.hashtagUtil.getCatFromId(catId);
-        
         const params = {
-            updateItem: category,
+            itemId: catId,
             itemType: global.CATEGORY_ITEM
         };
 
