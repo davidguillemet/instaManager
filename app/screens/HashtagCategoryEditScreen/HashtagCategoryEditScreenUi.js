@@ -263,7 +263,7 @@ export default class HashtagCategoryEditScreenUi extends React.Component {
 
                 <ScrollView style={[CommonStyles.styles.standardPage, {padding: 0}]}>
                     <View style={styles.parameterContainerView}>
-                        <Text style={[CommonStyles.styles.smallLabel, styles.parameterLabel]}>Name</Text>
+                        <Text style={[CommonStyles.styles.smallLabel, styles.parameterLabel, {fontWeight: 'bold'}]}>Name *</Text>
                         <TextInput
                             defaultValue={this.state.itemName}
                             autoFocus={this.props.editorMode == global.CREATE_MODE}
