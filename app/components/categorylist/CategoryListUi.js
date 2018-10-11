@@ -128,6 +128,7 @@ class CategoryListUi extends React.PureComponent {
                 id={item.id}
                 name={item.name}
                 level={item.level ? item.level : 0}
+                tagCount={item.tagCount}
                 selected={this.state.selection.has(item.id)}
                 deactivated={item.deactivated}
             />

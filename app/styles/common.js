@@ -39,6 +39,7 @@ export default CommonStyles = {
   LARGE_FONT_SIZE: 25,
   MEDIUM_FONT_SIZE: 20,
   SMALL_FONT_SIZE: 14,
+  TINY_FONT_SIZE: 12,
   NAV_ICON_SIZE: 34,
   SWIPE_ICON_SIZE: 25,
 

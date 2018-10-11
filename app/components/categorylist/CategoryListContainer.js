@@ -17,8 +17,9 @@ function _buildCategoryHierarchy(rawCategories, hiddenCategories) {
     rootCategories = rootCategories.sort((c1, c2) => c1.name.localeCompare(c2.name));
 
     for (let rootCat of rootCategories) {
-        hierarchy.push(_getCatHierarchyNode(rootCat, 0));
-        _getSubCategories(rootCat, 1, hierarchy, rawCategories);
+        const tagSet = new Set(rootCat.hashtags);
+        hierarchy.push(_getCatHierarchyNode(rootCat, 0, tagSet));
+        _getSubCategories(rootCat, 1, hierarchy, rawCategories, tagSet);
     }
 
     if (hiddenCategories)
@@ -29,7 +30,7 @@ function _buildCategoryHierarchy(rawCategories, hiddenCategories) {
     return hierarchy;
 }
 
-function _getSubCategories(parentCategory, level, hierarchy, rawCategories) {
+function _getSubCategories(parentCategory, level, hierarchy, rawCategories, parentTags) {
 
     if (parentCategory.children == null || parentCategory.children.length == 0) {
         return;
@@ -38,15 +39,17 @@ function _getSubCategories(parentCategory, level, hierarchy, rawCategories) {
     let children = parentCategory.children.map((id, index, array) => rawCategories.get(id));
     for (let subCategory of children) {
         
-        hierarchy.push(_getCatHierarchyNode(subCategory, level));
-        _getSubCategories(subCategory, level + 1, hierarchy, rawCategories);
+        const tagSet = new Set([...subCategory.hashtags, ...parentTags]);
+        hierarchy.push(_getCatHierarchyNode(subCategory, level, tagSet));
+        _getSubCategories(subCategory, level + 1, hierarchy, rawCategories, tagSet);
     }
 }
 
-function _getCatHierarchyNode(cat, level) {
+function _getCatHierarchyNode(cat, level, tagSet) {
     return {
         ...cat,
-        level: level
+        level: level,
+        tagCount: tagSet.size
     };
 }
 

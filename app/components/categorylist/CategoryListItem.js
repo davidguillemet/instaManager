@@ -55,7 +55,51 @@ export default class CategoryListItem extends React.PureComponent {
         //////////
     }
     
+    getHexValue(val) {
+        x = val.toString(16);
+        return (x.length == 1) ? '0' + x : x;
+    }
+
+    getTagCountColor() {
+        const maxCount = global.settingsManager.getMaxNumberOfTags();
+        if (this.props.tagCount > maxCount) {
+            return CommonStyles.LIGHT_RED;
+        }
+        const colorStart = CommonStyles.DARK_GREEN.substring(1);
+        const colorEnd = CommonStyles.TEXT_COLOR.substring(1);
+        const ratio = this.props.tagCount / maxCount;
+        const r = Math.ceil(parseInt(colorStart.substring(0,2), 16) * ratio + parseInt(colorEnd.substring(0,2), 16) * (1-ratio));
+        const g = Math.ceil(parseInt(colorStart.substring(2,4), 16) * ratio + parseInt(colorEnd.substring(2,4), 16) * (1-ratio));
+        const b = Math.ceil(parseInt(colorStart.substring(4,6), 16) * ratio + parseInt(colorEnd.substring(4,6), 16) * (1-ratio));
+        const color = [r, g, b].reduce((color, chanelValue) => color + this.getHexValue(chanelValue), '');
+        return `#${color}`;
+    }
+
+    renderCategoryIcon() {
+
+        const indentation = CommonStyles.HIERARCHY_INDENT * this.props.level;
+        const countLeftPosition = indentation + (this.props.tagCount < 10 ? 18 : 14);
+        const countTopPosition = 8;
+
+        return (
+            <View>
+                <Ionicons style={{
+                        color: this.props.deactivated ? CommonStyles.DEACTIVATED_TEXT_COLOR : this.getTagCountColor(),
+                        paddingLeft: CommonStyles.GLOBAL_PADDING,
+                        marginLeft: indentation
+                    }}
+                    name='ios-folder-open'
+                    size={CommonStyles.LARGE_FONT_SIZE}
+                />
+                <View style={{position: 'absolute', top: countTopPosition, left: countLeftPosition, backgroundColor: 'transparent'}}>
+                    <Text style={{fontSize: CommonStyles.TINY_FONT_SIZE, color: 'black'}}>{this.props.tagCount}</Text>
+                </View>
+            </View>
+        );
+    }
+
     renderInnerItem() {
+
         let inlineTextStyle = { flex: 1 };
         if (this.props.deactivated) {
             inlineTextStyle = { ...inlineTextStyle /*, textDecorationLine: 'line-through' */}
@@ -66,14 +110,7 @@ export default class CategoryListItem extends React.PureComponent {
                         { flex: 1, flexDirection: 'row', alignItems: 'center' }
                     ]}
             >
-                <Ionicons style={{
-                        color: this.props.deactivated ? CommonStyles.DEACTIVATED_TEXT_COLOR : CommonStyles.TEXT_COLOR,
-                        paddingLeft: CommonStyles.GLOBAL_PADDING,
-                        marginLeft: CommonStyles.HIERARCHY_INDENT * this.props.level
-                    }}
-                    name='ios-folder-open-outline'
-                    size={CommonStyles.LARGE_FONT_SIZE}
-                />
+                { this.renderCategoryIcon() }
                 <Text style={[
                         this.props.deactivated ? CommonStyles.styles.deacivatedSingleListItem : CommonStyles.styles.singleListItem,
                         inlineTextStyle]}

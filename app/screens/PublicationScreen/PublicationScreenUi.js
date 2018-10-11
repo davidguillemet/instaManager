@@ -124,15 +124,7 @@ export default class PublicationScreenUi extends React.Component {
         }
 
         return(
-            <View style={CommonStyles.styles.standardPage}>
-                <View style={[CommonStyles.styles.standardTile, {flexDirection: 'column'}]}>
-                    <Text style={CommonStyles.styles.smallLabel}>
-                        When creating a publication, you will be able to define a set of tags by selecting a base category as well as additional single tags.
-                    </Text>
-                    <Text style={CommonStyles.styles.smallLabel}>
-                        Once your publication contains all the desired tags, you will be able to copy them to the clipboard in order to paste them easily in your target social application.
-                    </Text>
-                </View>
+            <View style={[CommonStyles.styles.standardPage, {paddingHorizontal: 0, paddingTop: 0}]}>
                 <SectionList
                     ref={ref => this.sectionListRef = ref}
                     style={{ flex: 1 }}
