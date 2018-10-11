@@ -115,10 +115,10 @@ export default class HashTagListScreenUi extends React.Component {
         this.props.navigation.navigate('ImportFromText' /* 'HashTagsImport' */);
     }
 
-    navigateToEditScreen(tagToEdit) {
+    navigateToEditScreen(itemId) {
 
         const params = {
-            itemId: tagToEdit.id,
+            itemId: itemId,
             itemType: global.TAG_ITEM
         };
 
@@ -141,8 +141,7 @@ export default class HashTagListScreenUi extends React.Component {
 
     onEditTag(itemId) {
 
-        let tagItem = global.hashtagUtil.getTagFromId(itemId);
-        this.navigateToEditScreen(tagItem);
+        this.navigateToEditScreen(itemId);
     }
 
     onSelectTag(itemId) {
