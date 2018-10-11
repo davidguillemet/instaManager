@@ -120,15 +120,18 @@ export default class SearchInput extends React.PureComponent {
                 <Ionicons name={'ios-search'} size={25} color={CommonStyles.TEXT_COLOR} style={{marginTop: 4}}/>
                 <TextInput
                     onChangeText={this.shouldSearch}
-                    autoCorrect={false}
                     style={styles.searchInput}                
                     selectionColor={CommonStyles.TEXT_COLOR}
                     placeholder={this.props.placeholder ? this.props.placeholder : 'search text'}
                     placeholderTextColor={CommonStyles.PLACEHOLDER_COLOR}
                     clearButtonMode={'always'}
                     autoCapitalize='none'
-                    editable={this.props.dataSource != null && this.props.dataSource.length > 0}>
-                </TextInput>
+                    editable={this.props.dataSource != null && this.props.dataSource.length > 0}
+                    autoCapitalize='none'
+                    returnKeyType={'done'}
+                    textContentType={'none'}
+                    autoCorrect={false}
+                />
                 { this.renderAddButton() }
             </View>
         );
