@@ -36,11 +36,8 @@ export default class HashtagCategoryEditScreenUi extends React.Component {
 
     static navigationOptions = ({ navigation }) => {
         const params = navigation.state.params || {};
-        let headerTitle = params.updateItem ? 'Edit' : 'New';
-        headerTitle += ' ';
-        headerTitle += global.hashtagUtil.getItemTypeCaption(params.itemType);
         return {
-            headerTitle: headerTitle,
+            headerTitle: params.headerTitle,
             headerRight: renderSaveButton(params)
         }   
     };
@@ -76,8 +73,13 @@ export default class HashtagCategoryEditScreenUi extends React.Component {
     
     componentDidMount() {
 
+        const headerTitle =
+            this.props.editorMode == global.UPDATE_MODE ? 
+            this.props.itemName : 'New ' + global.hashtagUtil.getItemTypeCaption(this.props.itemType);
+
         this.props.navigation.setParams({ 
-            onSaveItem: this.onSaveItem
+            onSaveItem: this.onSaveItem,
+            headerTitle: headerTitle
         });
     }
 
