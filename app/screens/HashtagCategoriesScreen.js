@@ -78,7 +78,7 @@ class HashtagCategoriesScreenUi extends React.Component {
 
     render() {
         return (
-            <View style={[CommonStyles.styles.standardPage, {paddingHorizontal: 0, paddingTop: 0}]}>
+            <View style={[CommonStyles.styles.standardPage, {padding: 0}]}>
                 <CategoryList
                     mode={global.LIST_EDITION_MODE}
                     renderEmptyComponent={this.renderEmptyComponent}

@@ -258,6 +258,7 @@ export default class PublicationWizardScreenUi extends React.PureComponent {
                 selectionMode={global.SINGLE_SELECTION}
                 onSelectionChanged={this.onCategorySelectionChanged}
                 selection={ this.state.selectedCategory }
+                footerHeight={60}
             />
         );
     }
@@ -308,14 +309,15 @@ export default class PublicationWizardScreenUi extends React.PureComponent {
         }
 
         return (
-            <View style={CommonStyles.styles.standardPage}>
+            <ScrollView style={CommonStyles.styles.standardPage}>
                 <CategorieTagsDisplay
                     tags={this.state.tags}
                     onDeleteTag={this.onDeleteTag}
                     onTagSelectionValidated={this.onTagSelectionValidated}
                     itemType={global.PUBLICATION_ITEM}
                 />
-            </View>
+                <View style={{height: 60 + CommonStyles.GLOBAL_PADDING}}></View>
+            </ScrollView>
         );
     }
 
@@ -325,7 +327,7 @@ export default class PublicationWizardScreenUi extends React.PureComponent {
 
     renderSavePublication() {
         return (
-            <View style={CommonStyles.styles.standardPage}>
+            <ScrollView style={CommonStyles.styles.standardPage}>
                 <View style={styles.parameterContainerView}>
                     <Text style={[CommonStyles.styles.smallLabel, styles.parameterLabel]}>Name</Text>
                     <TextInput
@@ -341,7 +343,7 @@ export default class PublicationWizardScreenUi extends React.PureComponent {
                         onChangeText={this.onChangeName}
                     />
                 </View>
-            </View>
+            </ScrollView>
         );
     }
 
@@ -362,10 +364,6 @@ export default class PublicationWizardScreenUi extends React.PureComponent {
         return false;
     }
 
-    componentDidUpdate() {
-        this.stepScrollView.scrollTo({y: 0, animated: false});
-    }
-
     render() {
         return(
             <View style={[CommonStyles.styles.standardPage, { padding: 0, justifyContent: 'space-between'}]}>
@@ -374,14 +372,13 @@ export default class PublicationWizardScreenUi extends React.PureComponent {
                     <Wizard steps={this.wizardConfig.steps} activeStep={this.state.wizardStep} />
                 </View>
 
-                <ScrollView style={[CommonStyles.styles.standardPage, {padding: 0}]} ref={ref => this.stepScrollView = ref}>
+                <View style={[CommonStyles.styles.standardPage, {padding: 0, flex: 1}]} >
 
-                    <View style={{alignItems: 'stretch'}}>
+                    <View style={{alignItems: 'stretch', flex: 1}}>
                         { this.getActiveWizardStep().renderStep() }
-                        <View style={{height: 60}}></View>
                     </View>
 
-                </ScrollView>
+                </View>
 
                     <CustomButton
                         onPress={this.onPreviousStep}
@@ -423,6 +420,7 @@ const styles = StyleSheet.create(
 {
     parameterContainerView: {
         flexDirection: 'column',
+        marginTop: CommonStyles.GLOBAL_PADDING,
         borderBottomColor: CommonStyles.SEPARATOR_COLOR,
         borderBottomWidth: 1
     },
@@ -451,8 +449,5 @@ const styles = StyleSheet.create(
     },
     wizardStepButtonRight: {
         right: CommonStyles.GLOBAL_PADDING
-    },
-    scrollViewFooter: {
-        height: CommonStyles.WIZARD_BUTTON_SIZE + CommonStyles.GLOBAL_PADDING
     }
 });

@@ -43,6 +43,7 @@ class CategoryListUi extends React.PureComponent {
         
         this.renderCategory = this.renderCategory.bind(this);
         this.renderEmptyComponent = this.renderEmptyComponent.bind(this);
+        this.renderFooterComponent = this.renderFooterComponent.bind(this);
         this.keyExtractor = this.keyExtractor.bind(this);
         this.setSearchResults = this.setSearchResults.bind(this);
 
@@ -236,6 +237,17 @@ class CategoryListUi extends React.PureComponent {
         return item.name;
     }
 
+    renderFooterComponent() {
+
+        if (this.props.footerHeight && this.props.footerHeight > 0) {
+            return (
+                <View style={{height: this.props.footerHeight}}></View>
+            );
+        }
+
+        return null;
+    }
+
     render() {
 
         if (this.state.searchResults) {
@@ -285,10 +297,11 @@ class CategoryListUi extends React.PureComponent {
                     {
                         this.state.isLoading ?
                         <LoadingIndicatorView/> :
-                        <View>
+                        <View style={{flex: 1}}>
                             {
                                 this.props.mode == global.LIST_SELECTION_MODE &&
-                                this.props.selectionMode === global.MULTI_SELECTION ?
+                                this.props.selectionMode === global.MULTI_SELECTION &&
+                                this.state.searchResults == null ?
                                 <Text style={[CommonStyles.styles.smallLabel, {padding: CommonStyles.GLOBAL_PADDING}]}>{`${this.state.selection.size} selected item(s)`}</Text> :
                                 null
                             }
@@ -305,7 +318,8 @@ class CategoryListUi extends React.PureComponent {
                                 ListEmptyComponent={this.renderEmptyComponent}
                                 renderItem={this.renderCategory}
                                 ItemSeparatorComponent={ListItemSeparator}
-                                style={ this.props.mode == global.LIST_SELECTION_MODE ? styles.categoryListWithBorder : null }
+                                ListFooterComponent={this.renderFooterComponent}
+                                style={{flex: 1}}
                             />
                         </View>
                     }
@@ -314,13 +328,6 @@ class CategoryListUi extends React.PureComponent {
         );
     }
 }
-
-const styles = StyleSheet.create(
-{
-    categoryListWithBorder: {
-        borderColor: CommonStyles.MEDIUM_BACKGROUND
-    }
-});
 
 export default withNavigation(CategoryListUi);
 
