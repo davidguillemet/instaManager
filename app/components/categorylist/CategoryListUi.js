@@ -285,21 +285,29 @@ class CategoryListUi extends React.PureComponent {
                     {
                         this.state.isLoading ?
                         <LoadingIndicatorView/> :
-                        <FlatList
-                            scrollEnabled={!this.state.isSwiping}
-                            data={
-                                this.state.searchResults != null ?
-                                this.state.searchResults :
-                                this.state.displayType == DISPLAY_SELECTED ?
-                                this.state.selectedCategories :
-                                this.props.categories}
-                            extraData={this.state}
-                            keyExtractor={this.keyExtractor}
-                            ListEmptyComponent={this.renderEmptyComponent}
-                            renderItem={this.renderCategory}
-                            ItemSeparatorComponent={ListItemSeparator}
-                            style={ this.props.mode == global.LIST_SELECTION_MODE ? styles.categoryListWithBorder : null }
-                        />
+                        <View>
+                            {
+                                this.props.mode == global.LIST_SELECTION_MODE &&
+                                this.props.selectionMode === global.MULTI_SELECTION ?
+                                <Text style={[CommonStyles.styles.smallLabel, {padding: CommonStyles.GLOBAL_PADDING}]}>{`${this.state.selection.size} selected item(s)`}</Text> :
+                                null
+                            }
+                            <FlatList
+                                scrollEnabled={!this.state.isSwiping}
+                                data={
+                                    this.state.searchResults != null ?
+                                    this.state.searchResults :
+                                    this.state.displayType == DISPLAY_SELECTED ?
+                                    this.state.selectedCategories :
+                                    this.props.categories}
+                                extraData={this.state}
+                                keyExtractor={this.keyExtractor}
+                                ListEmptyComponent={this.renderEmptyComponent}
+                                renderItem={this.renderCategory}
+                                ItemSeparatorComponent={ListItemSeparator}
+                                style={ this.props.mode == global.LIST_SELECTION_MODE ? styles.categoryListWithBorder : null }
+                            />
+                        </View>
                     }
                 </View>
             </View>

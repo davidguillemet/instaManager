@@ -384,6 +384,11 @@ export default class HashTagListScreenUi extends React.Component {
                         ItemSeparatorComponent={ListItemSeparator} />
                     :
                     <View style={{ flex: 1, justifyContent: 'center'}}>
+                        {
+                            this.mode == global.LIST_SELECTION_MODE ? 
+                            <Text style={[CommonStyles.styles.smallLabel, {padding: CommonStyles.GLOBAL_PADDING}]}>{`${this.state.selection.size} selected item(s)`}</Text> :
+                            null
+                        }
                         <SectionList
                             ref={ref => this.sectionListRef = ref}
                             style={{ flex: 1 }}
