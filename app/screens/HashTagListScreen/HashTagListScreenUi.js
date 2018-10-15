@@ -17,6 +17,7 @@ import SectionListIndex from '../../components/SectionListIndex';
 import TagListItem from './HashTagListItem';
 import ListItemSeparator from '../../components/ListItemSeparator';
 import { NotificationType, BottomNotification } from '../../components/BottomNotification';
+import EmptySearchResult from './../../components/EmptySearchResult';
 
 import CommonStyles from '../../styles/common'; 
 
@@ -104,11 +105,7 @@ export default class HashTagListScreenUi extends React.Component {
     }
 
     emptySearchResult() {
-        return (
-            <View style={{ flex: 1, justifyContent: 'center', padding: CommonStyles.GLOBAL_PADDING}}>
-                <Text style={ [CommonStyles.styles.mediumLabel, { marginBottom: CommonStyles.GLOBAL_PADDING} ]}>No results...</Text>
-            </View>
-        );
+        return <EmptySearchResult />;
     }
 
     onImport() {

@@ -13,6 +13,7 @@ import CategoryListItem from './CategoryListItem';
 import LoadingIndicatorView from '../LoadingIndicator';
 import SearchInput from '../Search';
 import ListItemSeparator from './../ListItemSeparator';
+import EmptySearchResult from './../EmptySearchResult';
 
 import CommonStyles from '../../styles/common'; 
 
@@ -158,12 +159,7 @@ class CategoryListUi extends React.PureComponent {
             }
         } else {
             // Empty search results
-            return (
-                <CategoryListItem
-                    name={'No search results...'}
-                    level={0}
-                />
-            );
+            return <EmptySearchResult />;
         }
     }
 
