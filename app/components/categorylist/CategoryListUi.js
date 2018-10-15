@@ -190,11 +190,7 @@ class CategoryListUi extends React.PureComponent {
 
     addParentCategories(category, categoryIndex, selectedCategoriesList, selectedCategoriesSet) {
         if (category.parent && !selectedCategoriesSet.has(category.parent)) {
-            const parentStoreCategory = global.hashtagUtil.getCatFromId(category.parent);
-            const parentCategory = {
-                ...parentStoreCategory,
-                level: category.level - 1
-            };
+            const parentCategory = this.props.categoriesMap.get(category.parent);
             selectedCategoriesList.splice(categoryIndex, 0, parentCategory);
             selectedCategoriesSet.add(parentCategory.id);
             this.addParentCategories(parentCategory, categoryIndex, selectedCategoriesList, selectedCategoriesSet);

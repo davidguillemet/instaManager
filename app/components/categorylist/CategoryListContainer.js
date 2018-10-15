@@ -10,7 +10,8 @@ import CategorylistUi from './CategoryListUi';
 function _buildCategoryHierarchy(rawCategories, hiddenCategories) {
 
     // Build hiearchy a list with level property
-    let hierarchy = [];
+    const hierarchy = [];
+    const categoryMap= new Map();
 
     // get sorted root categories
     let rootCategories = rawCategories.toList().filter(cat => cat.parent === null);
@@ -18,8 +19,10 @@ function _buildCategoryHierarchy(rawCategories, hiddenCategories) {
 
     for (let rootCat of rootCategories) {
         const tagSet = new Set(rootCat.hashtags);
-        hierarchy.push(_getCatHierarchyNode(rootCat, 0, tagSet));
-        _getSubCategories(rootCat, 1, hierarchy, rawCategories, tagSet);
+        const catNode = _getCatHierarchyNode(rootCat, 0, tagSet);
+        categoryMap.set(catNode.id, catNode);
+        hierarchy.push(catNode);
+        _getSubCategories(rootCat, 1, hierarchy, rawCategories, tagSet, categoryMap);
     }
 
     if (hiddenCategories)
@@ -27,10 +30,13 @@ function _buildCategoryHierarchy(rawCategories, hiddenCategories) {
         _deactivateHiddenCategoriesChildren(hierarchy, new Set(hiddenCategories));
     }
 
-    return hierarchy;
+    return {
+        hierarchy: hierarchy,
+        map: categoryMap
+    }
 }
 
-function _getSubCategories(parentCategory, level, hierarchy, rawCategories, parentTags) {
+function _getSubCategories(parentCategory, level, hierarchy, rawCategories, parentTags, categoryMap) {
 
     if (parentCategory.children == null || parentCategory.children.length == 0) {
         return;
@@ -40,8 +46,10 @@ function _getSubCategories(parentCategory, level, hierarchy, rawCategories, pare
     for (let subCategory of children) {
         
         const tagSet = new Set([...subCategory.hashtags, ...parentTags]);
-        hierarchy.push(_getCatHierarchyNode(subCategory, level, tagSet));
-        _getSubCategories(subCategory, level + 1, hierarchy, rawCategories, tagSet);
+        const catNode = _getCatHierarchyNode(subCategory, level, tagSet);
+        categoryMap.set(catNode.id, catNode);
+        hierarchy.push(catNode);
+        _getSubCategories(subCategory, level + 1, hierarchy, rawCategories, tagSet, categoryMap);
     }
 }
 
@@ -84,8 +92,10 @@ const hiddenCategoriesSelector = (state, props) => props.hiddenCategories;
 const hierarchicalCategoriesSelector = createSelector([categoriesSelector, hiddenCategoriesSelector], _buildCategoryHierarchy);
 
 const mapStateToProps = (state, ownProps) => {
+    const { hierarchy, map } = hierarchicalCategoriesSelector(state, ownProps);
     return {
-        categories: hierarchicalCategoriesSelector(state, ownProps),
+        categories: hierarchy,
+        categoriesMap: map
     }
 }
 
