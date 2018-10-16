@@ -66,7 +66,7 @@ export default class PublicationListItem extends React.PureComponent {
     render() {
 
         const numberOfTags = `${this.props.tagsCount} tags`;
-        const publicationTime = `created at ${this.props.time}`;
+        const publicationTime = `${this.props.time}`;
         const publicationCategory = this.props.categoryName.length > 0 ? `based on '${this.props.categoryName}'` : 'No category.';
 
         return (

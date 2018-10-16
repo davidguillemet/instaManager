@@ -99,13 +99,18 @@ export default class PublicationScreenUi extends React.Component {
             categoryName = publication.categoryName;
         }
 
+        const publicationDate =
+            publication.creationDate.toLocaleDateString(global.locale, {year: "numeric", month: "long", day: "numeric"}) +
+            ' - ' +
+            publication.creationDate.toLocaleTimeString(global.locale);
+
         return (
             <PublicationListItem
                 id={item}
                 name={publication.name || 'no name'}
                 categoryName={categoryName}
                 tagsCount={publication.tagNames.length}
-                time={publication.creationDate.toLocaleTimeString(global.locale)}
+                time={publicationDate}
                 setParentState={this.setStateProxy}
                 onDeleteItem={this.props.onDeletePublication}
                 onPress={this.onEditPublication}

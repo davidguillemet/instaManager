@@ -10,14 +10,28 @@ import {
 import PublicationScreenUi from './PublicationScreenUi';
 import withControlStatus from '../../components/WithControlStatus';
 
-function sameDay(d1, d2) {
+function sameMonth(d1, d2) {
     if (d1 === d2) {
         return true;
     }
 
     return (d1.getYear() === d2.getYear() &&
-            d1.getMonth() === d2.getMonth() &&
-            d1.getDate() === d2.getDate())      // Day of the month
+            d1.getMonth() === d2.getMonth());
+}
+
+function getSectionTitle(date) {
+
+    const now = new Date();
+
+    if (now.getYear() == date.getYear()) {
+        if (now.getMonth() == date.getMonth()) {
+            return "Ce mois-ci";
+        } else if (now.getMonth() == date.getMonth() + 1) {
+            return "Le mois dernier";
+        }
+    }
+
+    return date.toLocaleDateString(global.locale, {year: "numeric", month: "long"});
 }
 
 function _buildSections(publicationsLoaded, immutablePublications) {
@@ -44,12 +58,12 @@ function _buildSections(publicationsLoaded, immutablePublications) {
 
         let currentDate = publication.creationDate;
 
-        if (previousSectionDate === null || sameDay(currentDate, previousSectionDate) === false) {
+        if (previousSectionDate === null || sameMonth(currentDate, previousSectionDate) === false) {
             // New section
             previousSectionDate = currentDate;
             currentSectionData = [];
             const newSection = {
-                title: currentDate.toLocaleDateString(global.locale, {year: "numeric", month: "long", day: "numeric"}),
+                title: getSectionTitle(currentDate),
                 data: currentSectionData
             };
             sections.push(newSection);
