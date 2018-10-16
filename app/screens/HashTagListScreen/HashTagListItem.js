@@ -99,7 +99,7 @@ export default class TagListItem extends React.PureComponent {
     renderSwipeableContent() {
         return (
             <SwipeableListViewItem
-                itemId={this.props.id} 
+                itemId={this.props.id}
                 rightAction={{ caption: 'Delete', icon: 'ios-trash', color: CommonStyles.DELETE_COLOR, callback: this._onDeleteTag }}
                 leftAction={{ caption: 'Archive', icon: 'ios-archive', color: CommonStyles.ARCHIVE_COLOR, callback: this._onArchiveTag }}
                 onSwipeStart={() => this.props.setParentState({isSwiping: true})}

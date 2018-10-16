@@ -93,6 +93,9 @@ const hierarchicalCategoriesSelector = createSelector([categoriesSelector, hidde
 
 const mapStateToProps = (state, ownProps) => {
     const { hierarchy, map } = hierarchicalCategoriesSelector(state, ownProps);
+    if (hierarchy && hierarchy.length > 0) {
+        hierarchy[hierarchy.length - 1].last = true;
+    }
     return {
         categories: hierarchy,
         categoriesMap: map

@@ -1,12 +1,11 @@
 import React, { PureComponent } from 'react';
 import {
-  StyleSheet,
   View,
   Text,
   TouchableOpacity,
   Alert
 } from 'react-native';
-
+import PropTypes from 'prop-types';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import SwipeableListViewItem from '../SwipeableListViewItem';
 
@@ -25,6 +24,14 @@ import CommonStyles from '../../styles/common';
  * - onPress = callback when a category is pressed
  */
 export default class CategoryListItem extends React.PureComponent {
+
+    static propTypes = {
+        height: PropTypes.number.isRequired
+    };
+
+    static defaultProps = {
+        height: 50
+    };
 
     _onPress = () => {
         this.props.onPress(this.props.id);
@@ -79,10 +86,10 @@ export default class CategoryListItem extends React.PureComponent {
 
         const indentation = CommonStyles.HIERARCHY_INDENT * this.props.level;
         const countLeftPosition = indentation + (this.props.tagCount < 10 ? 18 : 14);
-        const countTopPosition = 8;
+        const countTopPosition = (this.props.height / 2) - 6;
 
         return (
-            <View>
+            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                 <Ionicons style={{
                         color: this.props.deactivated ? CommonStyles.DEACTIVATED_TEXT_COLOR : this.getTagCountColor(),
                         paddingLeft: CommonStyles.GLOBAL_PADDING,
@@ -101,30 +108,39 @@ export default class CategoryListItem extends React.PureComponent {
     renderInnerItem() {
 
         let inlineTextStyle = { flex: 1 };
-        if (this.props.deactivated) {
-            inlineTextStyle = { ...inlineTextStyle /*, textDecorationLine: 'line-through' */}
-        }
+
         return (
             <View style={[
                         CommonStyles.styles.singleListItemContainer, 
-                        { flex: 1, flexDirection: 'row', alignItems: 'center' }
+                        { flex: 1, flexDirection: 'row', height: this.props.height }
                     ]}
             >
                 { this.renderCategoryIcon() }
-                <Text style={[
-                        this.props.deactivated ? CommonStyles.styles.deacivatedSingleListItem : CommonStyles.styles.singleListItem,
-                        inlineTextStyle]}
-                        numberOfLines={1}
-                >
-                    {this.props.name}
-                </Text>
-                {
-                    this.props.selected ?
-                    <Ionicons style={{ color: CommonStyles.ARCHIVE_COLOR, paddingRight: CommonStyles.GLOBAL_PADDING }} name='ios-checkmark-circle-outline' size={CommonStyles.LARGE_FONT_SIZE} /> :
-                    this.props.deactivated ?
-                    <Ionicons style={{ color: CommonStyles.LIGHT_RED, paddingRight: CommonStyles.GLOBAL_PADDING }} name='ios-remove-circle-outline' size={CommonStyles.LARGE_FONT_SIZE} /> :
-                    null
-                }
+
+                <View style={{
+                        flex: 1,
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        borderBottomWidth: this.props.last == true ? 0 : 1,
+                        borderColor: CommonStyles.SEPARATOR_COLOR,
+                        marginLeft: CommonStyles.GLOBAL_PADDING
+                    }}>
+                    <Text style={[
+                            this.props.deactivated ? CommonStyles.styles.deacivatedSingleListItem : CommonStyles.styles.singleListItem,
+                            inlineTextStyle,
+                            { paddingLeft: 0 }]}
+                            numberOfLines={1}
+                    >
+                        {this.props.name}
+                    </Text>
+                    {
+                        this.props.selected ?
+                        <Ionicons style={{ color: CommonStyles.ARCHIVE_COLOR, paddingRight: CommonStyles.GLOBAL_PADDING }} name='ios-checkmark-circle-outline' size={CommonStyles.LARGE_FONT_SIZE} /> :
+                        this.props.deactivated ?
+                        <Ionicons style={{ color: CommonStyles.LIGHT_RED, paddingRight: CommonStyles.GLOBAL_PADDING }} name='ios-remove-circle-outline' size={CommonStyles.LARGE_FONT_SIZE} /> :
+                        null
+                    }
+                </View>
             </View>
         );
     }
@@ -140,7 +156,8 @@ export default class CategoryListItem extends React.PureComponent {
     renderSwipeableContent() {
         return (
             <SwipeableListViewItem
-                itemId={this.props.id} 
+                itemId={this.props.id}
+                height={this.props.height}
                 rightAction={{ caption: 'Delete', icon: 'ios-trash', color: CommonStyles.DELETE_COLOR, callback: this._onDeleteCategory.bind(this) }}
                 leftAction={{ caption: 'Archive', icon: 'ios-archive', color: CommonStyles.ARCHIVE_COLOR, callback: this._onArchiveCategory.bind(this) }}
                 onSwipeStart={() => this.props.setParentState({isSwiping: true})}

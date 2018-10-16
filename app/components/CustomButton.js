@@ -3,9 +3,7 @@ import {
     ActivityIndicator,
     StyleSheet,
     TouchableOpacity,
-    Text,
-    View,
-    Alert
+    Text
 } from 'react-native';
 import PropTypes from 'prop-types';
 import CommonStyles from '../styles/common';

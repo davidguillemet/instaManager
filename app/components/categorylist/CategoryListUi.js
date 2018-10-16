@@ -45,6 +45,7 @@ class CategoryListUi extends React.PureComponent {
         this.renderCategory = this.renderCategory.bind(this);
         this.renderEmptyComponent = this.renderEmptyComponent.bind(this);
         this.renderFooterComponent = this.renderFooterComponent.bind(this);
+        this.renderHierarchyLevel = this.renderHierarchyLevel.bind(this);
         this.keyExtractor = this.keyExtractor.bind(this);
         this.setSearchResults = this.setSearchResults.bind(this);
 
@@ -133,6 +134,7 @@ class CategoryListUi extends React.PureComponent {
                 tagCount={item.tagCount}
                 selected={this.state.selection.has(item.id)}
                 deactivated={item.deactivated}
+                last={item.last}
             />
         );
     }
@@ -240,6 +242,21 @@ class CategoryListUi extends React.PureComponent {
         return null;
     }
 
+    renderHierarchyLevel(levelNodes) {
+        return (
+            <FlatList
+                scrollEnabled={!this.state.isSwiping}
+                data={levelNodes}
+                extraData={this.state}
+                keyExtractor={this.keyExtractor}
+                ListEmptyComponent={this.renderEmptyComponent}
+                renderItem={this.renderCategory}
+                ListFooterComponent={this.renderFooterComponent}
+                style={{flex: 1}}
+            />
+        );   
+    }
+
     render() {
 
         if (this.state.searchResults) {
@@ -297,22 +314,14 @@ class CategoryListUi extends React.PureComponent {
                                 <Text style={[CommonStyles.styles.smallLabel, {padding: CommonStyles.GLOBAL_PADDING}]}>{`${this.state.selection.size} selected item(s)`}</Text> :
                                 null
                             }
-                            <FlatList
-                                scrollEnabled={!this.state.isSwiping}
-                                data={
+                            {
+                                this.renderHierarchyLevel(
                                     this.state.searchResults != null ?
                                     this.state.searchResults :
                                     this.state.displayType == DISPLAY_SELECTED ?
                                     this.state.selectedCategories :
-                                    this.props.categories}
-                                extraData={this.state}
-                                keyExtractor={this.keyExtractor}
-                                ListEmptyComponent={this.renderEmptyComponent}
-                                renderItem={this.renderCategory}
-                                ItemSeparatorComponent={ListItemSeparator}
-                                ListFooterComponent={this.renderFooterComponent}
-                                style={{flex: 1}}
-                            />
+                                    this.props.categories)
+                            }
                         </View>
                     }
                 </View>
