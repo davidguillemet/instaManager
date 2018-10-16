@@ -107,12 +107,9 @@ class HashTagsHomeScreenComponent extends React.Component {
             this.configureMenus();
             return(
                 <View style={CommonStyles.styles.standardPage}>
-                    <View style={CommonStyles.styles.standardTile}>
-                        <Text style={CommonStyles.styles.mediumLabel}>You can manage and organize your tags in hierarchical way through categories to quickly select all the tags you need for each of your publications.</Text>
-                    </View>
-                    <View style={{ height: 10}}></View>
                     <SectionList
                         sections={this.sections} 
+                        scrollEnabled={false}
                         renderItem={({item}) => this.renderListItem(item)}
                         renderSectionHeader={({section}) => this.renderSectionHeader(section)}
                         ItemSeparatorComponent={ListItemSeparator}

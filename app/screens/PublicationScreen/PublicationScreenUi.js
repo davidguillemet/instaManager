@@ -124,7 +124,7 @@ export default class PublicationScreenUi extends React.Component {
         }
 
         return(
-            <View style={[CommonStyles.styles.standardPage, {paddingHorizontal: 0, paddingTop: 0}]}>
+            <View style={[CommonStyles.styles.standardPage, {padding: 0}]}>
                 <SectionList
                     ref={ref => this.sectionListRef = ref}
                     style={{ flex: 1 }}
