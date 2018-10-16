@@ -31,17 +31,17 @@ export default class OverflowListItem extends React.PureComponent {
     render() {
         
         return (
-            <View style={[
-                CommonStyles.styles.singleListItemContainer, 
-                { flex: 1, flexDirection: 'row', alignItems: 'center' }
-            ]}
-            >
-                <Text style={[CommonStyles.styles.singleListItem, { flex: 1 }]} numberOfLines={1}>{this.props.categoryName}</Text>
-                <Text style={CommonStyles.styles.singleListItem} numberOfLines={1}>{`${this.props.count} tags`}</Text>
-                <TouchableOpacity onPress={this.onShowOverflowItemMenu}>
-                    <Ionicons style={{ color: CommonStyles.ARCHIVE_COLOR, paddingRight: CommonStyles.GLOBAL_PADDING }} name='ios-eye' size={CommonStyles.LARGE_FONT_SIZE} />
-                </TouchableOpacity>
-            </View>
-        );
+            <TouchableOpacity onPress={this.onShowOverflowItemMenu}>
+                <View style={[
+                    CommonStyles.styles.singleListItemContainer, 
+                    { flex: 1, flexDirection: 'row', alignItems: 'center' }
+                ]}
+                >
+                    <Text style={[CommonStyles.styles.singleListItem, { flex: 1 }]} numberOfLines={1}>{this.props.categoryName}</Text>
+                    <Text style={CommonStyles.styles.singleListItem} numberOfLines={1}>{`${this.props.count} tags`}</Text>
+                    <Ionicons style={{ color: CommonStyles.TEXT_COLOR, paddingRight: 5, marginLeft: CommonStyles.GLOBAL_PADDING }} name='ios-arrow-forward' size={CommonStyles.MEDIUM_FONT_SIZE} />
+                </View>
+            </TouchableOpacity>
+            );
     }
 }

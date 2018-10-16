@@ -42,7 +42,7 @@ export default class DuplicatedListItem extends React.PureComponent {
                 <Tag name={'#' + this.props.tagName} style={{ marginLeft: 10 }} />
                 <Text style={[CommonStyles.styles.singleListItem, { flex: 1 }]} numberOfLines={1}>{caption}</Text>
                 <TouchableOpacity onPress={this.onShowDuplicatesItemMenu}>
-                    <Ionicons style={{ color: CommonStyles.ARCHIVE_COLOR, paddingRight: CommonStyles.GLOBAL_PADDING }} name='ios-more' size={CommonStyles.LARGE_FONT_SIZE} />
+                    <Ionicons style={{ color: CommonStyles.TEXT_COLOR, paddingRight: CommonStyles.GLOBAL_PADDING }} name='ios-more' size={CommonStyles.LARGE_FONT_SIZE} />
                 </TouchableOpacity>
             </View>
         );
