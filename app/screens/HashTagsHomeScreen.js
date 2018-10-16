@@ -106,7 +106,7 @@ class HashTagsHomeScreenComponent extends React.Component {
         if (categoriesLoaded && tagsLoaded) {
             this.configureMenus();
             return(
-                <View style={CommonStyles.styles.standardPage}>
+                <View style={[CommonStyles.styles.standardPage, {padding: 0}]}>
                     <SectionList
                         sections={this.sections} 
                         scrollEnabled={false}
