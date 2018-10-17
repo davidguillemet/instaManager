@@ -292,16 +292,10 @@ export default class HashtagPersistenceManagerClass {
     searchItem(itemType, filter) {
 
         const searchResults = this.realm.objects(this._getRealmTypeFromItemType(itemType)).filtered('name like[c] $0', filter);
-
-        if (itemType == global.TAG_ITEM) {
-            return searchResults.map((item, index, array) => {
-                return this._getTagProxyFromRealm(item);
-            });    
-        } else {
-            return searchResults.map((item, index, array) => {
-                return this._getCatProxyFromRealm(item);
-            });
-        }
+        
+        return searchResults.map((item, index, array) => {
+            return this._getItemProxyFromRealm(itemType, item);
+        });    
     }
 
     savePublication(rawPublication, update) {
@@ -335,6 +329,16 @@ export default class HashtagPersistenceManagerClass {
             this.realm.delete(publicationToDelete);
             
         });
+    }
+
+    _getItemProxyFromRealm(itemType, item) {
+        if (itemType == global.TAG_ITEM) {
+            return this._getTagProxyFromRealm(item);
+        } else if (itemType == global.CATEGORY_ITEM) {
+            return this._getCatProxyFromRealm(item);
+        } else if (itemType == global.PUBLICATION_ITEM) {
+            return this._getPubProxyFromRealm(item);
+        }
     }
 
     _getPubProxyFromRealm(item) {
@@ -383,7 +387,10 @@ export default class HashtagPersistenceManagerClass {
     }
 
     _getRealmTypeFromItemType(itemType) {
-        return itemType === global.TAG_ITEM ? hashtagSchema : categorySchema;
+
+        return  itemType === global.TAG_ITEM ? hashtagSchema :
+                itemType === global.CATEGORY_ITEM ? categorySchema :
+                publicationSchema;
     }
 
     _internalDeleteCategory(categoryToDelete) {

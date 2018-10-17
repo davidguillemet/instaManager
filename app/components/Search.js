@@ -20,7 +20,8 @@ export default class SearchInput extends React.PureComponent {
 
     static propTypes = {
         placeholder: PropTypes.string,                  // Placeholder for the input field
-        dataSource: PropTypes.array.isRequired,         // an iterable object
+        dataSource: PropTypes.array,                    // an iterable object containing objects from data source
+        onSearch: PropTypes.func,                       // a function to call when processgin search
         resultsCallback: PropTypes.func.isRequired,     // the method to call when the search completes
         filterProperty: PropTypes.string.isRequired,    // The name of property to use for the search process
         onValidateAdd: PropTypes.func,                  // A method to call to validate the input string when clicking on "Add"
@@ -64,14 +65,19 @@ export default class SearchInput extends React.PureComponent {
 
             function(resolve, reject) {
 
-                const dataList = that.props.dataSource;
                 let results = [];
-                const upperCaseSearch = searchText.toUpperCase();
-                for (let data of dataList) {
-                    
-                    let dataValue = data[that.props.filterProperty];
-                    if (dataValue.toUpperCase().includes(upperCaseSearch)) {
-                        results.push(data);
+                
+                if (that.props.onSearch) {
+                    results = that.props.onSearch(searchText);
+                } else {
+                    const dataList = that.props.dataSource;
+                    const upperCaseSearch = searchText.toUpperCase();
+                    for (let data of dataList) {
+                        
+                        let dataValue = data[that.props.filterProperty];
+                        if (dataValue.toUpperCase().includes(upperCaseSearch)) {
+                            results.push(data);
+                        }
                     }
                 }
                 resolve(results);
@@ -126,7 +132,7 @@ export default class SearchInput extends React.PureComponent {
                     placeholderTextColor={CommonStyles.PLACEHOLDER_COLOR}
                     clearButtonMode={'always'}
                     autoCapitalize='none'
-                    editable={this.props.dataSource != null && this.props.dataSource.length > 0}
+                    editable={(this.props.dataSource != null && this.props.dataSource.length > 0) || this.props.onSearch != null}
                     autoCapitalize='none'
                     returnKeyType={'done'}
                     textContentType={'none'}

@@ -1,5 +1,6 @@
 import React from 'react';
 import {
+    FlatList,
     SectionList,
     Text,
     TouchableOpacity,
@@ -12,6 +13,8 @@ import CustomButton from '../../components/CustomButton';
 import ListItemSeparator from '../../components/ListItemSeparator';
 import CommonStyles from '../../styles/common';
 import PublicationListItem from './PublicationListItem';
+import EmptySearchResult from './../../components/EmptySearchResult';
+import SearchInput from '../../components/Search';
 
 function renderEditionRightButtons(params) {
 
@@ -36,7 +39,8 @@ export default class PublicationScreenUi extends React.Component {
         super(props);
 
         this.state = {
-            isSwiping: false
+            isSwiping: false,
+            searchResults: null
         }
 
         this.onCreatePublication = this.onCreatePublication.bind(this);
@@ -44,6 +48,8 @@ export default class PublicationScreenUi extends React.Component {
         this.renderEmptyComponent = this.renderEmptyComponent.bind(this);
         this.renderListItem = this.renderListItem.bind(this);
         this.setStateProxy = this.setStateProxy.bind(this);
+        this.setSearchResults = this.setSearchResults.bind(this);
+        this.searchPublication = this.searchPublication.bind(this);
     }
 
     componentDidMount() {
@@ -90,7 +96,7 @@ export default class PublicationScreenUi extends React.Component {
 
     renderListItem({item}) {
         
-        const publication = global.hashtagUtil.getPubFromId(item);
+        const publication = item;
         let categoryName = '';
         if (publication.category != null) {
             categoryName = global.hashtagUtil.getCatFromId(publication.category).name;
@@ -106,7 +112,7 @@ export default class PublicationScreenUi extends React.Component {
 
         return (
             <PublicationListItem
-                id={item}
+                id={publication.id}
                 name={publication.name || 'no name'}
                 categoryName={categoryName}
                 tagsCount={publication.tagNames.length}
@@ -119,7 +125,19 @@ export default class PublicationScreenUi extends React.Component {
     }
 
     keyExtractor(item, index) {
-        return item;
+        return item.id;
+    }
+
+    emptySearchResult() {
+        return <EmptySearchResult />;
+    }
+
+    setSearchResults(results) {
+        this.setState({ searchResults: results });
+    }
+
+    searchPublication(searchText) {
+        return global.hashtagUtil.searchItem(global.PUBLICATION_ITEM, `*${searchText}*`);
     }
 
     render() {
@@ -128,19 +146,48 @@ export default class PublicationScreenUi extends React.Component {
             return <LoadingIndicatorView/>;
         }
 
+        if (this.state.searchResults) {
+            // Remove publications which could have been removed...
+            for (let index = this.state.searchResults.length - 1; index >= 0; index--) {
+                if (!global.hashtagUtil.hasPub(this.state.searchResults[index].id)) {
+                    this.state.searchResults.splice(index, 1);
+                }
+            }
+        }
+
         return(
             <View style={[CommonStyles.styles.standardPage, {padding: 0}]}>
-                <SectionList
-                    ref={ref => this.sectionListRef = ref}
-                    style={{ flex: 1 }}
-                    scrollEnabled={!this.state.isSwiping}
-                    sections={this.props.sections} 
-                    renderItem={this.renderListItem}
-                    renderSectionHeader={this.renderSectionHeader}
-                    ItemSeparatorComponent={ListItemSeparator}
-                    ListEmptyComponent={this.renderEmptyComponent}
-                    keyExtractor={this.keyExtractor}
-                />
+                <View style={{padding: CommonStyles.GLOBAL_PADDING, backgroundColor: CommonStyles.MEDIUM_BACKGROUND}}>
+                    <SearchInput
+                        placeholder={'search publication'}
+                        onSearch={this.searchPublication}
+                        resultsCallback={this.setSearchResults}
+                        filterProperty={'name'}
+                    />
+                </View>
+                {
+                    this.state.searchResults ?
+                    <FlatList
+                        style={{ flex: 1 }}
+                        scrollEnabled={!this.state.isSwiping}
+                        data={this.state.searchResults}
+                        keyExtractor={this.keyExtractor}
+                        ListEmptyComponent={this.emptySearchResult}
+                        renderItem={this.renderListItem}
+                        ItemSeparatorComponent={ListItemSeparator} />
+                    :
+                    <SectionList
+                        ref={ref => this.sectionListRef = ref}
+                        style={{ flex: 1 }}
+                        scrollEnabled={!this.state.isSwiping}
+                        sections={this.props.sections} 
+                        renderItem={this.renderListItem}
+                        renderSectionHeader={this.renderSectionHeader}
+                        ItemSeparatorComponent={ListItemSeparator}
+                        ListEmptyComponent={this.renderEmptyComponent}
+                        keyExtractor={this.keyExtractor}
+                    />
+                }
             </View>
         );
     }

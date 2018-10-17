@@ -69,7 +69,7 @@ function _buildSections(publicationsLoaded, immutablePublications) {
             sections.push(newSection);
         }
         
-        currentSectionData.push(publication.id);
+        currentSectionData.push(publication);
     }
 
     return sections;

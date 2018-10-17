@@ -55,6 +55,11 @@ export default class HashtagUtil {
         return this._getPublicationsFromStore().get(pubId);
     }
 
+    hasPub(pubId) {
+        
+        return this._getPublicationsFromStore().has(pubId);
+    }
+
     getAncestorCategories(catId) {
 
         let ancestors = [];
