@@ -29,7 +29,8 @@ const CategorySelectionStack = StackNavigator(
     },
     {
         initialRouteName: 'VirtualCategorySelection',
-        navigationOptions: NavigationOptions
+        navigationOptions: NavigationOptions,
+        mode: 'card'
     }
 );
 

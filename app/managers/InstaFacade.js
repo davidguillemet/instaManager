@@ -69,7 +69,7 @@ export default class InstaFacadeClass {
     };
     
     storeUserInfo = async () => {
-        let userInfoSerialized = JSON.stringify(his.currentSession);
+        let userInfoSerialized = JSON.stringify(this.currentSession);
         await AsyncStorage.setItem(this.lastUserInfo, userInfoSerialized);
     }
 

@@ -36,8 +36,15 @@ function getSectionTitle(date) {
 
 function _buildSections(publicationsLoaded, immutablePublications) {
 
+    const sections = [];
+    const rawPublications = [];
+    const returnValue = {
+        sections,
+        rawPublications
+    }
+
     if (publicationsLoaded == false) {
-        return null;
+        return returnValue;
     }
 
     const sortedPublications = immutablePublications.toList().sort((p1, p2) => {
@@ -50,7 +57,6 @@ function _buildSections(publicationsLoaded, immutablePublications) {
         return 0;
     });
 
-    let sections = [];
     let previousSectionDate = null;
     let currentSectionData;
 
@@ -70,9 +76,10 @@ function _buildSections(publicationsLoaded, immutablePublications) {
         }
         
         currentSectionData.push(publication);
+        rawPublications.push(publication);
     }
 
-    return sections;
+    return returnValue;
 }
 
 const publicationsLoadedSelector = state => state.get('publicationsLoaded');
@@ -80,9 +87,14 @@ const publicationsSelector = state => state.get('publications');
 const sectionsSelector = createSelector(publicationsLoadedSelector, publicationsSelector,  _buildSections);
 
 const mapStateToProps = (state, ownProps) => {
+    const publicationTotalCount = global.hashtagUtil.getTotalPublicationsCount();
+    const { sections, rawPublications } = sectionsSelector(state);
     return {
-        sections: sectionsSelector(state),
-        publicationsLoaded: publicationsLoadedSelector(state)
+        sections: sections,
+        rawPublications: rawPublications,
+        publicationsLoaded: publicationsLoadedSelector(state),
+        publicationCount: publicationsSelector(state).size,
+        publicationTotalCount: publicationTotalCount
     }
 }
 

@@ -13,9 +13,11 @@ import {
     CONTROLS_STARTED,
     CONTROLS_COMPLETED,
     PUBLICATIONS_LOADED,
+    PUBLICATIONS_LOADING,
     ADD_PUBLICATION,
     DELETE_PUBLICATION,
     SET_TAG_FILTER,
+    SET_PUBLICATION_FILTER,
     TagFilters,
 } from './../actions';
 
@@ -147,6 +149,8 @@ function publicationsLoadingReducer(state = false, action) {
     switch (action.type) {
         case PUBLICATIONS_LOADED:
             return true;
+        case PUBLICATIONS_LOADING:
+            return false;
         default:
             return state;
     }
@@ -199,6 +203,16 @@ function publicationReducer(state = Map(), action) {
     }
 }
 
+function settingsReducer(state = Map(global.settingsManager.getSettings()), action) {
+    switch (action.type) {
+        case SET_PUBLICATION_FILTER:
+            return state.set('publicationFilter', action.filter);
+
+        default:
+            return state;
+    }
+}
+
 export const rootReducer = combineReducers({
     tagsLoaded: tagsLoadingReducer,
     categoriesLoaded: categoriesLoadingReducer,
@@ -207,5 +221,6 @@ export const rootReducer = combineReducers({
     categories: categoriesReducer,
     tags: tagReducer,
     tagFilter: tagFilterReducer,
-    publications: publicationReducer
+    publications: publicationReducer,
+    settings: settingsReducer
 });

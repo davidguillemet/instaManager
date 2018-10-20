@@ -1,8 +1,7 @@
-import React, { PureComponent } from 'react';
+import React from 'react';
 import { withNavigation } from 'react-navigation';
 
 import {
-  StyleSheet,
   View,
   Text,
   FlatList,
@@ -294,7 +293,7 @@ class CategoryListUi extends React.PureComponent {
                     :
                     null
                 }
-                <View style={{padding: CommonStyles.GLOBAL_PADDING, backgroundColor: CommonStyles.MEDIUM_BACKGROUND}}>
+                <View style={{flexDirection: 'row', alignItems: 'center', padding: CommonStyles.GLOBAL_PADDING, backgroundColor: CommonStyles.MEDIUM_BACKGROUND}}>
                     <SearchInput
                         placeholder={'search category'}
                         dataSource={this.props.categories}

@@ -66,17 +66,54 @@ export default class HashtagPersistenceManagerClass {
         });
     }
 
+    _getFirstDate(publicationFilter) {
+        let firstDate = new Date();
+
+        firstDate.setHours(0);
+        firstDate.setMinutes(0);
+        firstDate.setSeconds(0);
+        firstDate.setMilliseconds(0);
+
+        if (publicationFilter.periodUnit == 'year') {
+            const year = firstDate.getYear();
+            firstDate.setYear(year - publicationFilter.periodCount);
+        } else if (publicationFilter.periodUnit == 'month') {
+            const month = firstDate.getMonth();
+            firstDate.setMonth(month - publicationFilter.periodCount);
+        } else if (publicationFilter.periodUnit == 'week') {
+            const dayOfMonth = firstDate.getDate(); // day of month
+            firstDate.setDate(dayOfMonth - publicationFilter.periodCount*7);
+        } else if (publicationFilter.periodUnit == 'day') {
+            const dayOfMonth = firstDate.getDate(); // day of month
+            firstDate.setDate(dayOfMonth - publicationFilter.periodCount);
+        }
+        return firstDate;
+    }
+
     getPublications() {
         
         return this.open()
         .then(() => {
 
+            const publicationFilter = global.settingsManager.getPublicationFilter();
+
             let publications = this.realm.objects(publicationSchema);
+            if (publicationFilter.type != 'all') {
+                publications = publications.filtered('creationDate > $0', this._getFirstDate(publicationFilter));
+            }
 
             return publications.map(item => {
                 return this._getPubProxyFromRealm(item);
             });
         });       
+    }
+
+    getPublicationFromId(pubId) {
+        return this.realm.objectForPrimaryKey(publicationSchema, pubId);
+    }
+
+    getTotalPublicationsCount() {
+        return this.realm.objects(publicationSchema).length;
     }
 
     saveTag(tag, update) {
@@ -329,6 +366,12 @@ export default class HashtagPersistenceManagerClass {
             this.realm.delete(publicationToDelete);
             
         });
+    }
+
+    hasPublication(pubId) {
+
+        const publication = this.realm.objectForPrimaryKey(publicationSchema, pubId);
+        return publication != null;
     }
 
     _getItemProxyFromRealm(itemType, item) {

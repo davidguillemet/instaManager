@@ -46,10 +46,11 @@ export default class PublicationScreenUi extends React.Component {
         this.onCreatePublication = this.onCreatePublication.bind(this);
         this.onEditPublication = this.onEditPublication.bind(this);
         this.renderEmptyComponent = this.renderEmptyComponent.bind(this);
+        this.renderFooterComponent = this.renderFooterComponent.bind(this);
         this.renderListItem = this.renderListItem.bind(this);
         this.setStateProxy = this.setStateProxy.bind(this);
         this.setSearchResults = this.setSearchResults.bind(this);
-        this.searchPublication = this.searchPublication.bind(this);
+        this.onFilterPublications = this.onFilterPublications.bind(this);
     }
 
     componentDidMount() {
@@ -85,9 +86,31 @@ export default class PublicationScreenUi extends React.Component {
 
     renderEmptyComponent() {
     
+        if (this.props.publicationTotalCount > 0) {
+            return null;
+        }
+
         return (
             <CustomButton title={'Create your first publication'} onPress={this.onCreatePublication} style={CommonStyles.styles.standardButtonCentered}/>
         );
+    }
+
+    renderFooterComponent() {
+        if (this.props.publicationTotalCount > this.props.publicationCount) {
+            return (
+                <View style={{
+                        alignItems: 'center',
+                        margin: CommonStyles.GLOBAL_PADDING,
+                        padding: CommonStyles.GLOBAL_PADDING,
+                        backgroundColor: CommonStyles.GLOBAL_FOREGROUND,
+                        borderRadius: CommonStyles.BORDER_RADIUS
+                    }}>
+                    <Text style={CommonStyles.styles.smallLabel}>Other publications are available but they are not visible because of your filter settings.</Text>
+                </View>
+            );
+        }
+
+        return null;
     }
 
     setStateProxy(state) {
@@ -136,8 +159,8 @@ export default class PublicationScreenUi extends React.Component {
         this.setState({ searchResults: results });
     }
 
-    searchPublication(searchText) {
-        return global.hashtagUtil.searchItem(global.PUBLICATION_ITEM, `*${searchText}*`);
+    onFilterPublications() {
+        this.props.navigation.navigate('PublicationFilter');
     }
 
     render() {
@@ -157,13 +180,16 @@ export default class PublicationScreenUi extends React.Component {
 
         return(
             <View style={[CommonStyles.styles.standardPage, {padding: 0}]}>
-                <View style={{padding: CommonStyles.GLOBAL_PADDING, backgroundColor: CommonStyles.MEDIUM_BACKGROUND}}>
+                <View style={{flexDirection: 'row', alignItems: 'center', padding: CommonStyles.GLOBAL_PADDING, backgroundColor: CommonStyles.MEDIUM_BACKGROUND}}>
                     <SearchInput
                         placeholder={'search publication'}
-                        onSearch={this.searchPublication}
+                        dataSource={this.props.rawPublications}
                         resultsCallback={this.setSearchResults}
                         filterProperty={'name'}
                     />
+                    <TouchableOpacity onPress={this.onFilterPublications}>
+                        <Ionicons name={'ios-funnel-outline'} style={[CommonStyles.styles.textIcon, {paddingRight: 0}]}/>
+                    </TouchableOpacity>
                 </View>
                 {
                     this.state.searchResults ?
@@ -185,6 +211,7 @@ export default class PublicationScreenUi extends React.Component {
                         renderSectionHeader={this.renderSectionHeader}
                         ItemSeparatorComponent={ListItemSeparator}
                         ListEmptyComponent={this.renderEmptyComponent}
+                        ListFooterComponent={this.renderFooterComponent}
                         keyExtractor={this.keyExtractor}
                     />
                 }

@@ -55,6 +55,11 @@ export default class HashtagUtil {
         return this._getPublicationsFromStore().get(pubId);
     }
 
+    getTotalPublicationsCount() {
+
+        return global.hashtagPersistenceManager.getTotalPublicationsCount();
+    }
+
     hasPub(pubId) {
         
         return this._getPublicationsFromStore().has(pubId);
@@ -78,7 +83,6 @@ export default class HashtagUtil {
 
     searchItem(itemType, filter) {
 
-        // TODO use the store instead of the persistence layer ?
         return global.hashtagPersistenceManager.searchItem(itemType, filter);
     }
 

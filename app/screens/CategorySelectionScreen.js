@@ -22,7 +22,7 @@ function renderRightButtons(params) {
 
     return (
         <View style={{ flexDirection: 'row'}}>
-            <TouchableOpacity onPress={params.onValidateSelection}><Ionicons name={'ios-checkmark'} style={CommonStyles.styles.navigationButtonIcon}/></TouchableOpacity>
+            <TouchableOpacity onPress={params.onValidateSelection}><Ionicons name={'md-checkmark'} size={40} style={CommonStyles.styles.navigationButtonIcon}/></TouchableOpacity>
         </View>
     );
 }

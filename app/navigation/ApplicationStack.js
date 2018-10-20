@@ -9,11 +9,11 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 
 import CommonStyles from '../styles/common';
 
-import StatisticsStack from './SatisticsStack';
 import PublicationStack from './PublicationStack';
 import HashTagsStack from './HashTagsStack';
 import SettingsStack from './SettingsStack';
 import ControlDetailsStack from './ControlDetailsStack';
+import PublicationFilterScreen from '../screens/PublicationFilterScreen';
 
 function getRouteIcon(routeName, focused) {
     let iconName;
@@ -31,16 +31,12 @@ function getRouteIcon(routeName, focused) {
 
 const ApplicationNavigator = TabNavigator(
 {
-    //Statistics : { screen: StatisticsStack },
     HashTags: { screen: HashTagsStack },
     Publication: { screen: PublicationStack },
     Settings: { screen: SettingsStack },
 },
 {
-    ////// TO REMOVE ONCE FACEBOOK CONNECTION IS BACK ///
     initialRouteName: 'HashTags',
-    ////////////////////////////////////////////////////
-
     navigationOptions: ({ navigation }) => ({
         tabBarIcon: ({ focused, tintColor }) => {
             const { routeName } = navigation.state;
@@ -67,7 +63,8 @@ const ApplicationNavigator = TabNavigator(
 export default Root = StackNavigator(
 {
     ApplicationStack: { screen: ApplicationNavigator },
-    ControlDetailsModal: { screen: ControlDetailsStack }
+    ControlDetailsModal: { screen: ControlDetailsStack },
+    PublicationFilter: { screen: PublicationFilterScreen }
 }
 ,
 {

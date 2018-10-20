@@ -39,7 +39,7 @@ function renderSelectionRightButtons(params) {
     return (
         <View style={{ flexDirection: 'row'}}>
             <TouchableOpacity onPress={params.onAddTag}><Ionicons name={'ios-add'} style={CommonStyles.styles.navigationButtonIcon}/></TouchableOpacity>
-            <TouchableOpacity onPress={params.onValidateSelection}><Ionicons name={'ios-checkmark'} style={CommonStyles.styles.navigationButtonIcon}/></TouchableOpacity>
+            <TouchableOpacity onPress={params.onValidateSelection}><Ionicons style={CommonStyles.styles.navigationButtonIcon} name={'md-checkmark'} size={40}/></TouchableOpacity>
         </View>
     );
 }
@@ -357,7 +357,7 @@ export default class HashTagListScreenUi extends React.Component {
                     tintColor={CommonStyles.TEXT_COLOR}
                     style={{ margin: CommonStyles.GLOBAL_PADDING }}
                 />
-                <View style={{padding: CommonStyles.GLOBAL_PADDING, backgroundColor: CommonStyles.MEDIUM_BACKGROUND}}>
+                <View style={{flexDirection: 'row', alignItems: 'center', padding: CommonStyles.GLOBAL_PADDING, backgroundColor: CommonStyles.MEDIUM_BACKGROUND}}>
                     <SearchInput
                         placeholder={'search hashtag'}
                         dataSource={this.props.rawTags}

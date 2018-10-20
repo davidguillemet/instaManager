@@ -20,7 +20,7 @@ function renderSaveButton(params) {
 
     return (
         <View style={{ flexDirection: 'row'}}>
-            <TouchableOpacity onPress={params.onSaveItem}><Ionicons name={'ios-checkmark'} style={CommonStyles.styles.navigationButtonIcon}/></TouchableOpacity>
+            <TouchableOpacity onPress={params.onSaveItem}><Ionicons style={CommonStyles.styles.navigationButtonIcon} name={'md-checkmark'} size={40}/></TouchableOpacity>
         </View>
     );
 }
