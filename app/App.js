@@ -3,7 +3,11 @@
  * https://github.com/facebook/react-native
  * @flow
  */
-import React, { Component } from 'react';
+import React from 'react';
+import {
+  StatusBar,
+  View
+} from 'react-native';
 
 import RootStack from './navigation/Navigation';
 
@@ -31,9 +35,12 @@ export default class App extends React.Component {
       const store = configureStore();
       global.hashtagUtil = new HashtagUtil(store);
       return (
-        <Provider store={store}>
-          <RootStack/>
-        </Provider>
+        <View style={{flex: 1}}>
+          <StatusBar barStyle="light-content" />
+          <Provider store={store}>
+            <RootStack />
+          </Provider>
+        </View>
       )
     } else {
       return null;
