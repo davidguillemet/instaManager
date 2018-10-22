@@ -1,5 +1,6 @@
 import React from 'react';
 import {
+    StyleSheet,
     Text,
     TouchableOpacity,
     View
@@ -34,18 +35,18 @@ class ModalTemplate extends React.PureComponent {
     render () {
         return (
             <View style={CommonStyles.styles.standardPage}>
-                <View style={{flexDirection: 'row', justifyContent: 'center', alignItems: 'center', height: 50, marginBottom: 20}}>
-                    <TouchableOpacity onPress={this.onClose} style={{position: 'absolute', left: 0, top: 0}}>
+                <View style={styles.headerStyle}>
+                    <TouchableOpacity onPress={this.onClose} style={styles.closeModal}>
                         <Ionicons style={{color: CommonStyles.GLOBAL_FOREGROUND}} name={'ios-close'} size={50}/>
                     </TouchableOpacity>
                     {
                         this.props.title ?
-                        <Text style={[CommonStyles.styles.mediumLabel, {paddingVertical: CommonStyles.GLOBAL_PADDING }]}>{this.props.title}</Text> :
+                        <Text style={[CommonStyles.styles.mediumLabel, styles.modalTitle]}>{this.props.title}</Text> :
                         null
                     } 
                     {
                         this.props.onValidate ?
-                        <TouchableOpacity onPress={this.onValidate} style={{position: 'absolute', right: 0, top: 0}}>
+                        <TouchableOpacity onPress={this.onValidate} style={styles.validateModal}>
                             <Ionicons style={{color: CommonStyles.GLOBAL_FOREGROUND}} name={'md-checkmark'} size={40}/>
                         </TouchableOpacity>
                         :
@@ -57,5 +58,36 @@ class ModalTemplate extends React.PureComponent {
         );
     }
 }
+
+const topMargin = 10;
+const horizontalButtonMArgin = 0;
+const headerHeight = 60;
+const headerMarginBottom = 20;
+
+const styles = StyleSheet.create({
+    headerStyle: {
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center',
+        height: headerHeight,
+        marginBottom: headerMarginBottom
+    },
+    modalTitle: {
+        paddingVertical: CommonStyles.GLOBAL_PADDING,
+        marginTop: topMargin
+    },
+    closeModal: {
+        position: 'absolute',
+        left: horizontalButtonMArgin,
+        top: topMargin
+    },
+    validateModal: {
+        position: 'absolute',
+        right: horizontalButtonMArgin,
+        top: topMargin
+    }
+});
+    
+
 
 export default withNavigation(ModalTemplate);
