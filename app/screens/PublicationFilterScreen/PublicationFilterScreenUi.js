@@ -70,15 +70,15 @@ export default class PublicationFilterScreenUi extends React.PureComponent {
 
     render() {
         return (
-            <ModalTemplate title={'Publication filter'} onValidate={this.onValidate}>
+            <ModalTemplate title={'Display Publications from'} onValidate={this.onValidate}>
                 <View style={{flexDirection: 'column', justifyContent: 'flex-start'}}>
                     <Picker selectedValue={this.state.type} itemStyle={CommonStyles.styles.mediumLabel} onValueChange={this.onFilterTypeChange} style={styles.filterBorder}>
-                        <Picker.Item label={'Display publications from today'} value={'today'}></Picker.Item>
-                        <Picker.Item label={'Display publications from last 7 days'} value={'week'}></Picker.Item>
-                        <Picker.Item label={'Display publications from last month'} value={'month'}></Picker.Item>
-                        <Picker.Item label={'Display publications from last 3 months'} value={'threemonths'}></Picker.Item>
-                        <Picker.Item label={'Display publications from last...'} value={'period'}></Picker.Item>
-                        <Picker.Item label={'Display all publications'} value={'all'}></Picker.Item>
+                        <Picker.Item label={'today'} value={'today'}></Picker.Item>
+                        <Picker.Item label={'last 7 days'} value={'week'}></Picker.Item>
+                        <Picker.Item label={'last month'} value={'month'}></Picker.Item>
+                        <Picker.Item label={'last 3 months'} value={'threemonths'}></Picker.Item>
+                        <Picker.Item label={'last...'} value={'period'}></Picker.Item>
+                        <Picker.Item label={'all'} value={'all'}></Picker.Item>
                     </Picker>
                     {
                         this.state.type == 'period' ?
