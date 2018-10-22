@@ -50,7 +50,7 @@ export default class PublicationFilterScreenUi extends React.PureComponent {
         const periodUnit = 
             this.state.type == 'today' ? 'day' :
             this.state.type == 'week' ? 'week' :
-            this.state.type == 'month' || this.state.tyoe == 'threemonths' ? 'month' :
+            this.state.type == 'month' || this.state.type == 'threemonths' ? 'month' :
             this.state.periodUnit;
         
         const periodCount =
