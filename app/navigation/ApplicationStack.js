@@ -29,6 +29,20 @@ function getRouteIcon(routeName, focused) {
     return iconName;
 }
 
+function getRouteLabel(routeName) {
+    let routeCaption;
+    if (routeName === 'Statistics') {
+        routeCaption = 'Statistics';
+    } else if (routeName === 'Hashtags') {
+        routeCaption = 'Hashtags';
+    } else if (routeName === 'Settings') {
+        routeCaption = 'Settings';
+    } else if (routeName === 'Publications') {
+        routeCaption = 'Publications';
+    }
+    return routeCaption;
+}
+
 const ApplicationNavigator = TabNavigator(
 {
     Hashtags: { screen: HashTagsStack },
@@ -44,6 +58,10 @@ const ApplicationNavigator = TabNavigator(
             // You can return any component that you like here! We usually use an
             // icon component from react-native-vector-icons
             return <Ionicons name={iconName} size={25} color={tintColor} />;
+        },
+        tabBarLabel: () => {
+            const { routeName } = navigation.state;
+            return getRouteLabel(routeName);    
         }
     }),
     tabBarOptions: {
