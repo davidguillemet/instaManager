@@ -56,7 +56,7 @@ export default CommonStyles = {
   
   // Radius
   BORDER_RADIUS: 5,
-  SEARCH_INPUT_BORDER_RADIUS: 15,
+  SEARCH_INPUT_BORDER_RADIUS: 22,
 
   // Padding
   GLOBAL_PADDING: 10,

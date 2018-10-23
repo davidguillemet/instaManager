@@ -104,7 +104,9 @@ export default class SearchInput extends React.PureComponent {
                                 {
                                     marginBottom: 0,
                                     paddingVertical: 0,
-                                    paddingHorizontal: CommonStyles.GLOBAL_PADDING
+                                    paddingHorizontal: CommonStyles.GLOBAL_PADDING,
+                                    height: 25,
+                                    borderRadius: 10
                                 }]} />
         );
     }
@@ -119,7 +121,7 @@ export default class SearchInput extends React.PureComponent {
     render() {
         return(
             <View style={styles.searchContainer}>
-                <Ionicons name={'ios-search'} size={25} color={CommonStyles.TEXT_COLOR} style={{marginTop: 4}}/>
+                <Ionicons name={'ios-search'} size={25} color={CommonStyles.TEXT_COLOR} style={{marginTop: 4, marginLeft: CommonStyles.GLOBAL_PADDING}}/>
                 <TextInput
                     onChangeText={this.shouldSearch}
                     style={styles.searchInput}                
@@ -145,9 +147,9 @@ const styles = StyleSheet.create(
         flexDirection: 'row',
         flex: 1,
         alignItems: 'center',
+        height: CommonStyles.SEARCH_INPUT_BORDER_RADIUS * 2,
         borderRadius: CommonStyles.SEARCH_INPUT_BORDER_RADIUS,
-        paddingHorizontal: 15,
-        paddingVertical: 5,
+        paddingHorizontal: CommonStyles.GLOBAL_PADDING,
         backgroundColor: CommonStyles.GLOBAL_FOREGROUND
     },
     searchInput: {
