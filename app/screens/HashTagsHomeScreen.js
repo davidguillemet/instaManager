@@ -85,7 +85,7 @@ class HashTagsHomeScreenComponent extends React.Component {
             <TouchableOpacity onPress={() => this.props.navigation.navigate(item.target)}>
                 <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center' }}>
                     <Text style={[CommonStyles.styles.mediumLabel, styles.singleItem]}>{item.caption}</Text>
-                    <Ionicons style={{ color: CommonStyles.TEXT_COLOR, paddingRight: 5 }} name='ios-arrow-forward' size={CommonStyles.MEDIUM_FONT_SIZE} />
+                    <Ionicons style={{ color: CommonStyles.TEXT_COLOR, paddingRight: CommonStyles.GLOBAL_PADDING }} name='ios-arrow-forward' size={CommonStyles.MEDIUM_FONT_SIZE} />
                 </View>
             </TouchableOpacity>
         );
