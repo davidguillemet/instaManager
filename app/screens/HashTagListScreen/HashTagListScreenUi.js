@@ -49,7 +49,7 @@ export default class HashTagListScreenUi extends React.Component {
     static navigationOptions = ({ navigation }) => {
         const params = navigation.state.params || {};
         return {
-            headerTitle: 'My Hashtags',
+            headerTitle: 'Hashtags',
             headerRight: (params.mode == undefined || params.mode == global.LIST_EDITION_MODE) ? renderEditionRightButtons(params) : renderSelectionRightButtons(params)
         }   
     };

@@ -33,7 +33,7 @@ class HashtagCategoriesScreenUi extends React.Component {
     static navigationOptions = ({ navigation }) => {
         const params = navigation.state.params || {};
         return {
-            headerTitle: 'My Categories',
+            headerTitle: 'Categories',
             headerRight: renderRightButtons(params)
         }   
     };

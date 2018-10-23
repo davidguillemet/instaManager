@@ -24,7 +24,7 @@ class HashTagsHomeScreenComponent extends React.Component {
     static navigationOptions = ({ navigation }) => {
         const params = navigation.state.params || {};
         return {
-            headerTitle: 'Tag Management'
+            headerTitle: 'Hashtag Management'
         }   
     };
 
@@ -44,7 +44,7 @@ class HashTagsHomeScreenComponent extends React.Component {
         // Section Hashtags
         let hashtagMenuItems = [];
         hashtagMenuItems.push({
-            caption: 'All your hashtags',
+            caption: 'View/edit hashtags',
             target: 'HashTagList'
         });
         hashtagMenuItems.push({
@@ -59,7 +59,7 @@ class HashTagsHomeScreenComponent extends React.Component {
         // Section Categories
         let categoryMenuItems = [];
         categoryMenuItems.push({
-            caption: 'All your categories',
+            caption: 'View/edit categories',
             target: 'HashtagCategories'
         });        
         this.sections.push({

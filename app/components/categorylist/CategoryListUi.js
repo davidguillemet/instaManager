@@ -11,7 +11,6 @@ import {
 import CategoryListItem from './CategoryListItem';
 import LoadingIndicatorView from '../LoadingIndicator';
 import SearchInput from '../Search';
-import ListItemSeparator from './../ListItemSeparator';
 import EmptySearchResult from './../EmptySearchResult';
 
 import CommonStyles from '../../styles/common'; 

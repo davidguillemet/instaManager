@@ -30,7 +30,7 @@ export default class PublicationScreenUi extends React.Component {
     static navigationOptions = ({ navigation }) => {
         const params = navigation.state.params || {};
         return {
-            headerTitle: 'Publication Management',
+            headerTitle: 'Publications',
             headerRight: renderEditionRightButtons(params)
         }   
     };

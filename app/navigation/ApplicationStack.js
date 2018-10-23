@@ -19,11 +19,11 @@ function getRouteIcon(routeName, focused) {
     let iconName;
     if (routeName === 'Statistics') {
         iconName = `ios-stats${focused ? '' : '-outline'}`;
-    } else if (routeName === 'HashTags') {
+    } else if (routeName === 'Hashtags') {
         iconName = `ios-pricetags${focused ? '' : '-outline'}`;
     } else if (routeName === 'Settings') {
         iconName = `ios-options${focused ? '' : '-outline'}`;
-    } else if (routeName === 'Publication') {
+    } else if (routeName === 'Publications') {
         iconName = `ios-images${focused ? '' : '-outline'}`;
     }
     return iconName;
@@ -31,12 +31,12 @@ function getRouteIcon(routeName, focused) {
 
 const ApplicationNavigator = TabNavigator(
 {
-    HashTags: { screen: HashTagsStack },
-    Publication: { screen: PublicationStack },
+    Hashtags: { screen: HashTagsStack },
+    Publications: { screen: PublicationStack },
     Settings: { screen: SettingsStack },
 },
 {
-    initialRouteName: 'HashTags',
+    initialRouteName: 'Hashtags',
     navigationOptions: ({ navigation }) => ({
         tabBarIcon: ({ focused, tintColor }) => {
             const { routeName } = navigation.state;
