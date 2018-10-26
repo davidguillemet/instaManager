@@ -31,7 +31,8 @@ export default class SearchInput extends React.PureComponent {
         super(props);
 
         this.state = {
-            tagToAdd: null
+            addTag: false,
+            search: null
         };
         this.shouldSearch = this.shouldSearch.bind(this);
         this.onAdd = this.onAdd.bind(this);
@@ -39,24 +40,32 @@ export default class SearchInput extends React.PureComponent {
 
    shouldSearch(text) {
         // Trigger search process only if at least 2 characters
-        if (text.length > 1) {
+        if (text && text.length > 1) {
             let that = this;
             this.processSearch(text)
             .then((results) => {
+                let addTag = false;
                 if (results.length == 0) {
-                    this.setState({ tagToAdd: text});
+                    addTag = true;
                 } else {
                     const resultSet = results.reduce((acc, item) => { acc.add(item.name); return acc; }, new Set());
                     if (resultSet.has(text)) {
-                        this.setState({ tagToAdd: null});
+                        addTag = false;
                     } else {
-                        this.setState({ tagToAdd: text});
+                        addTag = true;
                     }
                 }
+                this.setState({
+                    addTag: addTag,
+                    search: text
+                });
                 that.props.resultsCallback(results);
             });
         } else {
-            this.setState({ tagToAdd: null});
+            this.setState({
+                addTag: false,
+                search: null
+            });
             this.props.resultsCallback(null);
         }
     }
@@ -88,15 +97,15 @@ export default class SearchInput extends React.PureComponent {
 
     onAdd() {
 
-        if (this.props.onValidateAdd == null || this.props.onValidateAdd(this.state.tagToAdd)) {
+        if (this.props.onValidateAdd == null || this.props.onValidateAdd(this.state.search)) {
 
-            this.props.onAdd(this.state.tagToAdd);
+            this.props.onAdd(this.state.search);
         }
     }
 
     renderAddButton() {
 
-        if (this.state.tagToAdd == null || this.props.onAdd == null) {
+        if (this.state.addTag == false || this.props.onAdd == null) {
             return null;
         }
 
@@ -118,9 +127,7 @@ export default class SearchInput extends React.PureComponent {
 
     componentDidUpdate() {
 
-        if (this.state.tagToAdd != null) {
-            this.shouldSearch(this.state.tagToAdd);
-        }
+        this.shouldSearch(this.state.search);
     }
 
     render() {
