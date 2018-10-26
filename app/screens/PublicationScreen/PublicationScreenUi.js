@@ -91,7 +91,13 @@ export default class PublicationScreenUi extends React.Component {
         }
 
         return (
-            <CustomButton title={'Create your first publication'} onPress={this.onCreatePublication} style={CommonStyles.styles.standardButtonCentered}/>
+            <CustomButton 
+                title={'Create your first publication'}
+                onPress={this.onCreatePublication}
+                style={[
+                    CommonStyles.styles.standardButtonCentered,
+                    { margin: CommonStyles.GLOBAL_PADDING}
+                ]}/>
         );
     }
 
