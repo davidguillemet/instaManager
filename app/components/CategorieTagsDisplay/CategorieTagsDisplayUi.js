@@ -335,7 +335,7 @@ class CategorieTagsDisplayUi extends React.PureComponent {
     render() {
         
         return (
-            <View>
+            <View style={{paddingBottom: CommonStyles.GLOBAL_PADDING}}>
                 { this.renderSegmentControl() }
                 { this.state.tagsDisplayMode == TAGS_DISPLAY_SELF ? this.renderDuplicatesError() : this.renderAncestorDuplicatesError() }
                 { this.renderTagContainers() }

@@ -250,18 +250,18 @@ export default class HashtagCategoryEditScreenUi extends React.Component {
 
     render() {
         return (
-            <View style={CommonStyles.styles.standardPage}>
+            <View style={[CommonStyles.styles.standardPage, {padding: 0}]}>
             
                 <CustomButton
                     title={'Save'}
                     onPress={this.onSaveItem}
                     showActivityIndicator={true}
-                    style={CommonStyles.styles.standardButton}
+                    style={[CommonStyles.styles.standardButton, {margin: CommonStyles.GLOBAL_PADDING}]}
                     deactivated={this.isDirty() == false}
                     register={this.saveSubscriber}
                 />
 
-                <ScrollView style={[CommonStyles.styles.standardPage, {padding: 0}]}>
+                <ScrollView style={[CommonStyles.styles.standardPage, {padding: CommonStyles.GLOBAL_PADDING}]}>
                     <View style={styles.parameterContainerView}>
                         <Text style={[CommonStyles.styles.smallLabel, styles.parameterLabel, {fontWeight: 'bold'}]}>Name *</Text>
                         <TextInput
@@ -336,8 +336,6 @@ export default class HashtagCategoryEditScreenUi extends React.Component {
                         </View>
                         : null
                     }
-
-                    <View style={{ height: 20 }}></View>
                 </ScrollView>
             </View>
         );
