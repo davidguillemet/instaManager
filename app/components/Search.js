@@ -46,7 +46,12 @@ export default class SearchInput extends React.PureComponent {
                 if (results.length == 0) {
                     this.setState({ tagToAdd: text});
                 } else {
-                    this.setState({ tagToAdd: null});
+                    const resultSet = results.reduce((acc, item) => { acc.add(item.name); return acc; }, new Set());
+                    if (resultSet.has(text)) {
+                        this.setState({ tagToAdd: null});
+                    } else {
+                        this.setState({ tagToAdd: text});
+                    }
                 }
                 that.props.resultsCallback(results);
             });
