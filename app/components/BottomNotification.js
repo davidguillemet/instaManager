@@ -1,8 +1,6 @@
-import React, { PureComponent } from 'react';
+import React from 'react';
 import {
     Animated,
-    StyleSheet,
-    View,
     Text,
     TouchableOpacity
 } from 'react-native';

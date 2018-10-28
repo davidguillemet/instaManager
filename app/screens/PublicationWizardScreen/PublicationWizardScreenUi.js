@@ -10,7 +10,6 @@ import {
     ScrollView
 } from 'react-native';
 
-import TagContainer from '../../components/TagContainer';
 import CustomButton from '../../components/CustomButton';
 import CommonStyles from '../../styles/common';
 import { NotificationType, BottomNotification } from '../../components/BottomNotification';
