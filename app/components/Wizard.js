@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import {
     Alert,
+    Animated,
     Dimensions,
     TouchableOpacity,
     Text,
@@ -24,6 +25,13 @@ export default class Wizard extends React.PureComponent {
     constructor(props) {
         super(props);
 
+        this.state = {
+            fromStep: null,
+            toStep: this.props.activeStep,
+            activeStepWidth: new Animated.Value(0)
+        }
+
+        this.animationDuration = 400;
         this.showActiveStepDescription = this.showActiveStepDescription.bind(this);
     }
 
@@ -36,16 +44,68 @@ export default class Wizard extends React.PureComponent {
             }
         ]);
     }
+    
+    componentWillReceiveProps(nextProps) {
+           
+        this.state.fromStep = this.state.toStep;
+        this.state.toStep = nextProps.activeStep;
+        this.state.displayActiveStep = false;
+    }
+
+    getWizardLayoutInformation() {
+        const {width} = Dimensions.get('window');
+        const stepSpotWidth = 20;
+        const availableWidth = width - CommonStyles.GLOBAL_PADDING * 2 - stepSpotWidth * 2
+        return {
+            availableWidth: availableWidth,
+            stepSegmentWidth:  availableWidth / (this.props.steps.length - 1),
+            stepSpotWidth: stepSpotWidth,
+            stepLineHeight: 4
+        };
+    }
+
+    componentDidUpdate() {
+
+        if (this.state.toStep == 0 && this.state.fromStep == null) {
+            // No animation if we display the first 
+            return;
+        }
+
+        const { stepSpotWidth, stepSegmentWidth } = this.getWizardLayoutInformation();
+        
+        // Stop current line just before the active step spot
+        let currentStepLineWidth = stepSegmentWidth * this.state.toStep;
+        if (this.state.toStep < this.props.steps.length - 1) {
+            currentStepLineWidth -= stepSpotWidth / 2;
+        }
+
+        const that = this;
+
+        Animated.timing(
+            this.state.activeStepWidth,
+            {
+                toValue: currentStepLineWidth,
+                duration: this.animationDuration
+            }
+        ).start(() => {
+            that.setState({displayActiveStep: true});
+            if (this.state.fromStep < this.state.toStep && this.state.toStep < this.props.steps.length - 1)
+            {
+                Animated.timing(
+                    this.state.activeStepWidth,
+                    {
+                        // Once the Spot id displayed green just set the line width at the end of the spot
+                        toValue: currentStepLineWidth + stepSpotWidth,
+                        duration: 0
+                    }
+                ).start();
+            }
+        });
+    }
 
     render() {
-        const {height, width} = Dimensions.get('window');
-        const stepLineHeight = 4;
-        const stepDotDiameter = 20;
-        
-        const availableWidth = width - stepDotDiameter;
-        const stepWidth = (availableWidth - CommonStyles.GLOBAL_PADDING * 2) / (this.props.steps.length - 1);
-        const stepLines = new Array(this.props.steps.length - 1).fill(0);
 
+        const { availableWidth, stepSpotWidth, stepLineHeight, stepSegmentWidth } = this.getWizardLayoutInformation();
         const currentStep = this.props.steps[this.props.activeStep];
 
         return (
@@ -71,42 +131,53 @@ export default class Wizard extends React.PureComponent {
                     </TouchableOpacity>
                 </View>
                 <View style={{height: stepLineHeight + CommonStyles.GLOBAL_PADDING*2}}>
-                    {
-                        stepLines.map((_, index) => {
-
-                            const stepSegmentColor =
-                                index < this.props.activeStep ? CommonStyles.LIGHT_GREEN :
-                                CommonStyles.SEPARATOR_COLOR;
-                            
-                                return <View key={index} style={{
-                                height: stepLineHeight,
-                                width: stepWidth,
-                                backgroundColor: stepSegmentColor,
-                                position: 'absolute',
-                                left: CommonStyles.GLOBAL_PADDING + stepDotDiameter/2 + index * stepWidth,
-                                top: CommonStyles.GLOBAL_PADDING
-                            }} />
-                        })
-                    }
+                    <View style={{
+                            height: stepLineHeight,
+                            width: availableWidth,
+                            backgroundColor: CommonStyles.SEPARATOR_COLOR,
+                            position: 'absolute',
+                            left: CommonStyles.GLOBAL_PADDING + stepSpotWidth,
+                            top: CommonStyles.GLOBAL_PADDING
+                        }}
+                    />
+                    <Animated.View style={{
+                            position: 'absolute',
+                            top: CommonStyles.GLOBAL_PADDING,
+                            left: CommonStyles.GLOBAL_PADDING + stepSpotWidth,
+                            height: stepLineHeight,
+                            width: this.state.activeStepWidth,
+                            backgroundColor: CommonStyles.LIGHT_GREEN
+                        }}
+                    />
                     {
                         this.props.steps.map((_, index) => {
                             
                             const stepSpotColor =
-                                index <= this.props.activeStep ? CommonStyles.LIGHT_GREEN :
+                                index < this.props.activeStep || (index == this.props.activeStep && this.state.fromStep > this.state.toStep) ? CommonStyles.LIGHT_GREEN :
+                                index == this.props.activeStep && (this.state.displayActiveStep || this.props.activeStep == 0) ? CommonStyles.LIGHT_GREEN :
                                 CommonStyles.SEPARATOR_COLOR;
+                            
+                            let spotLeft = index * stepSegmentWidth;
+                            if (index > 0) {
+                                spotLeft += stepSpotWidth;
+                                if (index < this.props.steps.length - 1) {
+                                    // intermediate spot
+                                    spotLeft -= stepSpotWidth / 2;
+                                }
+                            }
                             
                             return ( 
                                 <View key={index} style={{
                                     alignItems: 'center',
                                     justifyContent: 'center',
                                     overflow: 'hidden',
-                                    width: stepDotDiameter,
-                                    height: stepDotDiameter,
-                                    borderRadius: stepDotDiameter / 2,
+                                    width: stepSpotWidth,
+                                    height: stepSpotWidth,
+                                    borderRadius: stepSpotWidth / 2,
                                     position: 'absolute',
                                     backgroundColor: stepSpotColor,
-                                    top: CommonStyles.GLOBAL_PADDING + stepLineHeight/2 - stepDotDiameter/2,
-                                    left: CommonStyles.GLOBAL_PADDING + index*stepWidth
+                                    top: CommonStyles.GLOBAL_PADDING + stepLineHeight/2 - stepSpotWidth/2,
+                                    left: CommonStyles.GLOBAL_PADDING + spotLeft
                                 }}>
                                 {
                                     index < this.props.activeStep ?
