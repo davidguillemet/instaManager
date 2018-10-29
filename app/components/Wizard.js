@@ -54,13 +54,13 @@ export default class Wizard extends React.PureComponent {
 
     getWizardLayoutInformation() {
         const {width} = Dimensions.get('window');
-        const stepSpotWidth = 20;
+        const stepSpotWidth = 30;
         const availableWidth = width - CommonStyles.GLOBAL_PADDING * 2 - stepSpotWidth * 2
         return {
             availableWidth: availableWidth,
             stepSegmentWidth:  availableWidth / (this.props.steps.length - 1),
             stepSpotWidth: stepSpotWidth,
-            stepLineHeight: 4
+            stepLineHeight: 2
         };
     }
 
@@ -109,7 +109,7 @@ export default class Wizard extends React.PureComponent {
         const currentStep = this.props.steps[this.props.activeStep];
 
         return (
-            <View style={{marginBottom: CommonStyles.GLOBAL_PADDING}}>
+            <View>
                 <View style={{
                         alignItems: 'center',
                     }}>
@@ -119,8 +119,9 @@ export default class Wizard extends React.PureComponent {
                             alignItems: 'center',
                             padding: CommonStyles.GLOBAL_PADDING,
                             paddingHorizontal: CommonStyles.GLOBAL_PADDING * 2,
-                            backgroundColor: CommonStyles.GLOBAL_FOREGROUND,
+                            backgroundColor: CommonStyles.BUTTON_COLOR,
                             margin: CommonStyles.GLOBAL_PADDING,
+                            marginBottom: 0,
                             borderRadius: CommonStyles.BORDER_RADIUS
                         }}>
                             <Text style={CommonStyles.styles.smallLabel}>
@@ -130,19 +131,17 @@ export default class Wizard extends React.PureComponent {
                         </View>
                     </TouchableOpacity>
                 </View>
-                <View style={{height: stepLineHeight + CommonStyles.GLOBAL_PADDING*2}}>
+                <View style={{height: stepSpotWidth + CommonStyles.GLOBAL_PADDING*2, justifyContent: 'center'}}>
                     <View style={{
                             height: stepLineHeight,
                             width: availableWidth,
                             backgroundColor: CommonStyles.SEPARATOR_COLOR,
                             position: 'absolute',
-                            left: CommonStyles.GLOBAL_PADDING + stepSpotWidth,
-                            top: CommonStyles.GLOBAL_PADDING
+                            left: CommonStyles.GLOBAL_PADDING + stepSpotWidth
                         }}
                     />
                     <Animated.View style={{
                             position: 'absolute',
-                            top: CommonStyles.GLOBAL_PADDING,
                             left: CommonStyles.GLOBAL_PADDING + stepSpotWidth,
                             height: stepLineHeight,
                             width: this.state.activeStepWidth,
@@ -174,15 +173,19 @@ export default class Wizard extends React.PureComponent {
                                     width: stepSpotWidth,
                                     height: stepSpotWidth,
                                     borderRadius: stepSpotWidth / 2,
+                                    borderWidth: 2,
+                                    borderColor: stepSpotColor,
                                     position: 'absolute',
-                                    backgroundColor: stepSpotColor,
-                                    top: CommonStyles.GLOBAL_PADDING + stepLineHeight/2 - stepSpotWidth/2,
+                                    backgroundColor: index < this.state.toStep ? stepSpotColor : CommonStyles.GLOBAL_BACKGROUND,
                                     left: CommonStyles.GLOBAL_PADDING + spotLeft
                                 }}>
                                 {
-                                    index < this.props.activeStep ?
-                                    <Ionicons style={{color: CommonStyles.DARK_GREEN, marginTop: 2}} name={'ios-checkmark'} size={28}/> :
-                                    null
+                                    index < this.state.toStep ?
+                                    <Ionicons style={{color: CommonStyles.DARK_GREEN, marginTop: 2}} name={'ios-checkmark'} size={34}/> :
+                                    <Text style={[CommonStyles.styles.smallLabel,
+                                        {
+                                            color: stepSpotColor
+                                        }]}>{index+1}</Text>
                                 }
                                 </View>
                             );
