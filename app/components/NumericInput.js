@@ -14,6 +14,9 @@ const defaultMinValue = 0;
 const defaultMaxValue = 100;
 const defaultStep = 1;
 
+const longpressTimeout = 1000;
+const incrementInterval = 50;
+
 export default class NumericInput extends React.PureComponent {
 
     static propTypes = {
@@ -41,6 +44,17 @@ export default class NumericInput extends React.PureComponent {
         this.onValueChange = this.onValueChange.bind(this);
         this.onIncrementValue = this.onIncrementValue.bind(this);
         this.onDecrementValue = this.onDecrementValue.bind(this);
+
+        this.onStartDecrementValue = this.onStartDecrementValue.bind(this);
+        this.onStopDecrementValue = this.onStopDecrementValue.bind(this);
+
+        this.onStartIncrementValue = this.onStartIncrementValue.bind(this);
+        this.onStopIncrementValue = this.onStopIncrementValue.bind(this);
+
+        this.decrementInterval = null;
+        this.decrementTimeout = null;
+        this.incrementinterval = null;
+        this.incrementTimeout = null;
     }
 
     changeValueCallback(value) {
@@ -71,8 +85,47 @@ export default class NumericInput extends React.PureComponent {
     changeValue(offset) {
         const previousValue = parseInt(this.state.value);
         const newValue = previousValue + offset;
-        this.setState({value: newValue.toString()});
-        this.changeValueCallback(newValue);
+        if (newValue >= this.props.minValue && newValue <= this.props.maxValue) {
+
+            this.setState({value: newValue.toString()});
+            this.changeValueCallback(newValue);
+        }
+    }
+
+    onStartDecrementValue() {
+
+        this.onDecrementValue();
+
+        const that = this;
+        this.decrementTimeout = setTimeout(() => {
+            that.decrementTimeout = null;
+            that.decrementInterval = setInterval(that.onDecrementValue, incrementInterval);
+        }, longpressTimeout);
+    }
+
+    onStopDecrementValue() {
+        clearTimeout(this.decrementTimeout);
+        clearInterval(this.decrementInterval);
+        this.decrementTimeout = null;
+        this.decrementInterval = null;
+    }
+
+    onStartIncrementValue() {
+
+        this.onIncrementValue();
+
+        const that = this;
+        this.incrementTimeout = setTimeout(() => {
+            that.incrementTimeout = null;
+            that.incrementInterval = setInterval(that.onIncrementValue, incrementInterval);
+        }, longpressTimeout);
+    }
+
+    onStopIncrementValue() {
+        clearTimeout(this.incrementTimeout);
+        clearInterval(this.incrementInterval);
+        this.incrementTimeout = null;
+        this.incrementInterval = null;
     }
 
     render() {
@@ -92,7 +145,8 @@ export default class NumericInput extends React.PureComponent {
             <View style={{flexDirection: 'row'}}>
                 <TouchableOpacity
                         style={decrementStyles}
-                        onPress={this.onDecrementValue}
+                        onPressIn={this.onStartDecrementValue}
+                        onPressOut={this.onStopDecrementValue}
                         disabled={decrementDisabled}>
                     <Ionicons key={'icon'} style={{color: decrementDisabled ? CommonStyles.DEACTIVATED_BUTTON_TEXT_COLOR : CommonStyles.TEXT_COLOR}} name={'ios-remove'} size={25} />
                 </TouchableOpacity>
@@ -105,7 +159,8 @@ export default class NumericInput extends React.PureComponent {
                 />
                 <TouchableOpacity
                         style={incrementStyles}
-                        onPress={this.onIncrementValue}
+                        onPressIn={this.onStartIncrementValue}
+                        onPressOut={this.onStopIncrementValue}
                         disabled={incrementDisabled}>
                     <Ionicons key={'icon'} style={{color: incrementDisabled ? CommonStyles.DEACTIVATED_BUTTON_TEXT_COLOR : CommonStyles.TEXT_COLOR}} name={'ios-add'} size={25} />
                 </TouchableOpacity>
