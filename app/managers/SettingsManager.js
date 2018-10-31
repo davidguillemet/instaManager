@@ -7,7 +7,7 @@ const defaultSettings = {
         periodCount: 3,
         referenceDate: null     // today...if not provided        
     },
-    publicationHeader: '.\n.\n.\n.\n.\n',
+    publicationHeader: '',
     publicationFooter: '',
     maximumNumberOfTags: 30
 }
@@ -56,5 +56,14 @@ export default class SettingsManager {
 
     setPublicationFilter(filter) {
         this.setSettings('publicationFilter', filter);
+    }
+    setPublicationHeader(header) {
+        this.setSettings('publicationHeader', header);
+    }
+    setPublicationFooter(footer) {
+        this.setSettings('publicationFooter', footer);
+    }
+    setMaximumNumberOfTags(value) {
+        this.setSettings('maximumNumberOfTags', value);
     }
 }

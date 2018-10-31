@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
 import {
-  StyleSheet,
-  ScrollView,
-  View,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  Alert
+    StyleSheet,
+    ScrollView,
+    View,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    Alert
 } from 'react-native';
 
 import PropTypes from 'prop-types';
