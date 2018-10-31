@@ -7,6 +7,9 @@ import {
     View,
     Text
 } from 'react-native';
+import { connect } from 'react-redux';
+
+import { launchControls } from './../actions/control';
 
 import CommonStyles from '../styles/common';
 import ListItemSeparator from '../components/ListItemSeparator';
@@ -14,7 +17,7 @@ import NumericInput from '../components/NumericInput';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import CustomButton from '../components/CustomButton';
 
-export default class SettingsScreen extends React.PureComponent {
+class SettingsScreen extends React.PureComponent {
     static navigationOptions = {
         title: 'Settings'
       };
@@ -73,6 +76,7 @@ export default class SettingsScreen extends React.PureComponent {
                 break;
             case 'maxTagsCount':
                 global.settingsManager.setMaximumNumberOfTags(value);
+                this.props.onLaunchControls();
                 break;
         }
     }
@@ -205,6 +209,16 @@ export default class SettingsScreen extends React.PureComponent {
         );
     }
 }
+
+const mapDispatchToProps = dispatch => {
+    return {
+        onLaunchControls: () => {
+            dispatch(launchControls());
+        }
+    }
+}
+
+export default connect(null, mapDispatchToProps)(SettingsScreen);
 
 const styles = StyleSheet.create({
     settingsListItem: {

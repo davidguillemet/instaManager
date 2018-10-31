@@ -74,32 +74,36 @@ export default class NumericInput extends React.PureComponent {
         this.changeValueCallback(parseInt(numericValue));
     }
 
-    onIncrementValue() {
-        this.changeValue(this.props.step);
+    onIncrementValue(notify) {
+        this.changeValue(this.props.step, notify);
     }
 
-    onDecrementValue() {
-        this.changeValue(-this.props.step);
+    onDecrementValue(notify) {
+        this.changeValue(-this.props.step, notify);
     }
 
-    changeValue(offset) {
+    changeValue(offset, notify) {
         const previousValue = parseInt(this.state.value);
         const newValue = previousValue + offset;
         if (newValue >= this.props.minValue && newValue <= this.props.maxValue) {
 
             this.setState({value: newValue.toString()});
-            this.changeValueCallback(newValue);
+            if (notify) {
+                this.changeValueCallback(newValue);
+            }
         }
     }
 
     onStartDecrementValue() {
 
-        this.onDecrementValue();
+        this.onDecrementValue(false);
 
         const that = this;
         this.decrementTimeout = setTimeout(() => {
             that.decrementTimeout = null;
-            that.decrementInterval = setInterval(that.onDecrementValue, incrementInterval);
+            that.decrementInterval = setInterval(() => {
+                that.onDecrementValue(false);
+            }, incrementInterval);
         }, longpressTimeout);
     }
 
@@ -108,16 +112,19 @@ export default class NumericInput extends React.PureComponent {
         clearInterval(this.decrementInterval);
         this.decrementTimeout = null;
         this.decrementInterval = null;
+        this.changeValueCallback(parseInt(this.state.value));
     }
 
     onStartIncrementValue() {
 
-        this.onIncrementValue();
+        this.onIncrementValue(false);
 
         const that = this;
         this.incrementTimeout = setTimeout(() => {
             that.incrementTimeout = null;
-            that.incrementInterval = setInterval(that.onIncrementValue, incrementInterval);
+            that.incrementInterval = setInterval(() => {
+                that.onIncrementValue(false);
+            }, incrementInterval);
         }, longpressTimeout);
     }
 
@@ -126,6 +133,7 @@ export default class NumericInput extends React.PureComponent {
         clearInterval(this.incrementInterval);
         this.incrementTimeout = null;
         this.incrementInterval = null;
+        this.changeValueCallback(parseInt(this.state.value));
     }
 
     render() {
