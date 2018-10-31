@@ -1,6 +1,7 @@
 import React from 'react';
 import {
     FlatList,
+    KeyboardAvoidingView,
     StyleSheet,
     TextInput,
     TouchableOpacity,
@@ -180,7 +181,7 @@ class SettingsScreen extends React.PureComponent {
     renderMaximumTagsCount(item) {
         return (
             <View style={styles.settingsListItem}>
-                <Text style={CommonStyles.styles.mediumLabel}>{item.caption}</Text>
+                <Text style={[CommonStyles.styles.mediumLabel, {flex: 1, marginRight: CommonStyles.GLOBAL_PADDING}]} numberOfLines={1}>{item.caption}</Text>
                 <NumericInput
                     value={this.state.maxTagsCount}
                     minValue={1}
@@ -198,14 +199,14 @@ class SettingsScreen extends React.PureComponent {
 
     render() {
         return(
-            <View style={[CommonStyles.styles.standardPage, {padding: 0}]}>
-                <FlatList
+            <KeyboardAvoidingView style={[CommonStyles.styles.standardPage, {padding: 0}]} contentContainerStyle={CommonStyles.styles.standardPage} behavior={'position'} enabled>
+               <FlatList
                     data={this.settings}
                     extraData={this.state}
                     renderItem={this.renderSetting}
                     ItemSeparatorComponent={ListItemSeparator}
                 />
-            </View>
+            </KeyboardAvoidingView>
         );
     }
 }
@@ -223,6 +224,7 @@ export default connect(null, mapDispatchToProps)(SettingsScreen);
 const styles = StyleSheet.create({
     settingsListItem: {
         flexDirection: 'row',
+        flex: 1,
         justifyContent: 'space-between',
         alignItems: 'center',
         height: 60,
