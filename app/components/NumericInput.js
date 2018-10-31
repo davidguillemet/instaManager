@@ -53,7 +53,9 @@ export default class NumericInput extends React.PureComponent {
     onValueChange(text) {
         
         const numericValue = text.replace(/[^0-9]/g, '');
-        this.setState({value: numericValue});
+        if (numericValue >= this.props.minValue && numericValue <= this.props.maxValue) {
+            this.setState({value: numericValue});
+        }
 
         this.changeValueCallback(parseInt(numericValue));
     }
