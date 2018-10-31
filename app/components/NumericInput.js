@@ -14,7 +14,7 @@ const defaultMinValue = 0;
 const defaultMaxValue = 100;
 const defaultStep = 1;
 
-const longpressTimeout = 1000;
+const longpressTimeout = 700;
 const incrementInterval = 50;
 
 export default class NumericInput extends React.PureComponent {
@@ -156,6 +156,7 @@ export default class NumericInput extends React.PureComponent {
                     onChangeText={this.onValueChange}
                     keyboardType={'numeric'}
                     multiline = {false}
+                    editable={false}
                 />
                 <TouchableOpacity
                         style={incrementStyles}
