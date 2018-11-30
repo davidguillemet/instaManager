@@ -98,7 +98,8 @@ const mapStateToProps = (state, ownProps) => {
     }
     return {
         categories: hierarchy,
-        categoriesMap: map
+        categoriesMap: map,
+        maxTagsCount: global.settingsManager.getMaxNumberOfTags()
     }
 }
 

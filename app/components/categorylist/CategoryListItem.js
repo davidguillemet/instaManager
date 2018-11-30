@@ -68,13 +68,12 @@ export default class CategoryListItem extends React.PureComponent {
     }
 
     getTagCountColor() {
-        const maxCount = global.settingsManager.getMaxNumberOfTags();
-        if (this.props.tagCount > maxCount) {
+        if (this.props.tagCount > this.props.maxTagsCount) {
             return CommonStyles.LIGHT_RED;
         }
         const colorStart = CommonStyles.DARK_GREEN.substring(1);
         const colorEnd = CommonStyles.TEXT_COLOR.substring(1);
-        const ratio = this.props.tagCount / maxCount;
+        const ratio = this.props.tagCount / this.props.maxTagsCount;
         const r = Math.ceil(parseInt(colorStart.substring(0,2), 16) * ratio + parseInt(colorEnd.substring(0,2), 16) * (1-ratio));
         const g = Math.ceil(parseInt(colorStart.substring(2,4), 16) * ratio + parseInt(colorEnd.substring(2,4), 16) * (1-ratio));
         const b = Math.ceil(parseInt(colorStart.substring(4,6), 16) * ratio + parseInt(colorEnd.substring(4,6), 16) * (1-ratio));
