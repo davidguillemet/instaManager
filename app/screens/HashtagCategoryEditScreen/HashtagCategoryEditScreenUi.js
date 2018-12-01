@@ -256,7 +256,7 @@ export default class HashtagCategoryEditScreenUi extends React.Component {
                     title={'Save'}
                     onPress={this.onSaveItem}
                     showActivityIndicator={true}
-                    style={[CommonStyles.styles.standardButton, {margin: CommonStyles.GLOBAL_PADDING}]}
+                    style={[CommonStyles.styles.standardButton, {margin: CommonStyles.GLOBAL_PADDING, marginBottom: 0}]}
                     deactivated={this.isDirty() == false}
                     register={this.saveSubscriber}
                 />
@@ -281,6 +281,9 @@ export default class HashtagCategoryEditScreenUi extends React.Component {
                             blurOnSubmit={true}
                         />
                     </View>
+
+                    <View style={styles.parameterSeparator}></View>
+
                     <View style={styles.parameterContainerView}>
                         <Text style={[CommonStyles.styles.smallLabel, styles.parameterLabel]}>{this.props.itemType === global.TAG_ITEM ? 'Categories' : this.props.itemType === global.CATEGORY_ITEM ? 'Parent' : 'Category'}</Text>
                         <TouchableOpacity onPress={this.onSelectParentCategory} style={{ flex: 1, flexDirection: 'row', alignItems: 'center' }}>
@@ -325,15 +328,13 @@ export default class HashtagCategoryEditScreenUi extends React.Component {
                     
                     {
                         this.props.itemType == global.CATEGORY_ITEM ?
-                        <View style={{paddingTop: CommonStyles.GLOBAL_PADDING}}>
-                            <CategorieTagsDisplay
-                                tags={this.state.childrenTags}
-                                onDeleteTag={this.onDeleteTag}
-                                onTagSelectionValidated={this.onTagSelectionValidated}
-                                parentCategory={this.state.parentCategories && this.state.parentCategories.length > 0 ? this.state.parentCategories[0] : null}
-                                itemType={this.props.itemType}
-                            />
-                        </View>
+                        <CategorieTagsDisplay
+                            tags={this.state.childrenTags}
+                            onDeleteTag={this.onDeleteTag}
+                            onTagSelectionValidated={this.onTagSelectionValidated}
+                            parentCategory={this.state.parentCategories && this.state.parentCategories.length > 0 ? this.state.parentCategories[0] : null}
+                            itemType={this.props.itemType}
+                        />
                         : null
                     }
                 </ScrollView>
@@ -345,10 +346,12 @@ export default class HashtagCategoryEditScreenUi extends React.Component {
 const styles = StyleSheet.create(
 {
     parameterContainerView: {
-        flexDirection: 'column',
-        borderBottomColor: CommonStyles.SEPARATOR_COLOR,
-        borderBottomWidth: 1,
-        paddingTop: CommonStyles.GLOBAL_PADDING,
+        flexDirection: 'column'
+    },
+    parameterSeparator: {
+        backgroundColor: CommonStyles.SEPARATOR_COLOR,
+        height: 1,
+        marginBottom: CommonStyles.GLOBAL_PADDING
     },
     parameterInput: {
         flex: 1,
