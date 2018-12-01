@@ -222,7 +222,7 @@ class CategorieTagsDisplayUi extends React.PureComponent {
         const ancestorCategoriesTagCount = this.getAncestorTagsCount(this.props);
         const categoryOwnTagsCount = this.getCategoryOwnTagsCount();
 
-        const remainingTags = global.settingsManager.getMaxNumberOfTags() - ancestorCategoriesTagCount - categoryOwnTagsCount;
+        const remainingTags = this.props.maxTagsCount - ancestorCategoriesTagCount - categoryOwnTagsCount;
         const remainingError = remainingTags < 0;
         const titleStatusStyle = remainingError ? styles.errorTitle : styles.successTitle;
         const remainingStatusStyle = remainingError ? styles.errorText : styles.successText;

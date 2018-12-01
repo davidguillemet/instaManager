@@ -11,7 +11,13 @@ const mapDispatchToProps = dispatch => {
     }
 }
 
-const PublicationSummaryScreen = connect(null, mapDispatchToProps)(PublicationSummaryScreenUi);
+const mapStateToPros = state => {
+    return {
+        maxTagsCount: global.settingsManager.getMaxNumberOfTags()
+    }
+}
+
+const PublicationSummaryScreen = connect(mapStateToPros, mapDispatchToProps)(PublicationSummaryScreenUi);
 
 export default PublicationSummaryScreen;
 

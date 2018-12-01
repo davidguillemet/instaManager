@@ -35,6 +35,7 @@ const mapStateToProps = (state, props) => {
     const ancestorTags = getAncestorTags(ancestorsCategories);
 
     return {
+        maxTagsCount: global.settingsManager.getMaxNumberOfTags(),
         ancestorCategories: ancestorsCategories,
         ancestorTags: ancestorTags,
         ancestorsDuplicatedTags: getAncestorDuplicatedTags(ancestorsCategories),
