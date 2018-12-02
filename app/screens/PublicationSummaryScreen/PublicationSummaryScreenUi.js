@@ -69,7 +69,7 @@ export default class PublicationSummaryScreenUi extends React.Component {
 
     renderTagsCountCaption() {
 
-        const remainingTags = global.settingsManager.getMaxNumberOfTags() - this.tags.length;
+        const remainingTags = this.props.maxTagsCount - this.tags.length;
         const remainingError = remainingTags < 0;
         const tagCount = `${this.tags.length} Tag(s) in total - `;
         const remainingTip = remainingError ? `${-remainingTags} in excess` : `${remainingTags} remaining`;
