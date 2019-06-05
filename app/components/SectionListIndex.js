@@ -134,7 +134,7 @@ const styles = StyleSheet.create(
     indexTitleStyle: {
         color: CommonStyles.GLOBAL_FOREGROUND,
         fontWeight: "800",
-        fontSize: CommonStyles.SMALL_FONT_SIZE,
+        fontSize: CommonStyles.TINY_FONT_SIZE,
         height: CommonStyles.INDEX_ITEM_HEIGHT
     }
 });
