@@ -195,34 +195,35 @@ export default class HashTagListScreenUi extends React.Component {
             animated: true,
             itemIndex: 0, // First item of the section
             sectionIndex: sectionIndex,
-            viewOffset: CommonStyles.SECTION_HEADER_HEIGHT
+            viewOffset: 0
         });
     }
 
-    // LIST_ITEM_HEIGHT: 40,
-    // LIST_SEPARATOR_HEIGHT: 1,
-    // SECTION_HEADER_HEIGHT: 30,
+    // CommonStyles.LIST_ITEM_HEIGHT: 40,
+    // CommonStyles.LIST_SEPARATOR_HEIGHT: 1,
+    // CommonStyles.SECTION_HEADER_HEIGHT: 30,
     getItemLayout(data, index) {
 
         let offset = 0;
         let globalIndex = 0;
         let height = 0;
 
-        for (let sectionIndex = 0; sectionIndex < data.length && globalIndex < index; sectionIndex++) {
+        for (let sectionIndex = 0; sectionIndex < data.length; sectionIndex++) {
+
+            if (globalIndex == index) {
+                height = CommonStyles.SECTION_HEADER_HEIGHT;
+                break;
+            }       
 
             offset += CommonStyles.SECTION_HEADER_HEIGHT;
+            globalIndex += 1; // an item for the section header
             const currentSection = data[sectionIndex];
 
-            globalIndex += 1; // an item for the header
-            if (globalIndex == index) {
-                height = 0;
-            }
-            globalIndex += 1; // next item for the first data in section            
-
-            for (let itemIndex = 0; itemIndex < currentSection.data.length && globalIndex < index; itemIndex++, globalIndex++) {
+            for (let itemIndex = 0; itemIndex < currentSection.data.length; itemIndex++, globalIndex++) {
                 
                 if (globalIndex == index) {
                     height = CommonStyles.LIST_ITEM_HEIGHT;
+                    break;
                 }
                 
                 offset += CommonStyles.LIST_ITEM_HEIGHT;
@@ -230,6 +231,12 @@ export default class HashTagListScreenUi extends React.Component {
                     offset += CommonStyles.LIST_SEPARATOR_HEIGHT;
                 }
             }
+            
+            if (globalIndex == index) {
+                break;
+            }
+            
+            globalIndex += 1; // next item for the section footer (height = 0)
         }
 
         return {
