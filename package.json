@@ -7,11 +7,12 @@
     "test": "jest"
   },
   "dependencies": {
+    "@react-native-community/async-storage": "^1.4.2",
     "hoist-non-react-statics": "^3.0.1",
     "immutable": "^3.8.2",
     "node": "^9.7.0",
-    "react": "^16.0.0",
-    "react-native": "^0.48.3",
+    "react": "^16.8.3",
+    "react-native": "^0.59.9",
     "react-native-cookies": "^3.2.0",
     "react-native-fbsdk": "^0.7.0",
     "react-native-fbsdklogin": "0.0.8",
@@ -19,7 +20,7 @@
     "react-native-vector-icons": "^4.5.0",
     "react-navigation": "^1.4.0",
     "react-redux": "^5.0.7",
-    "realm": "^2.4.1",
+    "realm": "^2.28.1",
     "redux": "^4.0.0",
     "redux-immutable": "^4.0.0",
     "redux-logger": "^3.0.6",
@@ -27,9 +28,11 @@
     "reselect": "^3.0.1"
   },
   "devDependencies": {
-    "babel-jest": "22.4.1",
-    "babel-preset-react-native": "4.0.0",
+    "@babel/cli": "^7.0.0-beta.47",
+    "@babel/core": "^7.0.0-beta.47",
+    "babel-jest": "^22.4.1",
     "jest": "22.4.2",
+    "metro-react-native-babel-preset": "^0.54.1",
     "react-native-clean-project": "^3.0.0",
     "react-test-renderer": "16.3.0-alpha.1"
   },

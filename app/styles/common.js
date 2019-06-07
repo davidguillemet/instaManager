@@ -116,7 +116,7 @@ CommonStyles.styles = StyleSheet.create(
   navigationButtonIcon: {
     color: CommonStyles.TEXT_COLOR,
     padding: 10,
-    paddingTop: 20,
+    paddingTop: 5,
     fontSize: CommonStyles.NAV_ICON_SIZE,
     marginBottom: 5
   },
@@ -128,6 +128,7 @@ CommonStyles.styles = StyleSheet.create(
   swipeButtonIcon: {
     color: CommonStyles.TEXT_COLOR,
     padding: 10,
+    paddingTop: 7,
     fontSize: CommonStyles.SWIPE_ICON_SIZE
   },
   sectionHeaderContainer: {

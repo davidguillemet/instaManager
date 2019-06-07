@@ -1,12 +1,11 @@
 import React from 'react';
 import {
   ActivityIndicator,
-  AsyncStorage,
   StatusBar,
   StyleSheet,
-  View,
-  Alert
+  View
 } from 'react-native';
+import AsyncStorage from '@react-native-community/async-storage';
 
 import UserService from '../services/users/UserService';
 
