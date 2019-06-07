@@ -181,7 +181,7 @@ export default class Wizard extends React.PureComponent {
                                 }}>
                                 {
                                     index < this.state.toStep ?
-                                    <Ionicons style={{color: CommonStyles.DARK_GREEN, marginTop: 2}} name={'ios-checkmark'} size={34}/> :
+                                    <Ionicons style={{color: CommonStyles.DARK_GREEN, marginTop: -4}} name={'ios-checkmark'} size={34}/> :
                                     <Text style={[CommonStyles.styles.smallLabel,
                                         {
                                             color: stepSpotColor
