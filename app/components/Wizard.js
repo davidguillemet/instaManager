@@ -31,7 +31,7 @@ export default class Wizard extends React.PureComponent {
             activeStepWidth: new Animated.Value(0)
         }
 
-        this.animationDuration = 400;
+        this.animationDuration = 200;
         this.showActiveStepDescription = this.showActiveStepDescription.bind(this);
     }
 

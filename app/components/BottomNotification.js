@@ -32,7 +32,7 @@ export class BottomNotification extends React.PureComponent {
         autoclose: true,            // close automatically by default
         duration: 2000,             // will close automatically after 3 s by default
         manuallyCloseable: true,    // manually closeable by default
-        animationDuration: 700,     // Animationn lasts 1s
+        animationDuration: 200,     // Animationn lasts 200ms
         opacity: 1
     };   
 
