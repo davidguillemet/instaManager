@@ -90,11 +90,11 @@ export default class HashtagUtil {
         
         switch (itemType) {
             case global.TAG_ITEM:
-                return 'tag';
+                return 'Tag';
             case global.CATEGORY_ITEM:
-                return 'category';
+                return 'Category';
             case global.PUBLICATION_ITEM:
-                return 'publication';
+                return 'Publication';
             default:
                 return '<unkonwn item type';
         }

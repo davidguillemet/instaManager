@@ -14,6 +14,7 @@ import PropTypes from 'prop-types';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import CategorieTagsDisplay from '../../components/CategorieTagsDisplay';
 import CustomButton from '../../components/CustomButton';
+import Flag from '../../components/Flag';
 import CommonStyles from '../../styles/common';
 
 function renderSaveButton(params) {
@@ -309,19 +310,11 @@ export default class HashtagCategoryEditScreenUi extends React.Component {
 
                                 null :
 
-                                <View style={{
+                                <Flag caption={this.state.parentCategories.length} style={{
                                     position: 'absolute',
                                     right: 30,
                                     top: -3,
-                                    width: 24,
-                                    height: 24,
-                                    alignItems: 'center',
-                                    justifyContent: 'center',
-                                    backgroundColor: CommonStyles.ARCHIVE_COLOR,
-                                    borderRadius: 12,
-                                }}>
-                                    <Text style={{ fontSize: CommonStyles.SMALL_FONT_SIZE }}>{this.state.parentCategories.length}</Text>
-                                </View>            
+                                }}/>
                             }
                         </TouchableOpacity>
                     </View>

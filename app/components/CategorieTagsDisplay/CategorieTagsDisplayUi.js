@@ -12,6 +12,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 
 import TagContainer from '../TagContainer';
 import CustomButton from '../CustomButton';
+import Flag from '../Flag';
 import Message from '../Message';
 
 import CommonStyles from '../../styles/common'; 
@@ -271,16 +272,25 @@ class CategorieTagsDisplayUi extends React.PureComponent {
 
     getOwnTagsCountCaption() {
 
-        const caption = this.getCategoryOwnTagsCount() + ' in this ' + global.hashtagUtil.getItemTypeCaption(this.props.itemType);
+        const caption = 'This ' + global.hashtagUtil.getItemTypeCaption(this.props.itemType);
         return caption;
     }
 
     getAncestorTagsCountCaption() {
 
-        const ancestorCategoriesTagCount = this.getAncestorTagsCount(this.props);
-        const caption = ancestorCategoriesTagCount + ' from ' + (this.props.itemType == global.CATEGORY_ITEM ? 'ancestors' : 'the category');
+        const caption = (this.props.itemType == global.CATEGORY_ITEM ? 'Ancestors' : 'Category');
 
         return caption;
+    }
+
+    getErrorFlag() {
+        return (
+            <Flag caption={'!'} style={{
+                backgroundColor: CommonStyles.DARK_RED,
+                color: CommonStyles.TEXT_COLOR,
+                fontWeight: 'bold',
+                marginLeft: 5}}/>
+        );
     }
 
     renderSegmentControl() {
@@ -303,9 +313,10 @@ class CategorieTagsDisplayUi extends React.PureComponent {
                                 this.state.tagsDisplayMode == TAGS_DISPLAY_SELF ? styles.selectedSegment : styles.unselectedSegment]}
                         >
                             <Text key={'text'}>{this.getOwnTagsCountCaption()}</Text>
+                            <Flag caption={this.getCategoryOwnTagsCount()} style={{ marginLeft: 5}}/>
                             {
                                 duplicates.size > 0 ?
-                                <Ionicons key={'icon'} style={{color: CommonStyles.DARK_RED, marginLeft: 5}} name={'ios-alert'} size={20} /> :
+                                this.getErrorFlag() :
                                 null
                             }
                         </CustomButton>
@@ -318,9 +329,10 @@ class CategorieTagsDisplayUi extends React.PureComponent {
                                 this.state.tagsDisplayMode == TAGS_DISPLAY_ANCESTORS ? styles.selectedSegment : styles.unselectedSegment ]}
                         >
                             <Text key={'text'}>{this.getAncestorTagsCountCaption()}</Text>
+                            <Flag caption={this.getAncestorTagsCount(this.props)} style={{ marginLeft: 5}} />
                             {
                                 ancestorDuplicates.size > 0 ?
-                                <Ionicons key={'icon'} style={{color: CommonStyles.DARK_RED, marginLeft: 5}} name={'ios-alert'} size={20} /> :
+                                this.getErrorFlag() :
                                 null
                             }
                         </CustomButton>
