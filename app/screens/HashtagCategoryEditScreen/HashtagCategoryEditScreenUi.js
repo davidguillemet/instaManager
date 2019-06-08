@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import {
+    Keyboard,
     StyleSheet,
     ScrollView,
     View,
@@ -114,6 +115,7 @@ export default class HashtagCategoryEditScreenUi extends React.Component {
                 break;
         }
 
+        Keyboard.dismiss();
         this.props.navigation.goBack(null);
     }
 
