@@ -7,7 +7,7 @@ import {
   } from 'react-native';
 
 import PropTypes from 'prop-types';
-
+import Flag from './Flag';
 import CommonStyles from '../styles/common';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Tag from './Tag';
@@ -89,7 +89,8 @@ export default class TagContainer extends React.PureComponent {
                         {
                             this.props.label ?
                             <View style={styles.tagContainerLabel}>
-                                <Text style={[CommonStyles.styles.smallLabel]}>{this.props.label}</Text>
+                                <Text style={[CommonStyles.styles.smallLabel, {fontWeight: 'bold', fontStyle: 'italic'}]}>{this.props.label}</Text>
+                                <Flag caption={this.props.count} style={{marginLeft: 5}}/>
                             </View>
                             :
                             null
@@ -149,6 +150,8 @@ const styles = StyleSheet.create(
         backgroundColor: CommonStyles.DARK_RED,
     },
     tagContainerLabel: {
+        flexDirection: 'row',
+        alignItems: 'center',
         justifyContent: 'center',
         borderColor: CommonStyles.SEPARATOR_COLOR,
         borderWidth: 1,

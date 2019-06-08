@@ -169,7 +169,8 @@ class CategorieTagsDisplayUi extends React.PureComponent {
             return (
                 <TagContainer
                     tags={tags}
-                    label={tagsCount + ' tag(s) in this ' + global.hashtagUtil.getItemTypeCaption(this.props.itemType)}
+                    label={'This ' + global.hashtagUtil.getItemTypeCaption(this.props.itemType)}
+                    count={tagsCount}
                     itemType={global.TAG_ITEM}
                     onPressTag={this.onDeleteTag}
                     onAdd={this.onSelectTags}
@@ -198,7 +199,8 @@ class CategorieTagsDisplayUi extends React.PureComponent {
                 return (
                     <TagContainer
                         style={{ marginBottom: 10 }}
-                        label={countWithoutDuplicated + ' tag(s) in ' + cat.name}
+                        label={cat.name}
+                        count={countWithoutDuplicated}
                         key={cat.id}
                         tags={cat.hashtags}
                         itemType={global.TAG_ITEM}
