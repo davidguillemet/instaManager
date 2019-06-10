@@ -10,6 +10,7 @@ import PropTypes from 'prop-types';
 import Flag from './Flag';
 import CommonStyles from '../styles/common';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import CustomButton from './CustomButton';
 import Tag from './Tag';
 
   
@@ -28,6 +29,7 @@ export default class TagContainer extends React.PureComponent {
     static propTypes = {
         tags: PropTypes.array,                  // tag collection
         errors: PropTypes.object,               // set of tags which should be rendered as error
+        warnings: PropTypes.object,             // set of tags which should be rendered as warningd (check error before)
         onPressTag: PropTypes.func,             // callback when a tag is pressed
         onAdd: PropTypes.func,                  // callback when selecting a new tag
         readOnly: PropTypes.bool,               // true if the display is readonly, what means we cannot remove the tag
@@ -37,12 +39,14 @@ export default class TagContainer extends React.PureComponent {
         iconName: PropTypes.string,             // name of the icon to use for each tag
         asObject: PropTypes.bool,               // true if tag objects are passed as input parameters instead of identifiers
         categoryId: PropTypes.string,           // Optional category identifier
-        onNavigateToCategory: PropTypes.func    // Callback function to navigate to category...
+        onNavigateToCategory: PropTypes.func,   // Callback function to navigate to category...
+        expanded: PropTypes.bool                // true if tags are visible, false otherwise
     };
 
     static defaultProps = {
         tags: [],
         errors: new Set(),
+        warnings: new Set(),
         onPressTag: null,
         onAdd: null,
         readOnly: false,
@@ -50,18 +54,27 @@ export default class TagContainer extends React.PureComponent {
         itemType: global.TAG_ITEM,
         hideIfEmpty: false,
         iconName: 'ios-close-circle-outline',
-        asObject: false
+        asObject: false,
+        expanded: true
     };
 
     constructor(props) {
         super(props);
         this.navigateToCategory = this.navigateToCategory.bind(this);
+        this.toggleExpanded = this.toggleExpanded.bind(this);
+        this.state = {
+            expanded: this.props.expanded
+        };
     }
 
     navigateToCategory() {
         if (this.props.categoryId && this.props.onNavigateToCategory) {
             this.props.onNavigateToCategory(this.props.categoryId);
         }
+    }
+
+    toggleExpanded() {
+        this.setState({ expanded: !this.state.expanded });
     }
     
     render() {
@@ -85,13 +98,16 @@ export default class TagContainer extends React.PureComponent {
             <View style={this.props.style}>
                 {
                     this.props.label || !this.props.readOnly ?
-                    <View style={{ flexDirection: 'row', flex: 1, justifyContent: 'space-between'}}>
+                    <View style={{ flexDirection: 'row', flex: 1, justifyContent: this.props.label ? 'space-between' : 'center'}}>
                         {
                             this.props.label ?
-                            <View style={styles.tagContainerLabel}>
-                                <Text style={[CommonStyles.styles.smallLabel, {fontWeight: 'bold', fontStyle: 'italic'}]}>{this.props.label}</Text>
-                                <Flag caption={this.props.count} style={{marginLeft: 5}}/>
-                            </View>
+                            <TouchableOpacity onPress={this.toggleExpanded} style={styles.tagContainerLabel}>
+                                <Text style={[CommonStyles.styles.mediumLabel, {fontWeight: 'bold'}]}>{this.props.label}</Text>
+                                <Flag caption={this.props.count} style={[
+                                    this.props.count > global.settingsManager.getMaxNumberOfTags() ? styles.countFlagError : styles.countFlag,
+                                    {marginLeft: 5}
+                                ]}/>
+                            </TouchableOpacity>
                             :
                             null
                         }
@@ -99,11 +115,7 @@ export default class TagContainer extends React.PureComponent {
                             this.props.readOnly || this.props.onAdd == null ?
                             null
                             :
-                            <View style={styles.addTagButton}>
-                                <TouchableOpacity onPress={this.props.onAdd}>
-                                    <Ionicons style={{color: CommonStyles.MEDIUM_GREEN}} name={'ios-add-circle'} size={30} />
-                                </TouchableOpacity>
-                            </View>
+                            <CustomButton title={'Add a Tag...'} onPress={this.props.onAdd} style={CommonStyles.styles.standardButton}/>
                         }
                         {
                             this.props.categoryId && this.props.onNavigateToCategory ?
@@ -119,10 +131,15 @@ export default class TagContainer extends React.PureComponent {
                     :
                     null
                 }
-                <View style={tagContainerStyle}>
+                {
+                    this.state.expanded ?
+                    <View style={tagContainerStyle}>
                     {
                         tagList.sort((t1, t2) => t1.name.localeCompare(t2.name)).map(tag => {
-                            const tagColorStyle = this.props.errors.has(tag.id) ? styles.tagErrColor : styles.tagStdColor;
+                            const tagColorStyle =
+                                this.props.errors.has(tag.id) ? styles.tagErrColor :
+                                this.props.warnings.has(tag.id) ? styles.tagWarnColor :
+                                styles.tagStdColor;
                             return (
                                 <Tag
                                     style={tagColorStyle}
@@ -135,7 +152,9 @@ export default class TagContainer extends React.PureComponent {
                             );
                         })
                     }
-                </View>
+                    </View> :
+                    null
+                }
             </View>
         );
     }
@@ -149,6 +168,9 @@ const styles = StyleSheet.create(
     tagErrColor: {
         backgroundColor: CommonStyles.DARK_RED,
     },
+    tagWarnColor: {
+        backgroundColor: CommonStyles.DARK_ORANGE,
+    },
     tagContainerLabel: {
         flexDirection: 'row',
         alignItems: 'center',
@@ -158,7 +180,8 @@ const styles = StyleSheet.create(
         borderTopLeftRadius: CommonStyles.BORDER_RADIUS,
         borderTopRightRadius: CommonStyles.BORDER_RADIUS,
         borderBottomWidth: 0,
-        paddingHorizontal: CommonStyles.GLOBAL_PADDING
+        paddingHorizontal: CommonStyles.GLOBAL_PADDING,
+        backgroundColor: CommonStyles.SEPARATOR_COLOR
     },
     tagContainer: {
         flexDirection: 'row',
@@ -175,5 +198,13 @@ const styles = StyleSheet.create(
     addTagButton: {
         justifyContent: 'center',
         alignItems: 'center'
+    },
+    countFlagError: {
+        color: CommonStyles.DARK_RED,
+        backgroundColor: CommonStyles.LIGHT_RED
+    },
+    countFlag: {
+        color: CommonStyles.DARK_GREEN,
+        backgroundColor: CommonStyles.LIGHT_GREEN
     }
 });

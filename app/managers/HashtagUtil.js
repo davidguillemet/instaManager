@@ -81,6 +81,16 @@ export default class HashtagUtil {
         return ancestors.reverse(); // From root to leaf
     }
 
+    getTagsFromCategoryHierarhchy(finalCategory) {
+
+        const ancestors = this.getAncestorCategories(finalCategory);
+        const tagSet = ancestors.reduce((set, cat) => { 
+            cat.hashtags.forEach(tagId => set.add(tagId));
+            return set;
+        }, new Set());
+        return [...tagSet];
+    }
+
     searchItem(itemType, filter) {
 
         return global.hashtagPersistenceManager.searchItem(itemType, filter);

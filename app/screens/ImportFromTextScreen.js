@@ -74,7 +74,7 @@ export default class ImportFromTextScreen extends React.Component {
         return (
             <KeyboardAvoidingView style={[CommonStyles.styles.standardPage, {padding: 0}]} contentContainerStyle={CommonStyles.styles.standardPage} behavior={'position'} enabled>
                 <View style={CommonStyles.styles.standardTile}>
-                    <Text style={CommonStyles.styles.mediumLabel}>You can import your hastags by clicking on "Import tags" once you have entered a string containing a space-separated list of tags, which might start with '#' or not.</Text>
+                    <Text style={CommonStyles.styles.mediumLabel}>You can import your hastags by clicking on "Import tags" once you have entered/pasted a string containing a space-separated list of tags, which might start with '#' or not.</Text>
                 </View>
                 <CustomButton
                     style={CommonStyles.styles.standardButtonCentered}
@@ -88,7 +88,7 @@ export default class ImportFromTextScreen extends React.Component {
                     style={styles.textInputStyle}
                     onChangeText={this.onChangeText}
                     multiline={true}
-                    placeholder={'Enter your space-separated tag list here'}
+                    placeholder={'Enter or paste a space-separated list of tags'}
                     placeholderTextColor={CommonStyles.PLACEHOLDER_COLOR}
                     autoCapitalize='none'
                     returnKeyType={'done'}

@@ -15,7 +15,10 @@ export default class Flag extends React.PureComponent {
             PropTypes.string,
             PropTypes.number
           ]).isRequired,
-        style: PropTypes.object         // Flag style
+        style: PropTypes.oneOfType([  // Flag style as simple style or array of styles
+            PropTypes.object,
+            PropTypes.array
+          ])
    };
     
     constructor(props) {

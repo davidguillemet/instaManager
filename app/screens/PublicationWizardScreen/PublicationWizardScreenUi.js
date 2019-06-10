@@ -298,13 +298,7 @@ export default class PublicationWizardScreenUi extends React.PureComponent {
         if (this.state.tags == null) {
 
             const selectedCategoryId = this.state.selectedCategory && this.state.selectedCategory.length > 0 ? this.state.selectedCategory[0] : null;
-
-            const ancestors = selectedCategoryId ? global.hashtagUtil.getAncestorCategories(selectedCategoryId) : [];
-            const tagSet = ancestors.reduce((set, cat) => { 
-                cat.hashtags.forEach(tagId => set.add(tagId));
-                return set;
-            }, new Set());
-            this.state.tags = [...tagSet];    
+            this.state.tags = selectedCategoryId ? global.hashtagUtil.getTagsFromCategoryHierarhchy(selectedCategoryId) : [];  
         }
 
         return (
