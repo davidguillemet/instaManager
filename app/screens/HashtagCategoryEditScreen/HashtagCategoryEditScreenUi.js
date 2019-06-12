@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import {
+    ActivityIndicator,
+    FlatList,
     Keyboard,
     StyleSheet,
     ScrollView,
@@ -16,7 +18,10 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import CategorieTagsDisplay from '../../components/CategorieTagsDisplay';
 import CustomButton from '../../components/CustomButton';
 import Flag from '../../components/Flag';
+import ListItemSeparator from '../../components/ListItemSeparator';
 import CommonStyles from '../../styles/common';
+
+import HashtagSuggestionListItem from './HashtagSuggestionListItem';
 
 function renderSaveButton(params) {
 
@@ -57,9 +62,11 @@ export default class HashtagCategoryEditScreenUi extends React.Component {
         this.state = {
             dirty: false,
             itemName: this.props.itemName,
+            normalizedItemName : this.props.itemName.toLowerCase(),
             parentCategories: this.props.parentCategories,
             parentCategoriesCaption: parentCategoriesCaption,
-            childrenTags: this.props.childrenTags
+            childrenTags: this.props.childrenTags,
+            searchIsRunning: false
         };
 
         this.onChangeText = this.onChangeText.bind(this);
@@ -69,8 +76,14 @@ export default class HashtagCategoryEditScreenUi extends React.Component {
         this.onDeleteTag = this.onDeleteTag.bind(this);
         this.onSaveItem = this.onSaveItem.bind(this);
         this.isDirty = this.isDirty.bind(this);
+        this.queryWebSearch = this.queryWebSearch.bind(this);
+        this.tagSuggestionKeyExtractor = this.tagSuggestionKeyExtractor.bind(this);
+        this.onRefreshSuggestions = this.onRefreshSuggestions.bind(this);
+        this.renderSuggestion = this.renderSuggestion.bind(this);
+        this.onSelectSuggestion = this.onSelectSuggestion.bind(this);
 
         this.saveSubscriber = [];
+        this.getSuggestionsSubscriber = [];
     }
     
     componentDidMount() {
@@ -204,10 +217,81 @@ export default class HashtagCategoryEditScreenUi extends React.Component {
         return true;
     }
 
+    queryWebSearch(text) {
+
+        this.setState({ searchIsRunning: true });
+
+        global.hashtagUtil.querySearch(text)
+        .then(data => {
+            // Sort tags by media count
+            const hashtags = data.hashtags.sort((t1, t2) => {
+                if (t1.hashtag.media_count < t2.hashtag.media_count) return 1;
+                if (t1.hashtag.media_count > t2.hashtag.media_count) return -1;
+                return 0;
+            });
+
+            this.queryWebSearchCompleted(hashtags, null);
+        })
+        .catch(e => {
+            this.queryWebSearchCompleted(null, e);
+        });
+    }
+
+    queryWebSearchCompleted(suggestions, error) {
+
+        this.setState({
+            searchIsRunning: false,
+            searchError: error ? error.message : null,
+            searchSuggestions: suggestions
+        });
+        this.getSuggestionsSubscriber.forEach(listener => listener.setActionCompleted());
+    }
+
+    tagSuggestionKeyExtractor(item, index) {
+        return item.position.toString();
+    }
+
+    onSelectSuggestion(tagSuggestion) {
+        this.onChangeText(tagSuggestion);
+    }
+
+    renderSuggestion({item}) {
+
+        const tagSuggestion = item.hashtag;
+        const tagName = tagSuggestion.name;
+        return (
+            <HashtagSuggestionListItem
+                name={tagName}
+                mediaCount={tagSuggestion.search_result_subtitle}
+                selected={tagName == this.state.normalizedItemName}
+                onSelect={this.onSelectSuggestion}
+            />
+        );
+    }
+
+    renderSuggestionListFooter() {
+        return (
+            <View style={{height: 30}} />
+        );
+    }
+
+    onRefreshSuggestions() {
+        this.queryWebSearch(this.state.itemName);
+    }
+
     onChangeText(text) {
+        
+        let searchSuggestions = this.state.searchSuggestions;
+        if (this.props.itemType == global.TAG_ITEM && text === '') {
+            // In case the tag name is empty, clear suggestions
+            searchSuggestions = null;
+        }
+        
         this.setState({
             dirty: true,
-            itemName: text
+            itemName: text,
+            normalizedItemName: text.toLowerCase(),
+            searchSuggestions: searchSuggestions
         });
     }
 
@@ -330,7 +414,30 @@ export default class HashtagCategoryEditScreenUi extends React.Component {
                             parentCategory={this.state.parentCategories && this.state.parentCategories.length > 0 ? this.state.parentCategories[0] : null}
                             itemType={this.props.itemType}
                         />
-                        : null
+                        :
+                        <View style={{marginTop: CommonStyles.GLOBAL_PADDING}}>
+                            <CustomButton
+                                title={'Get other suggestions'}
+                                onPress={this.onRefreshSuggestions}
+                                showActivityIndicator={true}
+                                style={[CommonStyles.styles.standardButton, {marginVertical: CommonStyles.GLOBAL_PADDING}]}
+                                deactivated={this.state.itemName==''}
+                                register={this.getSuggestionsSubscriber}
+                            />
+                            {
+                                this.state.searchError != null ?
+                                <Message message={this.state.searchError} error /> :
+                                null
+                            }
+                            <FlatList
+                                data={this.state.searchSuggestions || this.state.suggestions}
+                                keyExtractor={this.tagSuggestionKeyExtractor}
+                                renderItem={this.renderSuggestion}
+                                ItemSeparatorComponent={ListItemSeparator}
+                                ListFooterComponent={this.renderSuggestionListFooter}
+                                style={{flex: 1}}
+                            />
+                        </View>
                     }
                 </ScrollView>
             </View>

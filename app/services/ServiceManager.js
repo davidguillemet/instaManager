@@ -1,12 +1,32 @@
-import { GraphRequest, GraphRequestManager } from 'react-native-fbsdk';
 import { Alert } from 'react-native';
 
 export default class ServiceManagerClass  {
 
-    constructor(instaFacade) {
-        this.instaFacade = instaFacade;
+    invoke(serviceDelegate) {
+        
+        var accessTokenParam = '?access_token=' + this.instaFacade.getAccessToken();
+        var serviceUrl = this.instaFacade.config.rootApiUrl + serviceDelegate.getUrl() + accessTokenParam;
+        return fetch(
+            serviceUrl,
+            {
+              method: serviceDelegate.getVerb(),
+              headers: {
+                'Accept': 'application/json',
+              },
+              body: serviceDelegate.getBody()
+            }
+        )
+        .then((response) => {
+            return response.json();
+        })
+        .then((jsonResponse) => {
+            return jsonResponse.data;
+        }).catch(e => {
+            Alert.alert("fetch error", e.message);
+        });
     }
 
+    /*
     invoke_prev(serviceDelegate) {
         
         var accessTokenParam = '?access_token=' + this.instaFacade.getAccessToken();
@@ -71,6 +91,7 @@ export default class ServiceManagerClass  {
         );
                 
     }
+    */
 
     getConfiguration(serviceDelegate) {
 

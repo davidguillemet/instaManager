@@ -6,6 +6,26 @@ export default class HashtagUtil {
 
         this.reduxStore = store;
     }
+    
+    querySearch(searchQuery) {
+        
+        var serviceUrl = "https://www.instagram.com/web/search/topsearch/?query=" + encodeURIComponent(searchQuery);
+        return fetch(
+            serviceUrl,
+            {
+              method: "GET",
+              headers: {
+                'Accept': 'application/json',
+              }
+            }
+        )
+        .then((response) => {
+            return response.json();
+        })
+        .then((jsonResponse) => {
+            return jsonResponse;
+        });
+    }
 
     getHashtags(catId) {
 
