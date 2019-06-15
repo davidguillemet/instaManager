@@ -352,7 +352,7 @@ class CategorieTagsDisplayUi extends React.PureComponent {
             <FlatList style={{
                     borderWidth: 0,
                     borderColor: CommonStyles.SEPARATOR_COLOR,
-                    backgroundColor: CommonStyles.GLOBAL_FOREGROUND,
+                    backgroundColor: CommonStyles.SEPARATOR_COLOR,
                     marginVertical: CommonStyles.GLOBAL_PADDING,
                     borderRadius: CommonStyles.BORDER_RADIUS}
                 }
@@ -483,7 +483,7 @@ class CategorieTagsDisplayUi extends React.PureComponent {
         return (
             <TouchableOpacity onPress={() => this.switchDisplayMode(item.key)} disabled={disabled}>
                 <View style={containerViewStyle}>
-                    <Ionicons style={{color: selected ? CommonStyles.MEDIUM_GREEN : CommonStyles.GLOBAL_FOREGROUND}} name={'ios-arrow-forward'} size={CommonStyles.BIG_FONT_SIZE} />
+                    <Ionicons style={{color: selected ? CommonStyles.MEDIUM_GREEN : CommonStyles.SEPARATOR_COLOR}} name={'ios-arrow-forward'} size={CommonStyles.BIG_FONT_SIZE} />
                     <View style={{flexDirection: 'row', flex: 1, justifyContent: 'space-between'}}>
                         <Text style={[CommonStyles.styles.mediumLabel, textStyle]}>{this.getOverviewItemCaption(item.key)}</Text>
                         { this.getOverviewItemData(item.key) }
