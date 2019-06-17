@@ -39,6 +39,7 @@
 		832341BD1AAA6AB300B99B32 /* libRCTText.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 832341B51AAA6A8300B99B32 /* libRCTText.a */; };
 		87998FFCD32B4A04A7FBE29E /* libRNCookieManagerIOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FA65746285744223A717EA1E /* libRNCookieManagerIOS.a */; };
 		ADBDB9381DFEBF1600ED6528 /* libRCTBlob.a in Frameworks */ = {isa = PBXBuildFile; fileRef = ADBDB9271DFEBF0700ED6528 /* libRCTBlob.a */; };
+		B3C7F20B48C342448F7F6B7B /* libSplashScreen.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 94DEF24948C64BA094A962FE /* libSplashScreen.a */; };
 		BB786B8D46C440FDB83B8DD8 /* EvilIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 93AEE190682F488F9D45DBE2 /* EvilIcons.ttf */; };
 		CFB2FBEE74AF43FDB02A00F3 /* libc++.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 6445D79FBE974CD5B9D65356 /* libc++.tbd */; };
 		CFD1BF203EC7483CAF86AD7D /* Feather.ttf in Resources */ = {isa = PBXBuildFile; fileRef = BA8A9F585F72451BAE23A3D2 /* Feather.ttf */; };
@@ -222,6 +223,13 @@
 			remoteGlobalIDString = F60690131CA2766F0003FB26;
 			remoteInfo = RealmReact;
 		};
+		30AE7B9722B52BBD004221E5 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = FDB611077B90402FA4D357B4 /* SplashScreen.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 3D7682761D8E76B80014119E;
+			remoteInfo = SplashScreen;
+		};
 		30DC601120573348008AD76B /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 00D2BC45B5B049A68D0D5BB8 /* RNCookieManagerIOS.xcodeproj */;
@@ -388,6 +396,7 @@
 		832341B01AAA6A8300B99B32 /* RCTText.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTText.xcodeproj; path = "../node_modules/react-native/Libraries/Text/RCTText.xcodeproj"; sourceTree = "<group>"; };
 		8AB713E56296423C9A0A7C2E /* Octicons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Octicons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Octicons.ttf"; sourceTree = "<group>"; };
 		93AEE190682F488F9D45DBE2 /* EvilIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = EvilIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/EvilIcons.ttf"; sourceTree = "<group>"; };
+		94DEF24948C64BA094A962FE /* libSplashScreen.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libSplashScreen.a; sourceTree = "<group>"; };
 		95303AE554104867AF0D1ECF /* MaterialIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = MaterialIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/MaterialIcons.ttf"; sourceTree = "<group>"; };
 		9819A355AA4D43578D080EA2 /* libRealmReact.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRealmReact.a; sourceTree = "<group>"; };
 		ADBDB91F1DFEBF0600ED6528 /* RCTBlob.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTBlob.xcodeproj; path = "../node_modules/react-native/Libraries/Blob/RCTBlob.xcodeproj"; sourceTree = "<group>"; };
@@ -396,6 +405,7 @@
 		E33D826DBA794AF7964E48A9 /* libRCTFBSDKLogin.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRCTFBSDKLogin.a; sourceTree = "<group>"; };
 		FA65746285744223A717EA1E /* libRNCookieManagerIOS.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRNCookieManagerIOS.a; sourceTree = "<group>"; };
 		FB96F9F3E41A4A95A3A2F369 /* SimpleLineIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = SimpleLineIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/SimpleLineIcons.ttf"; sourceTree = "<group>"; };
+		FDB611077B90402FA4D357B4 /* SplashScreen.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = SplashScreen.xcodeproj; path = "../node_modules/react-native-splash-screen/ios/SplashScreen.xcodeproj"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -431,6 +441,7 @@
 				FBAF5219DF324775B0EA60D7 /* libz.tbd in Frameworks */,
 				372E9D645D1E4786A4B59809 /* libRNVectorIcons.a in Frameworks */,
 				EF73DBF69BA1407C9BA8BA2F /* libRNCAsyncStorage.a in Frameworks */,
+				B3C7F20B48C342448F7F6B7B /* libSplashScreen.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -610,6 +621,14 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		30AE7B9422B52BBC004221E5 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				30AE7B9822B52BBD004221E5 /* libSplashScreen.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		30DC5FEE20573344008AD76B /* Recovered References */ = {
 			isa = PBXGroup;
 			children = (
@@ -619,6 +638,7 @@
 				2E0FF05F469C4CC1A5ECB0FB /* libRCTFBSDK.a */,
 				E33D826DBA794AF7964E48A9 /* libRCTFBSDKLogin.a */,
 				629A3EF9E8AA432DABC8B50F /* libRNCAsyncStorage.a */,
+				94DEF24948C64BA094A962FE /* libSplashScreen.a */,
 			);
 			name = "Recovered References";
 			sourceTree = "<group>";
@@ -668,6 +688,7 @@
 				04392380BEF8485DB25C1349 /* RealmReact.xcodeproj */,
 				5F400DC318A84CC096ABD3B8 /* RNVectorIcons.xcodeproj */,
 				B6A24DADC7EA4AB3BF712A93 /* RNCAsyncStorage.xcodeproj */,
+				FDB611077B90402FA4D357B4 /* SplashScreen.xcodeproj */,
 			);
 			name = Libraries;
 			sourceTree = "<group>";
@@ -850,6 +871,10 @@
 					ProductGroup = 30549A9020681142003F248B /* Products */;
 					ProjectRef = 5F400DC318A84CC096ABD3B8 /* RNVectorIcons.xcodeproj */;
 				},
+				{
+					ProductGroup = 30AE7B9422B52BBC004221E5 /* Products */;
+					ProjectRef = FDB611077B90402FA4D357B4 /* SplashScreen.xcodeproj */;
+				},
 			);
 			projectRoot = "";
 			targets = (
@@ -1026,6 +1051,13 @@
 			fileType = archive.ar;
 			path = libRealmReact.a;
 			remoteRef = 30549A9D20681142003F248B /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		30AE7B9822B52BBD004221E5 /* libSplashScreen.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libSplashScreen.a;
+			remoteRef = 30AE7B9722B52BBD004221E5 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		30DC601220573348008AD76B /* libRNCookieManagerIOS.a */ = {
@@ -1254,12 +1286,14 @@
 					"$(SRCROOT)/../node_modules/react-native-fbsdk/ios/RCTFBSDK/**",
 					"$(SRCROOT)/../node_modules/react-native-fbsdklogin/iOS",
 					"$(SRCROOT)/../node_modules/@react-native-community/async-storage/ios",
+					"$(SRCROOT)/../node_modules/react-native-splash-screen/ios",
 				);
 				INFOPLIST_FILE = InstaManagerTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
@@ -1291,12 +1325,14 @@
 					"$(SRCROOT)/../node_modules/react-native-fbsdk/ios/RCTFBSDK/**",
 					"$(SRCROOT)/../node_modules/react-native-fbsdklogin/iOS",
 					"$(SRCROOT)/../node_modules/@react-native-community/async-storage/ios",
+					"$(SRCROOT)/../node_modules/react-native-splash-screen/ios",
 				);
 				INFOPLIST_FILE = InstaManagerTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
@@ -1332,6 +1368,7 @@
 					"$(SRCROOT)/../node_modules/react-native-vector-icons/RNVectorIconsManager",
 					"$(SRCROOT)/../node_modules/react-native-fbsdk/ios/RCTFBSDK/**",
 					"$(SRCROOT)/../node_modules/@react-native-community/async-storage/ios",
+					"$(SRCROOT)/../node_modules/react-native-splash-screen/ios",
 				);
 				INFOPLIST_FILE = InstaManager/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 10.3;
@@ -1365,6 +1402,7 @@
 					"$(SRCROOT)/../node_modules/react-native-vector-icons/RNVectorIconsManager",
 					"$(SRCROOT)/../node_modules/react-native-fbsdk/ios/RCTFBSDK/**",
 					"$(SRCROOT)/../node_modules/@react-native-community/async-storage/ios",
+					"$(SRCROOT)/../node_modules/react-native-splash-screen/ios",
 				);
 				INFOPLIST_FILE = InstaManager/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 10.3;

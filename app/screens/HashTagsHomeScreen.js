@@ -8,6 +8,8 @@ import {
   Alert
 } from 'react-native';
 
+import SplashScreen from 'react-native-splash-screen'
+
 import { connect } from 'react-redux';
 import { compose } from 'redux';
 
@@ -105,6 +107,7 @@ class HashTagsHomeScreenComponent extends React.Component {
 
         if (categoriesLoaded && tagsLoaded) {
             this.configureMenus();
+            SplashScreen.hide();
             return(
                 <View style={[CommonStyles.styles.standardPage, {padding: 0}]}>
                     <SectionList
