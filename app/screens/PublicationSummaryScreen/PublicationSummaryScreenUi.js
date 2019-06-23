@@ -115,7 +115,7 @@ export default class PublicationSummaryScreenUi extends React.Component {
                     showActivityIndicator={true}
                 />
 
-                <ScrollView style={CommonStyles.styles.standardPage}>
+                <ScrollView style={CommonStyles.styles.standardPage} indicatorStyle={'white'}>
 
                     <View style={styles.parameterContainerView}>
                         <Text style={[CommonStyles.styles.smallLabel, styles.parameterLabel]}>Name</Text>

@@ -252,6 +252,7 @@ class CategoryListUi extends React.PureComponent {
                 renderItem={this.renderCategory}
                 ListFooterComponent={this.renderFooterComponent}
                 style={{flex: 1}}
+                indicatorStyle={'white'}
             />
         );   
     }

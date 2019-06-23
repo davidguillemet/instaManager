@@ -1,18 +1,11 @@
 import React, { Component, PureComponent } from 'react';
 import {
-  StyleSheet,
   View,
   Text,
-  FlatList,
-  SectionList,
-  TouchableOpacity,
-  TouchableHighlight,
-  Alert
+  TouchableOpacity
 } from 'react-native';
 
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import LoadingIndicatorView from '../components/LoadingIndicator';
-import SearchInput from '../components/Search';
 import CategoryList from '../components/categorylist';
 import CustomButton from '../components/CustomButton';
 import CommonStyles from '../styles/common';
@@ -23,7 +16,7 @@ function renderRightButtons(params) {
 
     return (
         <View style={{ flexDirection: 'row'}}>
-            <TouchableOpacity onPress={params.onAddCategory}><Ionicons name={'ios-add'} style={CommonStyles.styles.navigationButtonIcon}/></TouchableOpacity>
+            <TouchableOpacity onPress={params.onAddCategory}><Ionicons name={'md-add'} style={CommonStyles.styles.navigationButtonIcon}/></TouchableOpacity>
         </View>
     );
 }

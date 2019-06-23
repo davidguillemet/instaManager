@@ -20,7 +20,7 @@ function renderEditionRightButtons(params) {
 
     return (
         <View style={{ flexDirection: 'row'}}>
-            <TouchableOpacity onPress={params.onCreatePublication}><Ionicons name={'ios-add'} style={CommonStyles.styles.navigationButtonIcon}/></TouchableOpacity>
+            <TouchableOpacity onPress={params.onCreatePublication}><Ionicons name={'md-add'} style={CommonStyles.styles.navigationButtonIcon}/></TouchableOpacity>
         </View>
     );
 }
@@ -206,7 +206,9 @@ export default class PublicationScreenUi extends React.Component {
                         keyExtractor={this.keyExtractor}
                         ListEmptyComponent={this.emptySearchResult}
                         renderItem={this.renderListItem}
-                        ItemSeparatorComponent={ListItemSeparator} />
+                        ItemSeparatorComponent={ListItemSeparator}
+                        indicatorStyle={'white'}
+                    />
                     :
                     <SectionList
                         ref={ref => this.sectionListRef = ref}
@@ -219,6 +221,7 @@ export default class PublicationScreenUi extends React.Component {
                         ListEmptyComponent={this.renderEmptyComponent}
                         ListFooterComponent={this.renderFooterComponent}
                         keyExtractor={this.keyExtractor}
+                        indicatorStyle={'white'}
                     />
                 }
             </View>

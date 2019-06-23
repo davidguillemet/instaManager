@@ -121,6 +121,7 @@ class HashTagsHomeScreenComponent extends React.Component {
                         ListEmptyComponent={this.renderEmptyComponent}
                         keyExtractor={(item, index) => item.target}
                         stickySectionHeadersEnabled={false}
+                        indicatorStyle={'white'}
                     />
                 </View>
             );

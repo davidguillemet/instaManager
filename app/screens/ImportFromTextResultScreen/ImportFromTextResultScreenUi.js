@@ -207,7 +207,7 @@ export default class ImportFromTextScreen extends React.PureComponent {
             null;
 
         return (
-            <ScrollView style={CommonStyles.styles.standardPage}>
+            <ScrollView style={CommonStyles.styles.standardPage} indicatorStyle={'white'}>
                 <CustomButton
                     style={CommonStyles.styles.standardButtonCentered}
                     title={'Save Tags'}

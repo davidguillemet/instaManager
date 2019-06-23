@@ -1,18 +1,11 @@
 import React, { Component, PureComponent } from 'react';
 import {
-  StyleSheet,
   View,
-  Text,
-  FlatList,
-  SectionList,
-  TouchableOpacity,
-  TouchableHighlight,
-  Alert
+  TouchableOpacity
 } from 'react-native';
 
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import LoadingIndicatorView from '../components/LoadingIndicator';
-import SearchInput from '../components/Search';
 import CategoryList from '../components/categorylist';
 
 

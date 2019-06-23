@@ -282,7 +282,7 @@ export default class PublicationWizardScreenUi extends React.PureComponent {
             return true;
         }
 
-        Alert.alert('Error', 'The publication is empty. Please, Select at least one tag.',
+        Alert.alert('', 'The publication is empty. Please, Select at least one tag.',
         [
             {
                 text: 'OK',
@@ -302,7 +302,7 @@ export default class PublicationWizardScreenUi extends React.PureComponent {
         }
 
         return (
-            <ScrollView style={CommonStyles.styles.standardPage}>
+            <ScrollView style={CommonStyles.styles.standardPage} indicatorStyle={'white'}>
                 <CategorieTagsDisplay
                     tags={this.state.tags}
                     onDeleteTag={this.onDeleteTag}
@@ -320,7 +320,7 @@ export default class PublicationWizardScreenUi extends React.PureComponent {
 
     renderSavePublication() {
         return (
-            <ScrollView style={CommonStyles.styles.standardPage}>
+            <ScrollView style={CommonStyles.styles.standardPage} indicatorStyle={'white'}>
                 <View style={styles.parameterContainerView}>
                     <Text style={[CommonStyles.styles.smallLabel, styles.parameterLabel]}>Name</Text>
                     <TextInput
@@ -346,7 +346,7 @@ export default class PublicationWizardScreenUi extends React.PureComponent {
             return true;
         }
 
-        Alert.alert('Error', 'Please, Enter a publication name.',
+        Alert.alert('', 'Please, Enter a publication name.',
         [
             {
                 text: 'OK',

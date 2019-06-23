@@ -335,6 +335,13 @@ class CategorieTagsDisplayUi extends React.PureComponent {
         );
     }
 
+    renderOverviewSeparator() {
+
+        return (
+            <View style={{ width: CommonStyles.GLOBAL_PADDING }}></View>
+        );
+    }
+
     renderOverview() {
 
         if (this.props.itemType === global.PUBLICATION_ITEM) {
@@ -349,16 +356,12 @@ class CategorieTagsDisplayUi extends React.PureComponent {
         }
 
         return (
-            <FlatList style={{
-                    borderWidth: 0,
-                    borderColor: CommonStyles.SEPARATOR_COLOR,
-                    backgroundColor: CommonStyles.SEPARATOR_COLOR,
-                    marginVertical: CommonStyles.GLOBAL_PADDING,
-                    borderRadius: CommonStyles.BORDER_RADIUS}
-                }
+            <FlatList style={{ marginVertical: CommonStyles.GLOBAL_PADDING }}
                 data={data}
                 renderItem={this.renderOverviewMenuItem}
-                ItemSeparatorComponent={ListItemSeparator}
+                horizontal={true}
+                ItemSeparatorComponent={this.renderOverviewSeparator}
+                indicatorStyle={'white'}
             />
         )
     }
@@ -462,33 +465,36 @@ class CategorieTagsDisplayUi extends React.PureComponent {
 
         const disabled = item.key == this.state.tagsDisplayMode || (item.key == TAGS_DISPLAY_ANCESTORS && this.props.parentCategory == null);
         const selected = item.key == this.state.tagsDisplayMode;
-        const containerViewStyle = {
+        let containerViewStyle = {
             flex: 1,
             flexDirection: 'row',
             alignItems: 'center',
-            paddingHorizontal: CommonStyles.GLOBAL_PADDING,
-            paddingVertical: 3
+            justifyContent: 'space-between',
+            borderWidth: 1,
+            borderColor: CommonStyles.SEPARATOR_COLOR,
+            borderRadius: 22,
+            paddingRight: CommonStyles.GLOBAL_PADDING,
+            paddingVertical: CommonStyles.GLOBAL_PADDING
         };
 
         let textStyle = {
             paddingHorizontal: CommonStyles.GLOBAL_PADDING
         };
         if (selected) {
-            textStyle = { fontWeight: 'bold', ...textStyle, color: CommonStyles.SELECTED_TEXT_COLOR };
+            textStyle = { ...textStyle, color: CommonStyles.SELECTED_TEXT_COLOR };
+            containerViewStyle = {
+                backgroundColor: CommonStyles.SEPARATOR_COLOR,
+                ...containerViewStyle
+            }
         }
         if (disabled && !selected) {
             textStyle = { color: CommonStyles.DEACTIVATED_TEXT_COLOR, ...textStyle };
         }
 
         return (
-            <TouchableOpacity onPress={() => this.switchDisplayMode(item.key)} disabled={disabled}>
-                <View style={containerViewStyle}>
-                    <Ionicons style={{color: selected ? CommonStyles.MEDIUM_GREEN : CommonStyles.SEPARATOR_COLOR}} name={'ios-arrow-forward'} size={CommonStyles.BIG_FONT_SIZE} />
-                    <View style={{flexDirection: 'row', flex: 1, justifyContent: 'space-between'}}>
-                        <Text style={[CommonStyles.styles.mediumLabel, textStyle]}>{this.getOverviewItemCaption(item.key)}</Text>
-                        { this.getOverviewItemData(item.key) }
-                    </View>
-                </View>
+            <TouchableOpacity onPress={() => this.switchDisplayMode(item.key)} disabled={disabled} style={containerViewStyle}>
+                <Text style={[CommonStyles.styles.mediumLabel, textStyle]}>{this.getOverviewItemCaption(item.key)}</Text>
+                { this.getOverviewItemData(item.key) }
             </TouchableOpacity>
         );
     }

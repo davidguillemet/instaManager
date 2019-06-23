@@ -1,9 +1,7 @@
 import React, { PureComponent } from 'react';
 import {
     StyleSheet,
-    FlatList,
     Text,
-    TouchableOpacity,
     View
  } from 'react-native';
 import CommonStyles from '../styles/common';

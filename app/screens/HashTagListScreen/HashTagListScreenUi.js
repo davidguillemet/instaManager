@@ -28,8 +28,8 @@ function renderEditionRightButtons(params) {
 
     return (
         <View style={{ flexDirection: 'row'}}>
-            <TouchableOpacity onPress={params.onAddTag}><Ionicons name={'ios-add'} style={CommonStyles.styles.navigationButtonIcon}/></TouchableOpacity>
-            <TouchableOpacity onPress={params.onImport}><Ionicons name={'ios-cloud-download'} style={CommonStyles.styles.navigationButtonIcon}/></TouchableOpacity>
+            <TouchableOpacity onPress={params.onAddTag}><Ionicons name={'md-add'} style={CommonStyles.styles.navigationButtonIcon}/></TouchableOpacity>
+            <TouchableOpacity onPress={params.onImport}><Ionicons name={'md-cloud-download'} style={CommonStyles.styles.navigationButtonIcon}/></TouchableOpacity>
         </View>
     );
 }
@@ -38,7 +38,7 @@ function renderSelectionRightButtons(params) {
 
     return (
         <View style={{ flexDirection: 'row'}}>
-            <TouchableOpacity onPress={params.onAddTag}><Ionicons name={'ios-add'} style={CommonStyles.styles.navigationButtonIcon}/></TouchableOpacity>
+            <TouchableOpacity onPress={params.onAddTag}><Ionicons name={'md-add'} style={CommonStyles.styles.navigationButtonIcon}/></TouchableOpacity>
             <TouchableOpacity onPress={params.onValidateSelection}><Ionicons style={CommonStyles.styles.navigationButtonIcon} name={'md-checkmark'} size={40}/></TouchableOpacity>
         </View>
     );
@@ -385,7 +385,9 @@ export default class HashTagListScreenUi extends React.Component {
                         keyExtractor={this.keyExtractor}
                         ListEmptyComponent={this.emptySearchResult}
                         renderItem={this.renderListItem}
-                        ItemSeparatorComponent={ListItemSeparator} />
+                        ItemSeparatorComponent={ListItemSeparator}
+                        indicatorStyle={'white'}
+                    />
                     :
                     <View style={{ flex: 1, justifyContent: 'center'}}>
                         {
@@ -404,6 +406,7 @@ export default class HashTagListScreenUi extends React.Component {
                             ListEmptyComponent={this.renderEmptyComponent}
                             keyExtractor={this.keyExtractor}
                             getItemLayout={this.getItemLayout}
+                            indicatorStyle={'white'}
                         />
                         <SectionListIndex
                             sections={this.props.sections}

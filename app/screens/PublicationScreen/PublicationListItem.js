@@ -7,12 +7,14 @@ import {
   Alert
 } from 'react-native';
 
-import SwipeableListViewItem from '../../components/SwipeableListViewItem';
+import { connect } from 'react-redux';
 
+import SwipeableListViewItem from '../../components/SwipeableListViewItem';
+import Flag from '../../components/Flag';
 import CommonStyles from '../../styles/common'; 
 
 
-export default class PublicationListItem extends React.PureComponent {
+class PublicationListItemUi extends React.PureComponent {
 
     static propTypes = {
         id: PropTypes.string.isRequired,            // item identifier
@@ -65,9 +67,14 @@ export default class PublicationListItem extends React.PureComponent {
 
     render() {
 
-        const numberOfTags = `${this.props.tagsCount} tags`;
+        const numberOfTags = `${this.props.tagsCount} / ${this.props.maxTagsCount}`;
+        const error = this.props.tagsCount > this.props.maxTagsCount;
         const publicationTime = `${this.props.time}`;
         const publicationCategory = this.props.categoryName.length > 0 ? `based on '${this.props.categoryName}'` : 'No category.';
+        const flagStyle = {
+            color: error ? CommonStyles.DARK_RED : CommonStyles.DARK_GREEN,
+            backgroundColor: error ? CommonStyles.LIGHT_RED : CommonStyles.LIGHT_GREEN
+        }
 
         return (
             <SwipeableListViewItem
@@ -79,7 +86,7 @@ export default class PublicationListItem extends React.PureComponent {
                 onSwipeRelease={() => this.props.setParentState({isSwiping: false})}
             >
                 <TouchableOpacity onPress={this._onPress}>
-                    <View style={{ flexDirection: 'row', flex: 1, alignItems: 'center' }}>
+                    <View style={{ flexDirection: 'row', flex: 1, alignItems: 'center', paddingRight: CommonStyles.GLOBAL_PADDING }}>
                         <View style={{flexDirection: 'column', flex: 1, paddingVertical: 5}}>
                             <Text style={[CommonStyles.styles.singleListItem]} numberOfLines={1}>{this.props.name}</Text>
                             <Text style={[
@@ -103,10 +110,22 @@ export default class PublicationListItem extends React.PureComponent {
                                 {publicationCategory}
                             </Text>
                         </View>
-                        <Text style={[CommonStyles.styles.singleListItem]} numberOfLines={1}>{numberOfTags}</Text>
+                        <Flag caption={numberOfTags} style={flagStyle}/>
                     </View>
                 </TouchableOpacity>
             </SwipeableListViewItem>
         );
     }
 }
+
+
+const mapStateToProps = (state, props) => {
+
+    return {
+        maxTagsCount: global.settingsManager.getMaxNumberOfTags(),
+    };
+}
+
+const PublicationListItem = connect(mapStateToProps)(PublicationListItemUi);
+
+export default PublicationListItem;

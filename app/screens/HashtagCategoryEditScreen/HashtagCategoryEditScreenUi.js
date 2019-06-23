@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import {
-    ActivityIndicator,
+    Animated,
     FlatList,
     Keyboard,
     StyleSheet,
@@ -32,6 +32,15 @@ function renderSaveButton(params) {
     );
 }
 
+function renderBackButton(params) {
+
+    return (
+        <View style={{ flexDirection: 'row'}}>
+            <TouchableOpacity onPress={params.onCancel}><Ionicons name={'ios-arrow-back'} style={CommonStyles.styles.navigationButtonIcon}/></TouchableOpacity>
+        </View>
+    );
+}
+
 export default class HashtagCategoryEditScreenUi extends React.Component {
 
     static propTypes = {
@@ -45,7 +54,8 @@ export default class HashtagCategoryEditScreenUi extends React.Component {
         const params = navigation.state.params || {};
         return {
             headerTitle: params.headerTitle,
-            headerRight: renderSaveButton(params)
+            //headerRight: renderSaveButton(params)
+            headerLeft: renderBackButton(params)
         }   
     };
 
@@ -75,12 +85,17 @@ export default class HashtagCategoryEditScreenUi extends React.Component {
         this.onSelectParentCategory = this.onSelectParentCategory.bind(this);
         this.onDeleteTag = this.onDeleteTag.bind(this);
         this.onSaveItem = this.onSaveItem.bind(this);
+        this.onCancel = this.onCancel.bind(this);
+        this.onQuit = this.onQuit.bind(this);
         this.isDirty = this.isDirty.bind(this);
         this.queryWebSearch = this.queryWebSearch.bind(this);
         this.tagSuggestionKeyExtractor = this.tagSuggestionKeyExtractor.bind(this);
         this.onRefreshSuggestions = this.onRefreshSuggestions.bind(this);
         this.renderSuggestion = this.renderSuggestion.bind(this);
         this.onSelectSuggestion = this.onSelectSuggestion.bind(this);
+
+        this.saveContainerAnimatedHeight = new Animated.Value(0);
+        this.saveContainerVisible = false;
 
         this.saveSubscriber = [];
         this.getSuggestionsSubscriber = [];
@@ -94,6 +109,7 @@ export default class HashtagCategoryEditScreenUi extends React.Component {
 
         this.props.navigation.setParams({ 
             onSaveItem: this.onSaveItem,
+            onCancel: this.onCancel,
             headerTitle: headerTitle
         });
     }
@@ -106,6 +122,32 @@ export default class HashtagCategoryEditScreenUi extends React.Component {
         }
 
         return items.map(id => global.hashtagUtil.getCatFromId(id).name).sort().join(', ');
+    }
+
+    onQuit() {
+        Keyboard.dismiss();
+        this.props.navigation.goBack(null);
+    }
+
+    onCancel() {
+
+        if (this.state.dirty == true) {
+            Alert.alert('', `Are you sure you want to quit and lose your changes?`,
+            [
+                { 
+                    text: 'Cancel',
+                    style: 'cancel'
+                },
+                {
+                    text: 'OK',
+                    onPress: () => {
+                        this.onQuit();
+                    }
+                }
+            ]);
+        } else {
+            this.onQuit();
+        }
     }
 
     onSaveItem() {
@@ -128,8 +170,7 @@ export default class HashtagCategoryEditScreenUi extends React.Component {
                 break;
         }
 
-        Keyboard.dismiss();
-        this.props.navigation.goBack(null);
+        this.onQuit();
     }
 
     hasNoTags() {
@@ -336,19 +377,35 @@ export default class HashtagCategoryEditScreenUi extends React.Component {
     }
 
     render() {
-        return (
-            <View style={[CommonStyles.styles.standardPage, {padding: 0}]}>
-            
-                <CustomButton
-                    title={'Save'}
-                    onPress={this.onSaveItem}
-                    showActivityIndicator={true}
-                    style={[CommonStyles.styles.standardButton, {margin: CommonStyles.GLOBAL_PADDING, marginBottom: 0}]}
-                    deactivated={this.isDirty() == false}
-                    register={this.saveSubscriber}
-                />
+        if (this.isDirty() && this.saveContainerVisible == false) {
+            this.saveContainerVisible = true;
+            Animated.timing(
+                this.saveContainerAnimatedHeight,
+                {
+                    toValue: 60,
+                    duration: 200
+                }
+            ).start();
+        } else if (this.isDirty() == false && this.saveContainerVisible == true) {
+            this.saveContainerVisible = false;
+            Animated.timing(
+                this.saveContainerAnimatedHeight,
+                {
+                    toValue: 0,
+                    duration: 200
+                }
+            ).start();
+        }
 
-                <ScrollView style={[CommonStyles.styles.standardPage, {padding: CommonStyles.GLOBAL_PADDING}]}>
+        return (
+            <View style={[CommonStyles.styles.standardPage, { padding: 0 }]}>
+            
+                <ScrollView style={[
+                                CommonStyles.styles.standardPage, 
+                                {
+                                    padding: CommonStyles.GLOBAL_PADDING
+                                }
+                            ]} indicatorStyle={'white'}>
                     <View style={styles.parameterContainerView}>
                         <Text style={[CommonStyles.styles.smallLabel, styles.parameterLabel, {fontWeight: 'bold'}]}>Name *</Text>
                         <TextInput
@@ -440,6 +497,24 @@ export default class HashtagCategoryEditScreenUi extends React.Component {
                         </View>
                     }
                 </ScrollView>
+
+                <Animated.View style={{
+                            backgroundColor: CommonStyles.SEPARATOR_COLOR,
+                            borderTopColor: CommonStyles.GLOBAL_BACKGROUND,
+                            borderTopWidth: 1,
+                            height: this.saveContainerAnimatedHeight,
+                        }}
+                        onLayout={this.onSaveContainerLayout}>
+                    <CustomButton
+                        title={'Save'}
+                        onPress={this.onSaveItem}
+                        showActivityIndicator={true}
+                        style={[CommonStyles.styles.standardButton, {margin: CommonStyles.GLOBAL_PADDING}]}
+                        deactivated={this.isDirty() == false}
+                        register={this.saveSubscriber}
+                    />
+                </Animated.View>
+
             </View>
         );
     }

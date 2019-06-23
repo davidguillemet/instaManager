@@ -1,5 +1,7 @@
 import React, { PureComponent } from 'react';
 import {
+    ActivityIndicator,
+    FlatList,
     StyleSheet,
     View,
     Text,
@@ -12,8 +14,76 @@ import CommonStyles from '../styles/common';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import CustomButton from './CustomButton';
 import Tag from './Tag';
+import ListItemSeparator from './ListItemSeparator';
 
+const DisplayType = {
+    TAG_CLOUD: 0,
+    MEDIA_COUNT: 1
+};
   
+
+class MediaCountItem extends React.PureComponent {
+    constructor(props) {
+        super(props);
+        this.state = {
+            mediaCount: this.props.mediaCount
+        }
+
+        this.onDelete = this.onDelete.bind(this);
+
+        if (this.state.mediaCount == null) {
+            global.hashtagUtil.querySearch(this.props.tagName)
+            .then(data => {
+                // Sort tags by media count
+                const tagInfo = data.hashtags.find(t => t.hashtag.name === this.props.tagName);
+                if (tagInfo == null) {
+                    throw 'not found';
+                }
+                //const mediaCount = tagInfo.hashtag.search_result_subtitle.split(' ')[0];
+                const mediaCount = tagInfo.hashtag.media_count.toLocaleString();;
+                this.setState({ mediaCount: mediaCount});
+            })
+            .catch(e => {
+                this.setState({ mediaCount: 'error'});
+            });
+        }
+    }
+
+    onDelete() {
+
+        if (this.props.onDelete) {
+            this.props.onDelete(this.props.tagId);
+        }
+    }
+
+    render() {
+        return (
+            <View style={{flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent:'space-between', padding: 5}}>
+                <Text style={[
+                    CommonStyles.styles.singleListItem,
+                    {paddingHorizontal: 0, flex: 1}]}>
+                    {this.props.tagName}
+                </Text>
+                {
+                    this.state.mediaCount == null ? <ActivityIndicator style={{marginRight: CommonStyles.GLOBAL_PADDING}} /> :
+                    this.state.mediaCount == 'error' ? <Ionicons style={{color: CommonStyles.DARK_ORANGE, marginRight: CommonStyles.GLOBAL_PADDING }} name={'ios-warning'} size={24} /> :
+                    <Text style={[CommonStyles.styles.singleListItem]}>
+                        {this.state.mediaCount}
+                    </Text>
+                }
+                {
+                    this.props.onDelete != null ?
+                    <TouchableOpacity onPress={this.onDelete} disabled={this.props.onDelete == null}>
+                        <Ionicons style={{color: CommonStyles.LIGHT_RED}} name={'ios-trash'} size={24} />
+                    </TouchableOpacity>
+                    :
+                    null
+                }
+            </View>
+        );
+    }
+}
+
 /**
  * - tags = tag collection
  * - onPressTag = callback when a tag is pressed
@@ -62,8 +132,11 @@ export default class TagContainer extends React.PureComponent {
         super(props);
         this.navigateToCategory = this.navigateToCategory.bind(this);
         this.toggleExpanded = this.toggleExpanded.bind(this);
+        this.toggleDisplayType = this.toggleDisplayType.bind(this);
+        this.renderMediaCountItem = this.renderMediaCountItem.bind(this);
         this.state = {
-            expanded: this.props.expanded
+            expanded: this.props.expanded,
+            displayType: DisplayType.TAG_CLOUD
         };
     }
 
@@ -75,6 +148,77 @@ export default class TagContainer extends React.PureComponent {
 
     toggleExpanded() {
         this.setState({ expanded: !this.state.expanded });
+    }
+
+    toggleDisplayType() {
+        const displayType = this.state.displayType == DisplayType.TAG_CLOUD ? DisplayType.MEDIA_COUNT : DisplayType.TAG_CLOUD;
+        this.setState({ displayType: displayType });
+    }
+
+    mediaCountKeyExtractor(item, index) {
+        return item.id;
+    }
+
+    renderMediaCountItem({item}) {
+        return (
+            <MediaCountItem
+                tagName={item.name}
+                tagId={item.id}
+                onDelete={this.props.readOnly ? null : this.props.onPressTag}
+            />
+        );
+    }
+
+    renderDisplaySelector() {
+
+        const tabStyle = {
+            flex: 1,
+            flexDirection: 'row',
+            justifyContent: 'center'
+        };
+
+        const selectedStyle = {
+            ...tabStyle,
+            borderBottomColor: CommonStyles.SELECTED_TEXT_COLOR,
+            borderBottomWidth: 2,
+            padding: 5
+        };
+
+        const notSelectedStyle = {
+            ...tabStyle,
+            borderBottomColor: CommonStyles.SEPARATOR_COLOR,
+            borderBottomWidth: 1,
+            padding: 5
+        };
+
+        const selectedTextStyle = {
+            color: CommonStyles.SELECTED_TEXT_COLOR,
+            fontWeight: 'bold'
+        };
+
+        const notSelectedTextStyle = {
+            color: CommonStyles.TEXT_COLOR,
+            fontWeight: 'normal'
+        };
+
+        const mediaCountActive = this.state.displayType == DisplayType.MEDIA_COUNT;
+
+        return (
+            <View style={{flexDirection: 'row', flex: 1, backgroundColor: CommonStyles.SEPARATOR_COLOR}}>
+                <TouchableOpacity
+                    onPress={this.toggleDisplayType}
+                    disabled={!mediaCountActive}
+                    style={mediaCountActive ? notSelectedStyle : selectedStyle}>
+                    <Ionicons style={[mediaCountActive ? selectedTextStyle : notSelectedTextStyle ]} name={'ios-keypad'} size={25} />
+                </TouchableOpacity>
+                <TouchableOpacity
+                    onPress={this.toggleDisplayType}
+                    disabled={this.state.displayType == DisplayType.MEDIA_COUNT}
+                    style={mediaCountActive ? selectedStyle : notSelectedStyle}>
+                    <Ionicons style={[mediaCountActive ? selectedTextStyle : notSelectedTextStyle ]} name={'md-list'} size={25} />
+                </TouchableOpacity>
+            </View>
+        );
     }
     
     render() {
@@ -88,10 +232,12 @@ export default class TagContainer extends React.PureComponent {
             return null;
         }
 
-        let tagContainerStyle = StyleSheet.flatten(styles.tagContainer);
+        tagList.sort((t1, t2) => t1.name.localeCompare(t2.name));
+
+        let tagContainerBordersStyle = StyleSheet.flatten(styles.tagContainerBorders);
 
         if (this.props.label == null) {
-            tagContainerStyle = { borderTopLeftRadius: CommonStyles.BORDER_RADIUS, ...tagContainerStyle };
+            tagContainerBordersStyle = { borderTopLeftRadius: CommonStyles.BORDER_RADIUS, ...tagContainerBordersStyle };
         }
 
         return (
@@ -133,25 +279,36 @@ export default class TagContainer extends React.PureComponent {
                 }
                 {
                     this.state.expanded ?
-                    <View style={tagContainerStyle}>
-                    {
-                        tagList.sort((t1, t2) => t1.name.localeCompare(t2.name)).map(tag => {
-                            const tagColorStyle =
-                                this.props.errors.has(tag.id) ? styles.tagErrColor :
-                                this.props.warnings.has(tag.id) ? styles.tagWarnColor :
-                                styles.tagStdColor;
-                            return (
-                                <Tag
-                                    style={tagColorStyle}
-                                    key={tag.id}
-                                    id={tag.id}
-                                    name={(this.props.addSharp ? '#' : '') + tag.name}
-                                    onPress={this.props.readOnly ? null : this.props.onPressTag}
-                                    iconName={this.props.iconName}
-                                />
-                            );
-                        })
-                    }
+                    <View style={tagContainerBordersStyle}>
+                        { this.renderDisplaySelector() }
+                        <View style={styles.tagContainer}>
+                        {
+                            this.state.displayType == DisplayType.TAG_CLOUD ?
+                            tagList.map(tag => {
+                                const tagColorStyle =
+                                    this.props.errors.has(tag.id) ? styles.tagErrColor :
+                                    this.props.warnings.has(tag.id) ? styles.tagWarnColor :
+                                    styles.tagStdColor;
+                                return (
+                                    <Tag
+                                        style={tagColorStyle}
+                                        key={tag.id}
+                                        id={tag.id}
+                                        name={(this.props.addSharp ? '#' : '') + tag.name}
+                                        onPress={this.props.readOnly ? null : this.props.onPressTag}
+                                        iconName={this.props.iconName}
+                                    />
+                                );
+                            })
+                            :
+                            <FlatList
+                                data={tagList}
+                                keyExtractor={this.mediaCountKeyExtractor}
+                                renderItem={this.renderMediaCountItem}
+                                ItemSeparatorComponent={ListItemSeparator}
+                            />
+                        }
+                        </View>
                     </View> :
                     null
                 }
@@ -188,12 +345,14 @@ const styles = StyleSheet.create(
         flexWrap: 'wrap',
         paddingTop: CommonStyles.GLOBAL_PADDING,
         paddingHorizontal: CommonStyles.GLOBAL_PADDING,
+        minHeight: 53
+    },
+    tagContainerBorders: {
         borderTopRightRadius: CommonStyles.BORDER_RADIUS,
         borderBottomLeftRadius: CommonStyles.BORDER_RADIUS,
         borderBottomRightRadius: CommonStyles.BORDER_RADIUS,
         borderColor: CommonStyles.SEPARATOR_COLOR,
-        borderWidth: 1,
-        minHeight: 53
+        borderWidth: 1
     },
     addTagButton: {
         justifyContent: 'center',

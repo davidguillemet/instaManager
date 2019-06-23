@@ -205,6 +205,7 @@ class SettingsScreen extends React.PureComponent {
                     extraData={this.state}
                     renderItem={this.renderSetting}
                     ItemSeparatorComponent={ListItemSeparator}
+                    indicatorStyle={'white'}
                 />
             </KeyboardAvoidingView>
         );
