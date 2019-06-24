@@ -57,7 +57,7 @@ const styles = StyleSheet.create(
     statusContainer: {
         position: 'absolute',
         bottom: 0,
-        right: 5,
+        right: CommonStyles.INDEX_LIST_WIDTH,
         justifyContent: 'center',
         alignItems: 'center',
         backgroundColor: CommonStyles.COLOR_TRANSPARENT

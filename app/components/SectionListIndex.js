@@ -127,8 +127,9 @@ const styles = StyleSheet.create(
         position: 'absolute',
         width: CommonStyles.INDEX_LIST_WIDTH,
         right: 0,
-        borderRadius: 3,
+        borderRadius: CommonStyles.INDEX_LIST_WIDTH / 2,
         backgroundColor: CommonStyles.KPI_COLOR,
+        paddingVertical: 5,
         opacity: 0.5
     },
     indexTitleStyle: {

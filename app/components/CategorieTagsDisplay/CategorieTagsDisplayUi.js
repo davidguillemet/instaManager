@@ -379,7 +379,7 @@ class CategorieTagsDisplayUi extends React.PureComponent {
         switch (displayMode) {
 
             case TAGS_DISPLAY_ALL:
-                return 'All tags';
+                return 'Total';
             case TAGS_DISPLAY_SELF:
                 return this.props.itemType === global.PUBLICATION_ITEM ? '' : 'This Category';
             case TAGS_DISPLAY_ANCESTORS:
