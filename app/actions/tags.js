@@ -32,7 +32,7 @@ function createLoadTagsAction() {
     }
 }
 
-export function createTagsLoadedAction(tagsMap) {
+function createTagsLoadedAction(tagsMap) {
     return {
         type: TAGS_LOADED,
         tags: tagsMap
@@ -64,5 +64,12 @@ export function createSetTagFilterAction(filter) {
     return {
         type: SET_TAG_FILTER,
         filter: filter
+    };
+}
+
+export function createUpdateMediaCountAction(updatedTag) {
+    return {
+        type: UPDATE_TAG,
+        tag: updatedTag
     };
 }

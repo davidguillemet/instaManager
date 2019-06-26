@@ -1,7 +1,8 @@
 import {
     PublicationSchema,
     TagCategorySchema,
-    HashtagSchema 
+    HashtagSchema,
+    MediaCountSchema
 } from '../model/hashtagSchemas';
 
 const Realm = require('realm');
@@ -24,10 +25,11 @@ export default class HashtagPersistenceManagerClass {
                 schema: [
                     TagCategorySchema,
                     HashtagSchema,
-                    PublicationSchema
+                    PublicationSchema,
+                    MediaCountSchema
                 ],
                 path: 'hashTagInfo.realm',
-                schemaVersion: 2
+                schemaVersion: 3
             }).then(realm => {
                 this.realm = realm;
             });
@@ -149,6 +151,14 @@ export default class HashtagPersistenceManagerClass {
             updatedCats: [ ...updatedCats ]
         }
 
+    }
+
+    updateTagMediaCount(tagId, mediaCount) {
+
+        this.realm.write(() => {
+            const tag = this.realm.objectForPrimaryKey(hashtagSchema, tagId);
+            tag.mediaCount = mediaCount;
+        });
     }
 
     deleteTag(tagId) {
@@ -422,10 +432,15 @@ export default class HashtagPersistenceManagerClass {
 
     _getTagProxyFromRealm(item) {
 
+        const mediaCount = item.mediaCount == null ? null : {
+            count: item.mediaCount.count,
+            timestamp: item.mediaCount.timestamp
+        };
         return {
             id: item.id,
             name: item.name,
-            categories: item.categories.map((cat, index, array) => cat.id)
+            categories: item.categories.map((cat, index, array) => cat.id),
+            mediaCount : mediaCount
         }
     }
 

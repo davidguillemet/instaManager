@@ -15,6 +15,14 @@ export const TagCategorySchema = {
     }
 };
 
+export const MediaCountSchema = {
+    name: 'MediaCount',
+    properties: {
+        count: { type: 'int' },
+        timestamp: { type: 'date' }
+    }
+}
+
 /**
  * Contains all the user hashtags. The category might be null in case the tag does not belong to any category
  */
@@ -25,7 +33,8 @@ export const HashtagSchema = {
         id: 'string',
         name: 'string',
         categories: 'TagCategory[]',
-        archived: {type: 'bool',  default: false}
+        archived: {type: 'bool',  default: false},
+        mediaCount: { type: 'MediaCount', optional: true }
     }
 };
 

@@ -27,6 +27,17 @@ export default class HashtagUtil {
         });
     }
 
+    getMediaCount(tagName) {
+        return this.querySearch(tagName).then((data) => {
+            // Sort tags by media count
+            const tagInfo = data.hashtags.find(t => t.hashtag.name === tagName);
+            if (tagInfo == null) {
+                throw 'not found';
+            }
+            return tagInfo.hashtag.media_count;
+        });
+    }
+
     getHashtags(catId) {
 
         if (catId) {

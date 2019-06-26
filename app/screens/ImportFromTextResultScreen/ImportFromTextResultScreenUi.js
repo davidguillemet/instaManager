@@ -174,7 +174,7 @@ export default class ImportFromTextScreen extends React.PureComponent {
     renderTags(tags, readOnly, onPress, iconName) {
 
         return (
-            <TagContainer style={{ marginTop: 10 }}
+            <TagContainer style={{ marginVertical: CommonStyles.GLOBAL_PADDING }}
                 tags={tags}
                 asObject={true}
                 itemType={global.TAG_ITEM}
@@ -182,6 +182,7 @@ export default class ImportFromTextScreen extends React.PureComponent {
                 readOnly={readOnly}
                 addSharp={true}
                 iconName={iconName}
+                details={this.state.selected != INVALID_TAGS}
             />
         );
     }

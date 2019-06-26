@@ -9,7 +9,11 @@ const defaultSettings = {
     },
     publicationHeader: '',
     publicationFooter: '',
-    maximumNumberOfTags: 30
+    maximumNumberOfTags: 30,
+    mediaCountRefreshPeriod: {
+        periodCount: 1,
+        periodUnit: 'week'      // 'day', 'week', 'month', 'year'
+    }
 }
 
 const settingsStorageKeyName = '@TagManager:settings';
@@ -22,7 +26,8 @@ export default class SettingsManager {
             if (serializedSettingsFromStorage == null) {
                 this.settings = defaultSettings;
             } else {
-                this.settings = JSON.parse(serializedSettingsFromStorage);
+                const storedSettings = JSON.parse(serializedSettingsFromStorage);
+                this.settings = { ...defaultSettings, ...storedSettings };
             }    
         })
     }
@@ -52,6 +57,10 @@ export default class SettingsManager {
 
     getPublicationFilter() {
         return this.settings.publicationFilter;
+    }
+
+    getMediaCountRefreshPeriod() {
+        return this.settings.mediaCountRefreshPeriod;
     }
 
     setPublicationFilter(filter) {
