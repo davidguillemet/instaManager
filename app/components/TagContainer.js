@@ -27,7 +27,7 @@ const DisplayType = {
   
 function formatMediaCount(mediaCount) {
     if (mediaCount >= 0) {
-        return mediaCount.toLocaleString();
+        return Utils.formatBigNumber(mediaCount, 1);
     }
     return 'error';
 }
