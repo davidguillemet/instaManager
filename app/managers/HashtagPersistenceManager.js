@@ -5,6 +5,8 @@ import {
     MediaCountSchema
 } from '../model/hashtagSchemas';
 
+import Utils from './Utils';
+
 const Realm = require('realm');
 
 const categorySchema = 'TagCategory';
@@ -68,30 +70,6 @@ export default class HashtagPersistenceManagerClass {
         });
     }
 
-    _getFirstDate(publicationFilter) {
-        let firstDate = new Date();
-
-        firstDate.setHours(0);
-        firstDate.setMinutes(0);
-        firstDate.setSeconds(0);
-        firstDate.setMilliseconds(0);
-
-        if (publicationFilter.periodUnit == 'year') {
-            const year = firstDate.getYear();
-            firstDate.setYear(year - publicationFilter.periodCount);
-        } else if (publicationFilter.periodUnit == 'month') {
-            const month = firstDate.getMonth();
-            firstDate.setMonth(month - publicationFilter.periodCount);
-        } else if (publicationFilter.periodUnit == 'week') {
-            const dayOfMonth = firstDate.getDate(); // day of month
-            firstDate.setDate(dayOfMonth - publicationFilter.periodCount*7);
-        } else if (publicationFilter.periodUnit == 'day') {
-            const dayOfMonth = firstDate.getDate(); // day of month
-            firstDate.setDate(dayOfMonth - publicationFilter.periodCount);
-        }
-        return firstDate;
-    }
-
     getPublications() {
         
         return this.open()
@@ -101,7 +79,7 @@ export default class HashtagPersistenceManagerClass {
 
             let publications = this.realm.objects(publicationSchema);
             if (publicationFilter.type != 'all') {
-                publications = publications.filtered('creationDate > $0', this._getFirstDate(publicationFilter));
+                publications = publications.filtered('creationDate > $0', Utils.getPivotDate(publicationFilter));
             }
 
             return publications.map(item => {

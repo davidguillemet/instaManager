@@ -18,6 +18,8 @@ import ListItemSeparator from './ListItemSeparator';
 
 import { createUpdateTagAction } from '../actions';
 
+import Utils from './../managers/Utils';
+
 const DisplayType = {
     TAG_CLOUD: 0,
     MEDIA_COUNT: 1
@@ -169,7 +171,7 @@ class TagDetailList extends React.PureComponent {
         }
 
         const refreshPeriod = global.settingsManager.getMediaCountRefreshPeriod();
-        const refreshDate = global.hashtagPersistenceManager._getFirstDate(refreshPeriod);
+        const refreshDate = Utils.getPivotDate(refreshPeriod);
         return mediaCount.timestamp <= refreshDate;
     }
 
