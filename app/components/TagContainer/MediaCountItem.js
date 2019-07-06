@@ -28,8 +28,11 @@ class MediaCountItemUi extends React.PureComponent {
             mediaCount: this.props.mediaCount,
             refreshing: false
         }
+    }
 
+    componentDidMount() {
         if (this.props.mediaCount == null) {
+            this.setState({refreshing: true});
             this.triggerMediaCountUpdate();
         }
     }

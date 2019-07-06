@@ -123,7 +123,7 @@ export default class TagDetailList extends React.PureComponent {
 
     renderListHeader() {
         
-        const sortDisabled = this.props.tags.length == 0;
+        const sortDisabled = this.props.tags.length <= 1;
 
         const headerStyle = {
             flex: 1,
