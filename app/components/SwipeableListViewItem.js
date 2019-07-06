@@ -138,5 +138,6 @@ const styles = StyleSheet.create(
     swipeAction: {
         flexDirection: 'row',
         alignItems: 'center',
+        paddingLeft: CommonStyles.GLOBAL_PADDING*2
     }
 });

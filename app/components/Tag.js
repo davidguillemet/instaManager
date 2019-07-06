@@ -69,7 +69,7 @@ const styles = {
         paddingVertical: 3
     },
     container: {
-      marginRight: 6
+      marginLeft: CommonStyles.GLOBAL_PADDING
     },
     title: {
       color: '#FFFFFF',
