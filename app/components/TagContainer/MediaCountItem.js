@@ -172,17 +172,6 @@ const mapDispatchToProps = dispatch => {
             };
             global.hashtagPersistenceManager.updateTagMediaCount(tagUpdated.id, tagUpdated.mediaCount);
             dispatch(createUpdateTagAction(tagUpdated));
-        },
-        onMediaCountRefresh: (tagId) => {
-            const tag = global.hashtagUtil.getTagFromId(tagId);
-            const tagUpdated = {
-                id: tag.id,
-                name: tag.name,
-                categories: tag.categories,
-                mediaCount: null
-            };
-            global.hashtagPersistenceManager.updateTagMediaCount(tagUpdated.id, tagUpdated.mediaCount);
-            dispatch(createUpdateTagAction(tagUpdated));
         }
     }
 }

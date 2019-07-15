@@ -13,6 +13,8 @@ import CustomButton from '../CustomButton';
 import Tag from '../Tag';
 import TagDetailList from './TagDetailList';
 
+import TabBar from '../TabBar';
+
 const DisplayType = {
     TAG_CLOUD: 0,
     MEDIA_COUNT: 1
@@ -88,67 +90,6 @@ export default class TagContainer extends React.PureComponent {
     toggleDisplayType() {
         const displayType = this.state.displayType == DisplayType.TAG_CLOUD ? DisplayType.MEDIA_COUNT : DisplayType.TAG_CLOUD;
         this.setState({ displayType: displayType });
-    }
-
-    renderDisplaySelector() {
-
-        const tabStyle = {
-            flex: 1,
-            flexDirection: 'row',
-            justifyContent: 'center'
-        };
-
-        const selectedStyle = {
-            ...tabStyle,
-            borderBottomColor: CommonStyles.SELECTED_TEXT_COLOR,
-            borderBottomWidth: 2,
-            padding: 5
-        };
-
-        const notSelectedStyle = {
-            ...tabStyle,
-            borderBottomColor: CommonStyles.SEPARATOR_COLOR,
-            borderBottomWidth: 1,
-            padding: 5
-        };
-
-        const selectedTextStyle = {
-            color: CommonStyles.SELECTED_TEXT_COLOR,
-            fontWeight: 'bold'
-        };
-
-        const notSelectedTextStyle = {
-            color: CommonStyles.TEXT_COLOR,
-            fontWeight: 'normal'
-        };
-
-        const notAvailableIconStyle = {
-            color: CommonStyles.DEACTIVATED_TEXT_COLOR
-        }
-
-        const mediaCountActive = this.state.displayType == DisplayType.MEDIA_COUNT;
-
-        const tagCloudIconStyle = mediaCountActive ? selectedTextStyle : notSelectedTextStyle;
-        const detailsIconStyle =
-            this.props.details == false ? notAvailableIconStyle :
-            mediaCountActive ? selectedTextStyle : notSelectedTextStyle;
-
-        return (
-            <View style={{flexDirection: 'row', flex: 1, backgroundColor: CommonStyles.SEPARATOR_COLOR}}>
-                <TouchableOpacity
-                    onPress={this.toggleDisplayType}
-                    disabled={!mediaCountActive}
-                    style={mediaCountActive ? notSelectedStyle : selectedStyle}>
-                    <Ionicons style={tagCloudIconStyle} name={'ios-keypad'} size={25} />
-                </TouchableOpacity>
-                <TouchableOpacity
-                    onPress={this.toggleDisplayType}
-                    disabled={this.state.displayType == DisplayType.MEDIA_COUNT || this.props.details == false}
-                    style={mediaCountActive ? selectedStyle : notSelectedStyle}>
-                    <Ionicons style={detailsIconStyle} name={'md-list'} size={25} />
-                </TouchableOpacity>
-            </View>
-        );
     }
 
     renderTagList(tagList) {
@@ -232,18 +173,17 @@ export default class TagContainer extends React.PureComponent {
                 {
                     this.state.expanded ?
                     <View style={tagContainerBordersStyle}>
-                        { this.renderDisplaySelector() }
-                        <View style={styles.tagContainer}>
-                        {
-                            this.state.displayType == DisplayType.TAG_CLOUD ?
-                            this.renderTagList(tagList)
-                            :
-                            <TagDetailList
-                                tags={tagList}
-                                onDelete={this.props.readOnly ? null : this.props.onPressTag}
-                            />
-                        }
-                        </View>
+                        <TabBar selectedIndex={0} tabBarItems={[{ icon: 'ios-keypad' }, { icon: 'md-list' }]} >
+                            <View style={styles.tagContainer}>
+                                { this.renderTagList(tagList) }
+                            </View>
+                            <View style={styles.tagContainer}>
+                                <TagDetailList
+                                    tags={tagList}
+                                    onDelete={this.props.readOnly ? null : this.props.onPressTag}
+                                />
+                            </View>
+                        </TabBar>
                     </View> :
                     null
                 }
