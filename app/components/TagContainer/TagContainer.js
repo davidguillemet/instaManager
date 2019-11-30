@@ -173,7 +173,7 @@ export default class TagContainer extends React.PureComponent {
                 {
                     this.state.expanded ?
                     <View style={tagContainerBordersStyle}>
-                        <TabBar selectedIndex={0} tabBarItems={[{ icon: 'ios-keypad' }, { icon: 'md-list' }]} >
+                        <TabBar selectedIndex={0} tabBarItems={[{ icon: 'ios-keypad' }, { icon: 'md-list' }]} animationDuration={300}>
                             <View style={styles.tagContainer}>
                                 { this.renderTagList(tagList) }
                             </View>

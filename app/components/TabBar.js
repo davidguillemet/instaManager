@@ -18,7 +18,8 @@ class TabBarItem extends React.PureComponent {
         onSelectTabItem: PropTypes.func.isRequired,
         caption: PropTypes.string,
         icon: PropTypes.string,
-        active: PropTypes.bool
+        active: PropTypes.bool,
+        animationDuration: PropTypes.number.isRequired
     };
 
     static defaultProps = {
@@ -29,6 +30,9 @@ class TabBarItem extends React.PureComponent {
 
     constructor(props) {
         super(props);
+        this.state = {
+            opacity: new Animated.Value(this.props.selected ? 1 : 0.5)
+        }
         this.onSelect = this.onSelect.bind(this);
     }
 
@@ -36,22 +40,43 @@ class TabBarItem extends React.PureComponent {
         this.props.onSelectTabItem(this.props.index);
     }
 
+    componentDidUpdate(prevProps) {
+        const { selected } = this.props;
+
+        if (prevProps.selected != selected) {
+            Animated.timing(
+                this.state.opacity,
+                {
+                    toValue: selected ? 1 : 0.5,
+                    duration: this.props.animationDuration
+                }
+            ).start();
+        }
+    }
+
     render() {
 
-        const captionStyle = 
-        this.props.active == false ? styles.notAvailableTextStyle :
-        this.props.selected == true ? styles.selectedTextStyle :
-        styles.notSelectedTextStyle;
+        const colorStyle = {
+            color: this.props.active == false ? CommonStyles.DEACTIVATED_TEXT_COLOR : CommonStyles.SELECTED_TEXT_COLOR
+        };
+        const opacityStyle = {
+            opacity: this.state.opacity
+        };
+        const mergedStyle = {
+            ...colorStyle,
+            ...opacityStyle
+        };
 
         return(
             <TouchableOpacity
+                activeOpacity={1}
                 onPress={this.onSelect}
                 disabled={this.props.selected}
-                style={styles.tabItemStyle}>
+                style={styles.tabBarItemStyle}>
                 {
-                    this.props.caption != null ? <Text styles={captionStyle}>{this.props.caption}</Text> :
-                    this.props.icon != null    ? <Ionicons style={captionStyle} name={this.props.icon} size={25} /> :
-                    <Text style={captionStyle}>{'???'}</Text>
+                    this.props.caption != null ? <Animated.Text styles={mergedStyle}>{this.props.caption}</Animated.Text> :
+                    this.props.icon != null    ? <Animated.View style={opacityStyle}><Ionicons style={colorStyle} name={this.props.icon} size={25} /></Animated.View> :
+                    <Animated.Text style={mergedStyle}>{'???'}</Animated.Text>
                 }
             </TouchableOpacity>
         );
@@ -75,7 +100,7 @@ class TabBarIndicator extends React.PureComponent {
                 this.state.left,
                 {
                     toValue: (layout.width / itemsCount) * selectedIndex,
-                    duration: 300
+                    duration: this.props.animationDuration
                 }
             ).start();
         }
@@ -142,6 +167,7 @@ export default class TabBar extends React.PureComponent {
     }
 
     render() {
+        
         return (
             <View onLayout={this.handleLayout}>
                 <View style={{flexDirection: 'row', flex: 1, backgroundColor: CommonStyles.SEPARATOR_COLOR}}>
@@ -154,6 +180,7 @@ export default class TabBar extends React.PureComponent {
                             caption={tabBarItem.caption}
                             icon={tabBarItem.icon}
                             onSelectTabItem={this.onSelectTabItem}
+                            animationDuration={this.props.animationDuration}
                         />        
                     )
                 }
@@ -162,7 +189,9 @@ export default class TabBar extends React.PureComponent {
                     <TabBarIndicator
                         itemsCount={this.props.tabBarItems.length}
                         selectedIndex={this.state.selectedIndex} 
-                        layout={this.state.layout}/>
+                        layout={this.state.layout}
+                        animationDuration={this.props.animationDuration}
+                    />
                 </View>
                 {
                     this.props.children[this.state.selectedIndex]
@@ -179,21 +208,10 @@ const styles = StyleSheet.create({
         bottom: 0,
         height: 3
     },
-    tabItemStyle: {
+    tabBarItemStyle: {
         flex: 1,
         flexDirection: 'row',
         justifyContent: 'center',
         padding: 5
-    },
-    selectedTextStyle: {
-        color: CommonStyles.SELECTED_TEXT_COLOR,
-        opacity: 1
-    },
-    notSelectedTextStyle: {
-        color: CommonStyles.SELECTED_TEXT_COLOR,
-        opacity: 0.5
-    },
-    notAvailableTextStyle: {
-        color: CommonStyles.DEACTIVATED_TEXT_COLOR
     }
 });
