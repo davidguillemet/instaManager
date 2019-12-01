@@ -11,15 +11,18 @@ import {
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import CommonStyles from '../styles/common';
 
-
 export default class Wizard extends React.PureComponent {
 
     static propTypes = {
         steps: PropTypes.array.isRequired,      // An array containing the wizard steps { caption, key }
-        activeStep: PropTypes.number.isRequired
+        activeStep: PropTypes.number.isRequired,
+        activeStepColor: PropTypes.string,
+        inactiveStepColor: PropTypes.string
     };
 
     static defaultProps = {
+        activeStepColor: CommonStyles.TEXT_COLOR,
+        inactiveStepColor: CommonStyles.SEPARATOR_COLOR
     };
 
     constructor(props) {
@@ -135,7 +138,7 @@ export default class Wizard extends React.PureComponent {
                     <View style={{
                             height: stepLineHeight,
                             width: availableWidth,
-                            backgroundColor: CommonStyles.SEPARATOR_COLOR,
+                            backgroundColor: this.props.inactiveStepColor,
                             position: 'absolute',
                             left: CommonStyles.GLOBAL_PADDING + stepSpotWidth
                         }}
@@ -145,16 +148,16 @@ export default class Wizard extends React.PureComponent {
                             left: CommonStyles.GLOBAL_PADDING + stepSpotWidth,
                             height: stepLineHeight,
                             width: this.state.activeStepWidth,
-                            backgroundColor: CommonStyles.LIGHT_GREEN
+                            backgroundColor: this.props.activeStepColor
                         }}
                     />
                     {
                         this.props.steps.map((_, index) => {
                             
                             const stepSpotColor =
-                                index < this.props.activeStep || (index == this.props.activeStep && this.state.fromStep > this.state.toStep) ? CommonStyles.LIGHT_GREEN :
-                                index == this.props.activeStep && (this.state.displayActiveStep || this.props.activeStep == 0) ? CommonStyles.LIGHT_GREEN :
-                                CommonStyles.SEPARATOR_COLOR;
+                                index < this.props.activeStep || (index == this.props.activeStep && this.state.fromStep > this.state.toStep) ? this.props.activeStepColor :
+                                index == this.props.activeStep && (this.state.displayActiveStep || this.props.activeStep == 0) ? this.props.activeStepColor :
+                                this.props.inactiveStepColor;
                             
                             let spotLeft = index * stepSegmentWidth;
                             if (index > 0) {
