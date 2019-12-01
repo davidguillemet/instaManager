@@ -45,6 +45,7 @@ export default class PublicationScreenUi extends React.Component {
 
         this.onCreatePublication = this.onCreatePublication.bind(this);
         this.onEditPublication = this.onEditPublication.bind(this);
+        this.onCopyPublication = this.onCopyPublication.bind(this);
         this.renderEmptyComponent = this.renderEmptyComponent.bind(this);
         this.renderFooterComponent = this.renderFooterComponent.bind(this);
         this.renderListItem = this.renderListItem.bind(this);
@@ -74,6 +75,15 @@ export default class PublicationScreenUi extends React.Component {
     onCreatePublication() {
 
         this.props.navigation.navigate('PublicationWizard');
+    }
+
+    onCopyPublication(pubId) {
+
+        const params = {
+            id: pubId
+        };
+
+        this.props.navigation.navigate('PublicationWizard', params);
     }
 
     renderSectionHeader({section}) {
@@ -149,6 +159,7 @@ export default class PublicationScreenUi extends React.Component {
                 setParentState={this.setStateProxy}
                 onDeleteItem={this.props.onDeletePublication}
                 onPress={this.onEditPublication}
+                onCopyPublication={this.onCopyPublication}
             />
         );
     }

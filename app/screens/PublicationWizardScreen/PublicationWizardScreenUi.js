@@ -35,10 +35,32 @@ export default class PublicationWizardScreenUi extends React.PureComponent {
             wizardStep: 0,
             selectedCategory: [],
             tags: [],
-            additionalTags: [],
             name: null,
             description: null,
             copyCompleted: false
+        }
+
+        const { params } = this.props.navigation.state;
+        if (params && params.id) {
+            this.state.wizardStep = 1; // Go to customisation step
+            
+            // Copy tags
+            const pubToCopy = global.hashtagUtil.getPubFromId(params.id);
+            pubToCopy.tagNames.forEach(tagName => {
+                const tag = global.hashtagUtil.getTagFromName(tagName, false);
+                if (tag != undefined) {
+                    // keep only tag which still exists
+                    this.state.tags.push(tag.id);
+                }
+            });
+            
+            // Copy base category
+            const baseCategoryId = pubToCopy.category;
+            const baseCategory = global.hashtagUtil.getCatFromId(baseCategoryId);
+            if (baseCategory) {
+                // Ok, the base category still exists
+                this.state.selectedCategory = [baseCategoryId];
+            }
         }
                 
         this.onPreviousStep = this.onPreviousStep.bind(this);

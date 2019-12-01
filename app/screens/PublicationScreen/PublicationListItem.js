@@ -31,7 +31,7 @@ class PublicationListItemUi extends React.PureComponent {
         super(props);
 
         this._onDeleteTag = this._onDeleteTag.bind(this);
-        this._onArchiveTag = this._onArchiveTag.bind(this);
+        this._onCopyTag = this._onCopyTag.bind(this);
         this._onPress = this._onPress.bind(this);
     }
 
@@ -59,10 +59,9 @@ class PublicationListItemUi extends React.PureComponent {
         ]);
     }
 
-    _onArchiveTag(itemId) {
-        //////////
-        // TODO
-        //////////
+    _onCopyTag(itemId) {
+
+        this.props.onCopyPublication(itemId);
     }
 
     render() {
@@ -81,7 +80,7 @@ class PublicationListItemUi extends React.PureComponent {
                 itemId={this.props.id} 
                 height={70}
                 rightAction={{ caption: 'Delete', icon: 'ios-trash', color: CommonStyles.DELETE_COLOR, callback: this._onDeleteTag }}
-                leftAction={{ caption: 'Archive', icon: 'ios-archive', color: CommonStyles.ARCHIVE_COLOR, callback: this._onArchiveTag }}
+                leftAction={{ caption: 'Copy', icon: 'ios-archive', color: CommonStyles.ARCHIVE_COLOR, callback: this._onCopyTag }}
                 onSwipeStart={() => this.props.setParentState({isSwiping: true})}
                 onSwipeRelease={() => this.props.setParentState({isSwiping: false})}
             >

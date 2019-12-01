@@ -65,7 +65,7 @@ export default class HashtagUtil {
 
         const lowerCaseTagName = tagName.toLowerCase();
         let tag = this._getTagsFromStore().toArray().find(tag => tag.name.toLowerCase() == lowerCaseTagName);
-        if (tag == undefined) {
+        if (tag == undefined && createIfNotFound == true) {
             tag = {
                 id: global.uniqueID(),
                 name: tagName,
