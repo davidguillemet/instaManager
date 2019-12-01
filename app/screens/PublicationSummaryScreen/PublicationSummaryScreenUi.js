@@ -33,7 +33,8 @@ export default class PublicationSummaryScreenUi extends React.Component {
         this.name = publication.name;
         this.category = publication.category;
         this.categoryName = publication.categoryName;
-        this.tags = publication.tagNames.map(tagName => this.getTagObject(tagName));
+        // As far as possible, try to get the tag from the name or create it on-the-fly if it does not exist anymore
+        this.tags = publication.tagNames.map(tagName => global.hashtagUtil.getTagFromName(tagName, true));
    
         this.onCopyToClipboard = this.onCopyToClipboard.bind(this);
 
@@ -43,15 +44,6 @@ export default class PublicationSummaryScreenUi extends React.Component {
 
         this.copyClipboardSubscriber = [];
         this.saveSubscriber = [];
-    }
-
-    getTagObject(tagName) {
-
-        return {
-            id: global.uniqueID(),
-            name: tagName,
-            categories: []
-        }
     }
 
     onCopyToClipboard() {

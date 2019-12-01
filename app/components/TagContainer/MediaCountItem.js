@@ -62,6 +62,9 @@ class MediaCountItemUi extends React.PureComponent {
     updateMediaCountState(mediaCount) {
         this.props.tag.mediaCount = { count: mediaCount, timestamp: new Date() };
         this.setState({ refreshing: false, mediaCount: formatMediaCount(mediaCount) });
+        if (this.props.onTransientMediaCountUpdated) {
+            this.props.onTransientMediaCountUpdated();
+        }
     }
 
     onRefresh() {

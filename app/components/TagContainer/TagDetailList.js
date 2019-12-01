@@ -22,7 +22,8 @@ export default class TagDetailList extends React.PureComponent {
         this.state = {
             sortedColumn: 0,
             sortOrder: [ SORT_ORDER.ASCENDING, SORT_ORDER.ASCENDING ],
-            isSwiping: false
+            isSwiping: false,
+            tags: this.props.tags
         }
         this.renderMediaCountItem = this.renderMediaCountItem.bind(this);
         this.renderListHeader = this.renderListHeader.bind(this);
@@ -32,6 +33,7 @@ export default class TagDetailList extends React.PureComponent {
         this.toggleSortForColumn = this.toggleSortForColumn.bind(this);
         this.sortTags = this.sortTags.bind(this);
         this.toggleSwipping = this.toggleSwipping.bind(this);
+        this.onTransientMediaCountUpdated = this.onTransientMediaCountUpdated.bind(this);
     }
 
     mediaCountKeyExtractor(item, index) {
@@ -51,9 +53,13 @@ export default class TagDetailList extends React.PureComponent {
                 onSwipeStart={this.toggleSwipping}
                 onSwipeRelease={this.toggleSwipping}
             >
-                <MediaCountItem tag={item} />
+                <MediaCountItem tag={item} onTransientMediaCountUpdated={this.onTransientMediaCountUpdated} />
             </SwipeableListViewItem>
         );
+    }
+
+    onTransientMediaCountUpdated() {
+        this.setState({ tags: [ ...this.state.tags ] });
     }
 
     toggleSortFirstColumn() {
@@ -67,7 +73,7 @@ export default class TagDetailList extends React.PureComponent {
     sortTags() {
         
         const sortOrder = this.state.sortOrder[this.state.sortedColumn];        
-        this.props.tags.sort((tag1, tag2) => {
+        this.state.tags.sort((tag1, tag2) => {
             const t1 = sortOrder == SORT_ORDER.ASCENDING ? tag1 : tag2;
             const t2 = sortOrder == SORT_ORDER.ASCENDING ? tag2 : tag1;
             switch (this.state.sortedColumn) {
@@ -123,7 +129,7 @@ export default class TagDetailList extends React.PureComponent {
 
     renderListHeader() {
         
-        const sortDisabled = this.props.tags.length <= 1;
+        const sortDisabled = this.state.tags.length <= 1;
 
         const headerStyle = {
             flex: 1,
@@ -146,7 +152,7 @@ export default class TagDetailList extends React.PureComponent {
         }
 
         // We cannot sort on media count if at least one item is refreshing
-        const sortOnMediaCountDisabled = (this.props.tags.findIndex(t => t.mediaCount == null) >= 0);
+        const sortOnMediaCountDisabled = (this.state.tags.findIndex(t => t.mediaCount == null) >= 0);
         if (sortOnMediaCountDisabled) {
             mediaCountHeaderTextStyle.color = CommonStyles.DEACTIVATED_TEXT_COLOR;
         }
@@ -186,7 +192,7 @@ export default class TagDetailList extends React.PureComponent {
 
         return (
             <FlatList
-                data={this.props.tags}
+                data={this.state.tags}
                 extraData={this.state}
                 keyExtractor={this.mediaCountKeyExtractor}
                 renderItem={this.renderMediaCountItem}
