@@ -11,6 +11,7 @@ import {
 } from 'react-native';
 
 import CustomButton from '../../components/CustomButton';
+import TagsCount from './../../components/TagsCount';
 import CommonStyles from '../../styles/common';
 import { NotificationType, BottomNotification } from '../../components/BottomNotification';
 import Wizard from '../../components/Wizard';
@@ -268,12 +269,12 @@ export default class PublicationWizardScreenUi extends React.PureComponent {
 
     onDeleteTag(deletedTagId) {
 
-        this.state.tags = this.state.tags.filter(tagId => tagId != deletedTagId);
+        this.setState({ tags: this.state.tags.filter(tagId => tagId != deletedTagId) });
     }
 
     onTagSelectionValidated(selection) {
 
-        this.state.tags = selection;
+        this.setState({ tags: selection} );
     }
 
     validateTags() {
@@ -302,15 +303,20 @@ export default class PublicationWizardScreenUi extends React.PureComponent {
         }
 
         return (
-            <ScrollView style={CommonStyles.styles.standardPage} indicatorStyle={'white'}>
-                <CategorieTagsDisplay
-                    tags={this.state.tags}
-                    onDeleteTag={this.onDeleteTag}
-                    onTagSelectionValidated={this.onTagSelectionValidated}
-                    itemType={global.PUBLICATION_ITEM}
-                />
-                <View style={{height: 60 + CommonStyles.GLOBAL_PADDING}}></View>
-            </ScrollView>
+            <View style={{flex: 1}}>
+                <View style={{marginHorizontal: CommonStyles.GLOBAL_PADDING}}>
+                    <TagsCount tagsCount={this.state.tags.length} />
+                </View>
+                <ScrollView style={CommonStyles.styles.standardPage} indicatorStyle={'white'}>
+                    <CategorieTagsDisplay
+                        tags={this.state.tags}
+                        onDeleteTag={this.onDeleteTag}
+                        onTagSelectionValidated={this.onTagSelectionValidated}
+                        itemType={global.PUBLICATION_ITEM}
+                    />
+                    <View style={{height: 60 + CommonStyles.GLOBAL_PADDING}}></View>
+                </ScrollView>
+            </View>
         );
     }
 
@@ -320,23 +326,28 @@ export default class PublicationWizardScreenUi extends React.PureComponent {
 
     renderSavePublication() {
         return (
-            <ScrollView style={CommonStyles.styles.standardPage} indicatorStyle={'white'}>
-                <View style={styles.parameterContainerView}>
-                    <Text style={[CommonStyles.styles.smallLabel, styles.parameterLabel]}>Name</Text>
-                    <TextInput
-                        defaultValue={this.state.name }
-                        autoFocus={true}
-                        keyboardType='default'
-                        autoCapitalize='none'
-                        style={styles.parameterInput}
-                        placeholder={`Enter a publication name`}
-                        selectionColor={CommonStyles.TEXT_COLOR}
-                        placeholderTextColor={CommonStyles.PLACEHOLDER_COLOR}
-                        clearButtonMode={'always'}
-                        onChangeText={this.onChangeName}
-                    />
+            <View style={{flex: 1}}>
+                <View style={{marginHorizontal: CommonStyles.GLOBAL_PADDING}}>
+                    <TagsCount tagsCount={this.state.tags.length} />
                 </View>
-            </ScrollView>
+                <ScrollView style={CommonStyles.styles.standardPage} indicatorStyle={'white'}>
+                    <View style={styles.parameterContainerView}>
+                        <Text style={[CommonStyles.styles.smallLabel, styles.parameterLabel]}>Name</Text>
+                        <TextInput
+                            defaultValue={this.state.name }
+                            autoFocus={true}
+                            keyboardType='default'
+                            autoCapitalize='none'
+                            style={styles.parameterInput}
+                            placeholder={`Enter a publication name`}
+                            selectionColor={CommonStyles.TEXT_COLOR}
+                            placeholderTextColor={CommonStyles.PLACEHOLDER_COLOR}
+                            clearButtonMode={'always'}
+                            onChangeText={this.onChangeName}
+                        />
+                    </View>
+                </ScrollView>
+            </View>
         );
     }
 

@@ -9,6 +9,7 @@ import {
 
 import TagContainer from '../../components/TagContainer';
 import CustomButton from '../../components/CustomButton';
+import TagsCount from '../../components/TagsCount';
 import CommonStyles from '../../styles/common';
 import { NotificationType, BottomNotification } from '../../components/BottomNotification';
 
@@ -67,33 +68,6 @@ export default class PublicationSummaryScreenUi extends React.Component {
         });
     }
 
-    renderTagsCountCaption() {
-
-        const remainingTags = this.props.maxTagsCount - this.tags.length;
-        const remainingError = remainingTags < 0;
-        const tagCount = `${this.tags.length} Tag(s) in total - `;
-        const remainingTip = remainingError ? `${-remainingTags} in excess` : `${remainingTags} remaining`;
-
-        return (
-            <View style={[
-                    CommonStyles.styles.standardTile,
-                    {
-                        justifyContent: 'center',
-                        backgroundColor: remainingError ? CommonStyles.LIGHT_RED : CommonStyles.LIGHT_GREEN
-                    }
-                    ]}>
-                <Text style={[
-                        CommonStyles.styles.smallLabel,
-                        {
-                            color: remainingError ? CommonStyles.DARK_RED : CommonStyles.DARK_GREEN
-                        }
-                        ]}>
-                    {tagCount + remainingTip}
-                </Text>
-            </View>
-        );
-    }
-
     render() {
 
         const categoryRemoved = (this.category == null || this.category.length == 0) && this.categoryName.length > 0;
@@ -136,7 +110,7 @@ export default class PublicationSummaryScreenUi extends React.Component {
                         />
                     </View>
                     <View style={{height: 20}}></View>
-                    { this.renderTagsCountCaption() }
+                    <TagsCount tagsCount={this.tags.length}/>
                     <TagContainer style={{ marginTop: 10 }}
                         tags={this.tags}
                         itemType={global.TAG_ITEM}

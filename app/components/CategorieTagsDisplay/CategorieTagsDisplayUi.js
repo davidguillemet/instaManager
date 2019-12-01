@@ -10,11 +10,8 @@ import {
 import PropTypes from 'prop-types';
 import { createSelector } from 'reselect';
 
-import Ionicons from 'react-native-vector-icons/Ionicons';
-
 import TagContainer from '../TagContainer';
 import CustomButton from '../CustomButton';
-import ListItemSeparator from '../ListItemSeparator';
 import Flag from '../Flag';
 import Message from '../Message';
 
@@ -244,25 +241,6 @@ class CategorieTagsDisplayUi extends React.PureComponent {
         return this.state.tags.length - categoryDuplicatedTags.size;
     }
 
-    renderTagsCountCaption() {
-
-        const ancestorCategoriesTagCount = this.getAncestorTagsCount(this.props);
-        const categoryOwnTagsCount = this.getCategoryOwnTagsCount();
-
-        const remainingTags = this.props.maxTagsCount - ancestorCategoriesTagCount - categoryOwnTagsCount;
-        const remainingError = remainingTags < 0;
-        const titleStatusStyle = remainingError ? styles.errorTitle : styles.successTitle;
-        const remainingStatusStyle = remainingError ? styles.errorText : styles.successText;
-        const tagCount = (ancestorCategoriesTagCount + categoryOwnTagsCount) + ' Tag(s) in total - ';
-        const remainingTip = remainingError ? `${-remainingTags} in excess` : `${remainingTags} remaining`;
-
-        return (
-            <View style={[CommonStyles.styles.standardTile, styles.tagSegmentTitle, titleStatusStyle]}>
-                <Text style={[CommonStyles.styles.smallLabel, remainingStatusStyle]}>{tagCount + remainingTip}</Text>
-            </View>
-        );
-    }
-
     renderDuplicatesError() {
 
         const duplicates = this.getCategoryDuplicatedTags(this.props, this.state);
@@ -345,7 +323,7 @@ class CategorieTagsDisplayUi extends React.PureComponent {
     renderOverview() {
 
         if (this.props.itemType === global.PUBLICATION_ITEM) {
-            return this.renderTagsCountCaption();
+            return null;
         }
 
         let data = [];
@@ -536,9 +514,6 @@ const styles = StyleSheet.create(
     {
         flex: 0.5,
         fontSize: CommonStyles.SMALL_FONT_SIZE
-    },
-    tagSegmentTitle: {
-        justifyContent: 'center'
     },
     errorText: {
         color: CommonStyles.DARK_RED

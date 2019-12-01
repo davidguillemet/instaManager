@@ -12,6 +12,7 @@ import {
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import CustomButton from '../../components/CustomButton';
 import SearchInput from '../../components/Search';
+import TagsCount from '../../components/TagsCount';
 import LoadingIndicatorView from '../../components/LoadingIndicator';
 import SectionListIndex from '../../components/SectionListIndex';
 import TagListItem from './HashTagListItem';
@@ -391,8 +392,8 @@ export default class HashTagListScreenUi extends React.Component {
                     :
                     <View style={{ flex: 1, justifyContent: 'center'}}>
                         {
-                            this.mode == global.LIST_SELECTION_MODE ? 
-                            <Text style={[CommonStyles.styles.smallLabel, {padding: CommonStyles.GLOBAL_PADDING}]}>{`${this.state.selection.size} selected item(s)`}</Text> :
+                            this.mode == global.LIST_SELECTION_MODE ?
+                            <TagsCount tagsCount={this.state.selection.size} /> :
                             null
                         }
                         <SectionList
