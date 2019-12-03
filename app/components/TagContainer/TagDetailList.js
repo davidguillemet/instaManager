@@ -26,6 +26,8 @@ export default class TagDetailList extends React.PureComponent {
             tags: this.props.tags
         }
         this.renderMediaCountItem = this.renderMediaCountItem.bind(this);
+        this.renderListItem = this.renderListItem.bind(this);
+        this.renderSwipeableListItem = this.renderSwipeableListItem.bind(this);
         this.renderListHeader = this.renderListHeader.bind(this);
         this.getSortIndicator = this.getSortIndicator.bind(this);
         this.toggleSortFirstColumn = this.toggleSortFirstColumn.bind(this);
@@ -45,6 +47,18 @@ export default class TagDetailList extends React.PureComponent {
     }
 
     renderMediaCountItem({item}) {
+        if (this.props.onDelete == null) {
+            return this.renderListItem(item);
+        } else {
+            return this.renderSwipeableListItem(item);
+        }
+    }
+    renderListItem(item) {
+        return (
+            <MediaCountItem tag={item} onTransientMediaCountUpdated={this.onTransientMediaCountUpdated} />
+        );
+    }
+    renderSwipeableListItem(item) {
         return (
             <SwipeableListViewItem
                 itemId={item.id}
@@ -53,7 +67,7 @@ export default class TagDetailList extends React.PureComponent {
                 onSwipeStart={this.toggleSwipping}
                 onSwipeRelease={this.toggleSwipping}
             >
-                <MediaCountItem tag={item} onTransientMediaCountUpdated={this.onTransientMediaCountUpdated} />
+                {this.renderListItem(item)}
             </SwipeableListViewItem>
         );
     }
