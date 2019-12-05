@@ -135,11 +135,11 @@ export default class HashtagCategoryEditScreenUi extends React.Component {
             Alert.alert('', `Are you sure you want to quit and lose your changes?`,
             [
                 { 
-                    text: 'Cancel',
+                    text: 'Ooops, no don\'t quit...',
                     style: 'cancel'
                 },
                 {
-                    text: 'OK',
+                    text: 'Yes, quit and discard changes',
                     onPress: () => {
                         this.onQuit();
                     }
