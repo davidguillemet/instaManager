@@ -236,12 +236,13 @@ export default class HashtagUtil {
         const promise = new Promise(
             function(resolve, reject) {
 
+                const insertNewLine = global.settingsManager.getNewLineSeparator();
                 let tagsValue = '';
 
                 tagObjects.forEach((tag) => {
         
                     if (tagsValue.length > 0) {
-                        tagsValue += ' ';
+                        tagsValue += insertNewLine ? '\n' : ' ';
                     }
                     tagsValue += '#' + tag.name;
                 });

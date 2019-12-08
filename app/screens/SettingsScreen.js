@@ -31,6 +31,7 @@ class SettingsScreen extends React.PureComponent {
         this.renderMaximumTagsCount = this.renderMaximumTagsCount.bind(this);
         this.renderHeaderFooterSetting = this.renderHeaderFooterSetting.bind(this);
         this.renderDisplayErrorSetting = this.renderDisplayErrorSetting.bind(this);
+        this.renderNewLineSeparator = this.renderNewLineSeparator.bind(this);
         this.setParameter = this.setParameter.bind(this);
         this.clearPublicationHeader = this.clearPublicationHeader.bind(this);
         this.clearPublicationFooter = this.clearPublicationFooter.bind(this);
@@ -43,7 +44,8 @@ class SettingsScreen extends React.PureComponent {
             expandedSetting: null,
             headerInputHeight: 0,
             footerInputHeight: 0,
-            displayErrors: global.settingsManager.getDisplayErrors()
+            displayErrors: global.settingsManager.getDisplayErrors(),
+            newLineSeparator: global.settingsManager.getNewLineSeparator()
         }
 
         this.settings = [
@@ -66,6 +68,12 @@ class SettingsScreen extends React.PureComponent {
                 update: (value) => this.setParameter('footer', value)
             },
             {
+                key: 'newLineSeparator',
+                caption: 'New line separator',
+                render: this.renderNewLineSeparator,
+                update: (value) => this.setParameter('newLineSeparator', value)
+            },
+            {
                 key: 'errors',
                 caption: 'Display errors',
                 render: this.renderDisplayErrorSetting,
@@ -76,7 +84,6 @@ class SettingsScreen extends React.PureComponent {
 
     setParameter(settingKey, value) {
 
-        this.setState({[settingKey]: value});
         switch (settingKey) {
             case 'header':
                 global.settingsManager.setPublicationHeader(value);
@@ -92,7 +99,11 @@ class SettingsScreen extends React.PureComponent {
                 global.settingsManager.setDisplayErrors(value);
                 this.props.onSetDisplayErrors(value);
                 break;
-            }
+            case 'newLineSeparator':
+                global.settingsManager.setNewLineSeparator(value);
+                break;
+        }
+        this.setState({[settingKey]: value});
     }
 
     addFiveDots() {
@@ -211,6 +222,17 @@ class SettingsScreen extends React.PureComponent {
                 <Text style={[CommonStyles.styles.mediumLabel, {flex: 1, marginRight: CommonStyles.GLOBAL_PADDING}]} numberOfLines={1}>{item.caption}</Text>
                 <Switch
                     value={this.state.displayErrors}
+                    onValueChange={item.update}/>
+            </View>
+        );
+    }
+
+    renderNewLineSeparator(item) {
+        return (
+            <View style={styles.settingsListItem}>
+                <Text style={[CommonStyles.styles.mediumLabel, {flex: 1, marginRight: CommonStyles.GLOBAL_PADDING}]} numberOfLines={1}>{item.caption}</Text>
+                <Switch
+                    value={this.state.newLineSeparator}
                     onValueChange={item.update}/>
             </View>
         );

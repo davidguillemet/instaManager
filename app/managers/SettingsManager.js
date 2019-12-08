@@ -14,7 +14,8 @@ const defaultSettings = {
         periodCount: 1,
         periodUnit: 'week'      // 'day', 'week', 'month', 'year'
     },
-    displayErrors: true
+    displayErrors: true,
+    newLineSeparator: true
 }
 
 const settingsStorageKeyName = '@TagManager:settings';
@@ -68,6 +69,10 @@ export default class SettingsManager {
         return this.settings.displayErrors;
     }
 
+    getNewLineSeparator() {
+        return this.settings.newLineSeparator;
+    }
+
     setPublicationFilter(filter) {
         this.setSettings('publicationFilter', filter);
     }
@@ -82,5 +87,8 @@ export default class SettingsManager {
     }
     setDisplayErrors(value) {
         this.setSettings('displayErrors', value);
+    }
+    setNewLineSeparator(value) {
+        this.setSettings('newLineSeparator', value);
     }
 }
