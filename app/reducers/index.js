@@ -18,6 +18,7 @@ import {
     DELETE_PUBLICATION,
     SET_TAG_FILTER,
     SET_PUBLICATION_FILTER,
+    SET_DISPLAY_ERRORS,
     TagFilters,
 } from './../actions';
 
@@ -207,6 +208,9 @@ function settingsReducer(state = Map(global.settingsManager.getSettings()), acti
     switch (action.type) {
         case SET_PUBLICATION_FILTER:
             return state.set('publicationFilter', action.filter);
+
+        case SET_DISPLAY_ERRORS:
+            return state.set('displayErrors', action.value);
 
         default:
             return state;

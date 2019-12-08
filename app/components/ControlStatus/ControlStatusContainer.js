@@ -7,7 +7,8 @@ const mapStateToProps = (state, ownProps) => {
     const controls = state.get('controls');
     return {
         running: controls.get('running'),
-        errors: controls.get('errors')
+        errors: controls.get('errors'),
+        displayErrors: state.get('settings').get('displayErrors')
     }
 }
 

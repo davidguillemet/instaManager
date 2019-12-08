@@ -24,7 +24,10 @@ export default class ControlStatusUi extends React.PureComponent {
 
     render() {
 
-        if (this.props.running === true) {
+        if (this.props.displayErrors == false) {
+            return null;
+        }
+        else if (this.props.running === true) {
             return (
                 <View style={styles.statusContainer}>
                     <ActivityIndicator />

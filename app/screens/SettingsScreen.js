@@ -3,14 +3,15 @@ import {
     FlatList,
     KeyboardAvoidingView,
     StyleSheet,
+    Switch,
     TextInput,
     TouchableOpacity,
     View,
     Text
 } from 'react-native';
-import { connect } from 'react-redux';
 
-import { launchControls } from './../actions/control';
+import { connect } from 'react-redux';
+import { createSetDisplayErrorsAction, launchControls } from './../actions';
 
 import CommonStyles from '../styles/common';
 import ListItemSeparator from '../components/ListItemSeparator';
@@ -29,6 +30,7 @@ class SettingsScreen extends React.PureComponent {
         this.renderSetting = this.renderSetting.bind(this);
         this.renderMaximumTagsCount = this.renderMaximumTagsCount.bind(this);
         this.renderHeaderFooterSetting = this.renderHeaderFooterSetting.bind(this);
+        this.renderDisplayErrorSetting = this.renderDisplayErrorSetting.bind(this);
         this.setParameter = this.setParameter.bind(this);
         this.clearPublicationHeader = this.clearPublicationHeader.bind(this);
         this.clearPublicationFooter = this.clearPublicationFooter.bind(this);
@@ -40,7 +42,8 @@ class SettingsScreen extends React.PureComponent {
             footer: global.settingsManager.getFooter(),
             expandedSetting: null,
             headerInputHeight: 0,
-            footerInputHeight: 0
+            footerInputHeight: 0,
+            displayErrors: global.settingsManager.getDisplayErrors()
         }
 
         this.settings = [
@@ -61,6 +64,12 @@ class SettingsScreen extends React.PureComponent {
                 caption: 'Publication footer',
                 render: this.renderHeaderFooterSetting,
                 update: (value) => this.setParameter('footer', value)
+            },
+            {
+                key: 'errors',
+                caption: 'Display errors',
+                render: this.renderDisplayErrorSetting,
+                update: (value) => this.setParameter('displayErrors', value)
             }
         ];
     }
@@ -79,7 +88,11 @@ class SettingsScreen extends React.PureComponent {
                 global.settingsManager.setMaximumNumberOfTags(value);
                 this.props.onLaunchControls();
                 break;
-        }
+            case 'displayErrors':
+                global.settingsManager.setDisplayErrors(value);
+                this.props.onSetDisplayErrors(value);
+                break;
+            }
     }
 
     addFiveDots() {
@@ -192,6 +205,17 @@ class SettingsScreen extends React.PureComponent {
         );
     }
 
+    renderDisplayErrorSetting(item) {
+        return (
+            <View style={styles.settingsListItem}>
+                <Text style={[CommonStyles.styles.mediumLabel, {flex: 1, marginRight: CommonStyles.GLOBAL_PADDING}]} numberOfLines={1}>{item.caption}</Text>
+                <Switch
+                    value={this.state.displayErrors}
+                    onValueChange={item.update}/>
+            </View>
+        );
+    }
+
     renderSetting({item}) {
 
         return item.render(item);
@@ -216,6 +240,9 @@ const mapDispatchToProps = dispatch => {
     return {
         onLaunchControls: () => {
             dispatch(launchControls());
+        },
+        onSetDisplayErrors: (value) => {
+            dispatch(createSetDisplayErrorsAction(value));
         }
     }
 }

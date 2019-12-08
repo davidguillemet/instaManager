@@ -13,7 +13,8 @@ const defaultSettings = {
     mediaCountRefreshPeriod: {
         periodCount: 1,
         periodUnit: 'week'      // 'day', 'week', 'month', 'year'
-    }
+    },
+    displayErrors: true
 }
 
 const settingsStorageKeyName = '@TagManager:settings';
@@ -63,6 +64,10 @@ export default class SettingsManager {
         return this.settings.mediaCountRefreshPeriod;
     }
 
+    getDisplayErrors() {
+        return this.settings.displayErrors;
+    }
+
     setPublicationFilter(filter) {
         this.setSettings('publicationFilter', filter);
     }
@@ -74,5 +79,8 @@ export default class SettingsManager {
     }
     setMaximumNumberOfTags(value) {
         this.setSettings('maximumNumberOfTags', value);
+    }
+    setDisplayErrors(value) {
+        this.setSettings('displayErrors', value);
     }
 }
