@@ -1,7 +1,7 @@
 import React from 'react';
 import {
-    FlatList,
     KeyboardAvoidingView,
+    SectionList,
     StyleSheet,
     Switch,
     TextInput,
@@ -19,6 +19,10 @@ import NumericInput from '../components/NumericInput';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import CustomButton from '../components/CustomButton';
 
+const TAGS_HEADER_KEY = 'tagsHeader';
+const TAGS_FOOTER_KEY = 'tagsFooter';
+const INPUT_HEIGHT_PARAM_SUFFIX = 'InputHeight';
+
 class SettingsScreen extends React.PureComponent {
     static navigationOptions = {
         title: 'Settings'
@@ -28,6 +32,7 @@ class SettingsScreen extends React.PureComponent {
         super(props);
 
         this.renderSetting = this.renderSetting.bind(this);
+        this.renderSection = this.renderSection.bind(this);
         this.renderMaximumTagsCount = this.renderMaximumTagsCount.bind(this);
         this.renderHeaderFooterSetting = this.renderHeaderFooterSetting.bind(this);
         this.renderDisplayErrorSetting = this.renderDisplayErrorSetting.bind(this);
@@ -39,45 +44,56 @@ class SettingsScreen extends React.PureComponent {
         
         this.state = {
             maxTagsCount: global.settingsManager.getMaxNumberOfTags(),
-            header: global.settingsManager.getHeader(),
-            footer: global.settingsManager.getFooter(),
             expandedSetting: null,
-            headerInputHeight: 0,
-            footerInputHeight: 0,
             displayErrors: global.settingsManager.getDisplayErrors(),
             newLineSeparator: global.settingsManager.getNewLineSeparator()
         }
 
+        this.state[TAGS_HEADER_KEY] = global.settingsManager.getHeader();
+        this.state[TAGS_FOOTER_KEY] = global.settingsManager.getFooter();
+        this.state[TAGS_HEADER_KEY + INPUT_HEIGHT_PARAM_SUFFIX] = 0;
+        this.state[TAGS_FOOTER_KEY + INPUT_HEIGHT_PARAM_SUFFIX] = 0;
+
         this.settings = [
             {
-                key: 'maxTagsCount',
-                caption: 'Maximum tags count',
-                render: this.renderMaximumTagsCount,
-                update: (value) => this.setParameter('maxTagsCount', value)
+                title: 'Tags Formatting',
+                data: [
+                    {
+                        key: 'maxTagsCount',
+                        caption: 'Maximum tags count',
+                        render: this.renderMaximumTagsCount,
+                        update: (value) => this.setParameter('maxTagsCount', value)
+                    },
+                    {
+                        key: TAGS_HEADER_KEY,
+                        caption: 'Publication header',
+                        render: this.renderHeaderFooterSetting,
+                        update: (value) => this.setParameter(TAGS_HEADER_KEY, value)
+                    },
+                    {
+                        key: TAGS_FOOTER_KEY,
+                        caption: 'Publication footer',
+                        render: this.renderHeaderFooterSetting,
+                        update: (value) => this.setParameter(TAGS_FOOTER_KEY, value)
+                    },
+                    {
+                        key: 'newLineSeparator',
+                        caption: 'New line separator',
+                        render: this.renderNewLineSeparator,
+                        update: (value) => this.setParameter('newLineSeparator', value)
+                    }
+                ]
             },
             {
-                key: 'header',
-                caption: 'Publication header',
-                render: this.renderHeaderFooterSetting,
-                update: (value) => this.setParameter('header', value)
-            },
-            {
-                key: 'footer',
-                caption: 'Publication footer',
-                render: this.renderHeaderFooterSetting,
-                update: (value) => this.setParameter('footer', value)
-            },
-            {
-                key: 'newLineSeparator',
-                caption: 'New line separator',
-                render: this.renderNewLineSeparator,
-                update: (value) => this.setParameter('newLineSeparator', value)
-            },
-            {
-                key: 'errors',
-                caption: 'Display errors',
-                render: this.renderDisplayErrorSetting,
-                update: (value) => this.setParameter('displayErrors', value)
+                title: 'General Settings',
+                data: [
+                    {
+                        key: 'errors',
+                        caption: 'Display errors',
+                        render: this.renderDisplayErrorSetting,
+                        update: (value) => this.setParameter('displayErrors', value)
+                    }
+                ]
             }
         ];
     }
@@ -85,10 +101,10 @@ class SettingsScreen extends React.PureComponent {
     setParameter(settingKey, value) {
 
         switch (settingKey) {
-            case 'header':
+            case TAGS_HEADER_KEY:
                 global.settingsManager.setPublicationHeader(value);
                 break;
-            case 'footer':
+            case TAGS_FOOTER_KEY:
                 global.settingsManager.setPublicationFooter(value);
                 break;
             case 'maxTagsCount':
@@ -107,18 +123,18 @@ class SettingsScreen extends React.PureComponent {
     }
 
     addFiveDots() {
-        const newHeader = '.\n.\n.\n.\n.\n' + this.state.header;
-        this.setParameter('header', newHeader);
+        const newHeader = '.\n.\n.\n.\n.';
+        this.setParameter(TAGS_HEADER_KEY, newHeader);
     }
 
     clearPublicationHeader() {
         
-        this.setParameter('header', '');
+        this.setParameter(TAGS_HEADER_KEY, '');
     }
 
     clearPublicationFooter() {
 
-        this.setParameter('footer', '');
+        this.setParameter(TAGS_FOOTER_KEY, '');
     }
 
     expandParameter(settingKey) {
@@ -131,9 +147,9 @@ class SettingsScreen extends React.PureComponent {
 
     renderHeaderFooterSetting(item) {
 
-        const parameterValue = item.key == 'header' ? this.state.header : this.state.footer;
-        const inputHeightParameterName = `${item.key}InputHeight`;
-        const clearCallback = item.key == 'header' ? this.clearPublicationHeader : this.clearPublicationFooter;
+        const parameterValue = this.state[item.key];
+        const inputHeightParameterName = item.key + INPUT_HEIGHT_PARAM_SUFFIX;
+        const clearCallback = item.key == TAGS_HEADER_KEY ? this.clearPublicationHeader : this.clearPublicationFooter;
 
         return (
             <View>
@@ -176,7 +192,7 @@ class SettingsScreen extends React.PureComponent {
                                 backgroundColor: CommonStyles.SEPARATOR_COLOR
                             }}>
                             {
-                                item.key == 'header' ?
+                                item.key == TAGS_HEADER_KEY ?
                                 <CustomButton title={'[...] Collapsible comment'} onPress={this.addFiveDots} style={
                                     [
                                         CommonStyles.styles.smallLabel,
@@ -243,12 +259,21 @@ class SettingsScreen extends React.PureComponent {
         return item.render(item);
     }
 
+    renderSection({section}) {
+        return (
+            <View style={{ borderLeftColor: CommonStyles.GLOBAL_FOREGROUND, borderLeftWidth: 4 }}>
+            <Text style={[CommonStyles.styles.largeLabel, styles.sectionHeader]}>{section.title}</Text>
+            </View>
+        );
+    }
+
     render() {
         return(
-            <KeyboardAvoidingView style={[CommonStyles.styles.standardPage, {padding: 0}]} contentContainerStyle={CommonStyles.styles.standardPage} behavior={'position'} enabled>
-               <FlatList
-                    data={this.settings}
+            <KeyboardAvoidingView style={[CommonStyles.styles.standardPage, {padding: 0}]} contentContainerStyle={[CommonStyles.styles.standardPage, {padding: 0}]} behavior={'position'} enabled>
+               <SectionList
+                    sections={this.settings}
                     extraData={this.state}
+                    renderSectionHeader={this.renderSection}
                     renderItem={this.renderSetting}
                     ItemSeparatorComponent={ListItemSeparator}
                     indicatorStyle={'white'}
@@ -279,5 +304,11 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         height: 60,
         paddingHorizontal: CommonStyles.GLOBAL_PADDING
-    }
+    },
+    sectionHeader: {
+        paddingHorizontal: CommonStyles.GLOBAL_PADDING,
+        paddingVertical: CommonStyles.GLOBAL_PADDING,
+        backgroundColor: '#192b48',
+        fontWeight: 'bold',
+    },
 });

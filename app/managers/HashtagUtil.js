@@ -247,9 +247,18 @@ export default class HashtagUtil {
                     tagsValue += '#' + tag.name;
                 });
         
-                let tagStream = global.settingsManager.getHeader()
+                let tagStream = '';
+                const tagHeaders = global.settingsManager.getHeader();
+                if (tagHeaders.length > 0) {
+                    tagStream += tagHeaders;
+                    tagStream += '\n';
+                }
                 tagStream += tagsValue;
-                tagStream += global.settingsManager.getFooter();
+                let tagsFooter = global.settingsManager.getFooter();
+                if (tagsFooter.length > 0) {
+                    tagStream += '\n';
+                    tagStream += tagsFooter;
+                }
                 Clipboard.setString(tagStream);
                 
                 resolve();
