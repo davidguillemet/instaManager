@@ -14,6 +14,7 @@ import TagContainer from '../TagContainer';
 import CustomButton from '../CustomButton';
 import Flag from '../Flag';
 import Message from '../Message';
+import TagsCount from '../TagsCount';
 
 import CommonStyles from '../../styles/common'; 
 
@@ -42,7 +43,8 @@ class CategorieTagsDisplayUi extends React.PureComponent {
         
         this.state = {
             tags: this.props.tags,
-            tagsDisplayMode: this.props.initialDisplayMode
+            tagsDisplayMode: this.props.initialDisplayMode,
+            selectedAncestor: null
         };
 
         // Callbacks for tag management
@@ -56,6 +58,7 @@ class CategorieTagsDisplayUi extends React.PureComponent {
         this.getCategoryOwnTagsCount = this.getCategoryOwnTagsCount.bind(this);
 
         this.renderOverviewMenuItem = this.renderOverviewMenuItem.bind(this);
+        this.renderAncestorItem = this.renderAncestorItem.bind(this);
         
         this.getAncestorCategories = props => props.ancestorCategories;
         this.getAncestorsTags = props => props.ancestorTags;
@@ -141,6 +144,73 @@ class CategorieTagsDisplayUi extends React.PureComponent {
         this.props.onTagSelectionValidated(selection);
     }
 
+    onSelectAncestor(ancestorId) {
+        this.setState({selectedAncestor: ancestorId});
+    }
+
+    renderAncestorItem({item}) {
+
+        let containerViewStyle = {
+            flex: 1,
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            borderWidth: 1,
+            borderColor: CommonStyles.SEPARATOR_COLOR,
+            borderRadius: 22,
+            paddingRight: CommonStyles.GLOBAL_PADDING,
+            paddingVertical: 8
+        };
+        let textStyle = {
+            paddingHorizontal: CommonStyles.GLOBAL_PADDING
+        };
+        
+        const duplicatedTags = this.props.onGetAncestorDuplicatedTags({ parentCategory: item.id });
+        const countWithoutDuplicated = item.hashtags.reduce((count, tagId) => { return duplicatedTags.has(tagId) ? count : count + 1; } , 0);
+        const countError = countWithoutDuplicated > this.props.maxTagsCount;
+        const selected = item.id == this.state.selectedAncestor;
+
+        if (selected) {
+            textStyle = { ...textStyle, color: CommonStyles.SELECTED_TEXT_COLOR };
+            containerViewStyle = {
+                backgroundColor: CommonStyles.SEPARATOR_COLOR,
+                ...containerViewStyle
+            }
+        }
+
+        let flagStyle = {
+            marginLeft: 5
+        };
+
+        if (countError) {
+            flagStyle = {
+                ...styles.errorTitle,
+                ...styles.errorText,                    
+                ...flagStyle
+            }
+        } else {
+            flagStyle = {
+                ...styles.successTitle,
+                ...styles.successText,                    
+                ...flagStyle
+            }
+        }
+
+        return (
+            <View style={containerViewStyle}>
+                <TouchableOpacity onPress={() => this.onSelectAncestor(item.id)} disabled={selected} >
+                    <Text style={[CommonStyles.styles.smallLabel, textStyle]}>{item.name}</Text>
+                </TouchableOpacity>
+                <Flag caption={countWithoutDuplicated} style={flagStyle}/>
+                {
+                    duplicatedTags.size > 0 ?
+                    this.getErrorFlag() :
+                    null
+                }
+            </View>
+        );
+    }
+
     renderTagContainers() {
 
         if (this.state.tagsDisplayMode == TAGS_DISPLAY_SELF) {
@@ -206,32 +276,50 @@ class CategorieTagsDisplayUi extends React.PureComponent {
             allDuplicatedTagsInHierarchy.add(tagId);
         });
 
+        if (this.state.selectedAncestor == null) {
+            this.state.selectedAncestor = ancestors[0].id;
+        }
+
+        let selectedAncestor = ancestors.find(cat => cat.id == this.state.selectedAncestor);
+        if (selectedAncestor == undefined) {
+            // The selected ancestor might have been removed from hierarcgy after the category parent has been modified
+            // -> select the root ancestor
+            selectedAncestor = ancestors[0];
+            this.state.selectedAncestor = selectedAncestor.id;
+        }
+
+        const duplicatedTags = this.props.onGetAncestorDuplicatedTags({ parentCategory: this.state.selectedAncestor });
+        const countWithoutDuplicated = selectedAncestor.hashtags.reduce((count, tagId) => { return duplicatedTags.has(tagId) ? count : count + 1; } , 0);
+
         return (
-            ancestors.map(cat => {
-                if (cat.hashtags.length == 0) {
-                    return null;
-                }
-                
-                const duplicatedTags = this.props.onGetAncestorDuplicatedTags({ parentCategory: cat.id });
-                const countWithoutDuplicated = cat.hashtags.reduce((count, tagId) => { return duplicatedTags.has(tagId) ? count : count + 1; } , 0);
-                
-                return (
-                    <TagContainer
-                        style={{ marginBottom: 10 }}
-                        label={cat.name}
-                        count={countWithoutDuplicated}
-                        key={cat.id}
-                        tags={cat.hashtags}
-                        itemType={global.TAG_ITEM}
-                        readOnly={true}
-                        addSharp={true}
-                        warnings={allDuplicatedTagsInHierarchy}
-                        errors={duplicatedTags}
-                        categoryId={cat.id}
-                        onNavigateToCategory={this.onNavigateToCategory}
-                    />
-                );
-            })
+            <View>
+                <FlatList
+                    style={{ marginVertical: CommonStyles.GLOBAL_PADDING }}
+                    data={ancestors}
+                    renderItem={this.renderAncestorItem}
+                    horizontal={true}
+                    ItemSeparatorComponent={this.renderOverviewSeparator}
+                    indicatorStyle={'white'}
+                    keyExtractor={(item, index) => item.id}
+                />
+                <CustomButton
+                    title={`Open '${selectedAncestor.name}'...`}
+                    onPress={() => this.onNavigateToCategory(selectedAncestor.id)}
+                    style={CommonStyles.styles.standardButton} />
+                <TagContainer
+                    style={{ marginBottom: 10 }}
+                    count={countWithoutDuplicated}
+                    key={selectedAncestor.id}
+                    tags={selectedAncestor.hashtags}
+                    itemType={global.TAG_ITEM}
+                    readOnly={true}
+                    addSharp={true}
+                    warnings={allDuplicatedTagsInHierarchy}
+                    errors={duplicatedTags}
+                    categoryId={selectedAncestor.id}
+                    onNavigateToCategory={this.onNavigateToCategory}
+                />
+            </View>
         );
     }
 
@@ -242,6 +330,10 @@ class CategorieTagsDisplayUi extends React.PureComponent {
     }
 
     renderDuplicatesError() {
+
+        if (this.state.tagsDisplayMode != TAGS_DISPLAY_SELF) {
+            return null;
+        }
 
         const duplicates = this.getCategoryDuplicatedTags(this.props, this.state);
 
@@ -327,20 +419,31 @@ class CategorieTagsDisplayUi extends React.PureComponent {
         }
 
         let data = [];
-        data.push({ key: TAGS_DISPLAY_SELF });
         if (this.props.parentCategory != null) {
+            data.push({ key: TAGS_DISPLAY_SELF });
             data.push({ key: TAGS_DISPLAY_ANCESTORS });
             data.push({ key: TAGS_DISPLAY_ALL });
         }
 
+        const ancestorCategoriesTagCount = this.getAncestorTagsCount(this.props);
+        const categoryOwnTagsCount = this.getCategoryOwnTagsCount();
+        const totalTagsCount = categoryOwnTagsCount + ancestorCategoriesTagCount;
+
         return (
-            <FlatList style={{ marginVertical: CommonStyles.GLOBAL_PADDING }}
-                data={data}
-                renderItem={this.renderOverviewMenuItem}
-                horizontal={true}
-                ItemSeparatorComponent={this.renderOverviewSeparator}
-                indicatorStyle={'white'}
-            />
+            <View>
+                <TagsCount tagsCount={totalTagsCount}/>
+                {
+                    data.length > 0 ?
+                    <FlatList
+                        style={{ marginBottom: CommonStyles.GLOBAL_PADDING }}
+                        data={data}
+                        renderItem={this.renderOverviewMenuItem}
+                        horizontal={true}
+                        ItemSeparatorComponent={this.renderOverviewSeparator}
+                        indicatorStyle={'white'} />
+                    : null
+                }
+            </View>
         )
     }
 
@@ -452,7 +555,7 @@ class CategorieTagsDisplayUi extends React.PureComponent {
             borderColor: CommonStyles.SEPARATOR_COLOR,
             borderRadius: 22,
             paddingRight: CommonStyles.GLOBAL_PADDING,
-            paddingVertical: CommonStyles.GLOBAL_PADDING
+            paddingVertical: 8
         };
 
         let textStyle = {
@@ -482,11 +585,7 @@ class CategorieTagsDisplayUi extends React.PureComponent {
         return (
             <View style={{paddingBottom: CommonStyles.GLOBAL_PADDING}}>
                 { this.renderOverview() }
-                { 
-                    this.state.tagsDisplayMode == TAGS_DISPLAY_SELF ? this.renderDuplicatesError() :
-                    this.state.tagsDisplayMode == TAGS_DISPLAY_ANCESTORS ? this.renderAncestorDuplicatesError() : 
-                    this.renderAllDuplicatesError()
-                }
+                { this.renderDuplicatesError() }
                 { this.renderTagContainers() }
             </View>
         );

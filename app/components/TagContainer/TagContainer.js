@@ -94,6 +94,14 @@ export default class TagContainer extends React.PureComponent {
 
     renderTagList(tagList) {
 
+        if (tagList.length == 0) {
+            return (
+                <View style={{flex: 1, alignItems: 'center', padding: CommonStyles.GLOBAL_PADDING}}>
+                    <Text style={CommonStyles.styles.mediumLabel}>This category is empty</Text>
+                </View>
+            );
+        }
+
         tagList.sort((t1, t2) => t1.name.localeCompare(t2.name));
 
         return (
@@ -180,6 +188,7 @@ export default class TagContainer extends React.PureComponent {
                             <View style={styles.tagContainer}>
                                 <TagDetailList
                                     tags={tagList}
+                                    errors={this.props.errors}
                                     onDelete={this.props.readOnly ? null : this.props.onPressTag}
                                 />
                             </View>

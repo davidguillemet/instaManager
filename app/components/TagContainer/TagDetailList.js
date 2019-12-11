@@ -54,7 +54,7 @@ export default class TagDetailList extends React.PureComponent {
     }
     renderListItem(item) {
         return (
-            <MediaCountItem tag={item} onTransientMediaCountUpdated={this.onTransientMediaCountUpdated} />
+            <MediaCountItem error={this.props.errors.has(item.id)} tag={item} onTransientMediaCountUpdated={this.onTransientMediaCountUpdated} />
         );
     }
     renderSwipeableListItem(item) {
@@ -223,9 +223,9 @@ const styles = StyleSheet.create({
     ascendingIndicator: {
         width: 0,
         height: 0,
-        borderLeftWidth: 8,
-        borderRightWidth: 8,
-        borderBottomWidth: 16,
+        borderLeftWidth: 7,
+        borderRightWidth: 7,
+        borderBottomWidth: 14,
         borderStyle: 'solid',
         backgroundColor: 'transparent',
         borderLeftColor: 'transparent',
@@ -242,9 +242,9 @@ const styles = StyleSheet.create({
     descendingIndicator: {
         width: 0,
         height: 0,
-        borderLeftWidth: 8,
-        borderRightWidth: 8,
-        borderTopWidth: 16,
+        borderLeftWidth: 7,
+        borderRightWidth: 7,
+        borderTopWidth: 14,
         borderStyle: 'solid',
         backgroundColor: 'transparent',
         borderLeftColor: 'transparent',

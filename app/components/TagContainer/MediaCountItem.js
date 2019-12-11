@@ -1,6 +1,7 @@
 import React from 'react';
 import {
     ActivityIndicator,
+    StyleSheet,
     View,
     Text,
     TouchableOpacity
@@ -19,6 +20,10 @@ function formatMediaCount(mediaCount) {
 }
 
 class MediaCountItemUi extends React.PureComponent {
+
+    static leftMargin = CommonStyles.GLOBAL_PADDING;
+    static indicatorWidth = 7;
+
     constructor(props) {
         super(props);
 
@@ -99,6 +104,11 @@ class MediaCountItemUi extends React.PureComponent {
     }
 
     render() {
+        
+        let itemIndicatorStyles = [styles.itemIndicator];
+        if (this.props.error == true) {
+            itemIndicatorStyles.push(styles.errorItemIndicator);
+        }
 
         return (
             <View style={
@@ -110,6 +120,7 @@ class MediaCountItemUi extends React.PureComponent {
                     paddingHorizontal: CommonStyles.GLOBAL_PADDING,
                     paddingVertical: 5
                 }}>
+                <View style={itemIndicatorStyles} />
                 <Text style={[
                     CommonStyles.styles.singleListItem,
                     CommonStyles.styles.smallLabel,
@@ -122,6 +133,20 @@ class MediaCountItemUi extends React.PureComponent {
         );
     }
 }
+
+const styles = StyleSheet.create ({
+    itemIndicator: {
+        marginRight: MediaCountItemUi.leftMargin,
+        width: MediaCountItemUi.indicatorWidth
+    },
+    errorItemIndicator: {
+        height: MediaCountItemUi.indicatorWidth,
+        borderRadius: MediaCountItemUi.indicatorWidth / 2,
+        borderColor: CommonStyles.DARK_RED,
+        borderWidth: 0,
+        backgroundColor: CommonStyles.DARK_RED,
+    }
+});   
 
 function mustRefreshMediaCount(mediaCount) {
 
