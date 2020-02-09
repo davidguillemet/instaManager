@@ -103,6 +103,7 @@ class HashTagsHomeScreenComponent extends React.Component {
 
     render() {
 
+        SplashScreen.hide();
         const { categoriesLoaded, tagsLoaded  } = this.props;
 
         if (categoriesLoaded && tagsLoaded) {

@@ -37,10 +37,12 @@ class SettingsScreen extends React.PureComponent {
         this.renderHeaderFooterSetting = this.renderHeaderFooterSetting.bind(this);
         this.renderDisplayErrorSetting = this.renderDisplayErrorSetting.bind(this);
         this.renderNewLineSeparator = this.renderNewLineSeparator.bind(this);
+        this.renderActiveProfile = this.renderActiveProfile.bind(this);
         this.setParameter = this.setParameter.bind(this);
         this.clearPublicationHeader = this.clearPublicationHeader.bind(this);
         this.clearPublicationFooter = this.clearPublicationFooter.bind(this);
         this.addFiveDots = this.addFiveDots.bind(this);
+        this.navigateToProfiles = this.navigateToProfiles.bind(this);
         
         this.state = {
             maxTagsCount: global.settingsManager.getMaxNumberOfTags(),
@@ -55,6 +57,16 @@ class SettingsScreen extends React.PureComponent {
         this.state[TAGS_FOOTER_KEY + INPUT_HEIGHT_PARAM_SUFFIX] = 0;
 
         this.settings = [
+            {
+                title: 'Profiles',
+                data: [
+                    {
+                        key: 'profiles',
+                        caption: 'Active Profile',
+                        render: this.renderActiveProfile
+                    }
+                ]
+            },
             {
                 title: 'Tags Formatting',
                 data: [
@@ -143,6 +155,21 @@ class SettingsScreen extends React.PureComponent {
             expandedSetting = settingKey;
         }
         this.setState({expandedSetting: expandedSetting});
+    }
+
+    navigateToProfiles() {
+        this.props.navigation.navigate('ProfileList');
+    }
+
+    renderActiveProfile(item) {
+        return (
+            <View>
+                <TouchableOpacity style={styles.settingsListItem} onPress={this.navigateToProfiles}>
+                    <Text style={CommonStyles.styles.mediumLabel}>{item.caption}</Text>
+                    <Ionicons style={{ color: CommonStyles.TEXT_COLOR }} name={'ios-arrow-forward'} size={CommonStyles.MEDIUM_FONT_SIZE} />
+                </TouchableOpacity>
+            </View>
+        );
     }
 
     renderHeaderFooterSetting(item) {

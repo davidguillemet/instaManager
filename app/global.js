@@ -6,12 +6,6 @@ import UserManagerClass from './managers/UserManager';
 import HashtagPersistenceManagerClass from './managers/HashtagPersistenceManager';
 import SettingsManager from './managers/SettingsManager';
 
-global.instaFacade = new InstaFacadeClass();
-global.serviceManager = new ServiceManagerClass(global.instaFacade);
-global.userManager = new UserManagerClass();
-global.hashtagPersistenceManager = new HashtagPersistenceManagerClass();
-global.settingsManager = new SettingsManager();
-
 // Editor modes
 global.CREATE_MODE = 'create';
 global.UPDATE_MODE = 'update';
@@ -20,6 +14,9 @@ global.UPDATE_MODE = 'update';
 global.TAG_ITEM = 'tag';
 global.CATEGORY_ITEM = 'category';
 global.PUBLICATION_ITEM = 'publication';
+global.PROFILE_ITEM = 'profile';
+
+global.MAIN_PROFILE_ID = '0';
 
 global.LIST_SELECTION_MODE = 'selection';
 global.LIST_EDITION_MODE = 'edition';
@@ -27,6 +24,11 @@ global.LIST_EDITION_MODE = 'edition';
 global.SINGLE_SELECTION = 'singleSelection';
 global.MULTI_SELECTION = 'multiSelection';
 
+global.instaFacade = new InstaFacadeClass();
+global.serviceManager = new ServiceManagerClass(global.instaFacade);
+global.userManager = new UserManagerClass();
+global.hashtagPersistenceManager = new HashtagPersistenceManagerClass();
+global.settingsManager = new SettingsManager();
 
 // Generate unique identifier as guid
 global.uniqueID = () => {
