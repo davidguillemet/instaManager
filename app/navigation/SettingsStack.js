@@ -6,6 +6,8 @@ import {
 import NavigationOptions from '../styles/navigation';
 
 import SettingsScreen from '../screens/SettingsScreen';
+import ProfileListScreen from '../screens/ProfileListScreen';
+import ProfileEditScreen from '../screens/ProfileEditScreen';
 
 export default SettingsStack = StackNavigator(
 {
@@ -14,7 +16,9 @@ export default SettingsStack = StackNavigator(
         navigationOptions: () => ({
             headerLeft: null
         }),
-    }
+    },
+    ProfileList: { screen: ProfileListScreen },
+    ProfileEdit: { screen: ProfileEditScreen }
 },
 {
     initialRouteName: 'SettingsHome',

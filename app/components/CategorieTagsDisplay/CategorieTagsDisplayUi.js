@@ -197,17 +197,15 @@ class CategorieTagsDisplayUi extends React.PureComponent {
         }
 
         return (
-            <View style={containerViewStyle}>
-                <TouchableOpacity onPress={() => this.onSelectAncestor(item.id)} disabled={selected} >
+                <TouchableOpacity onPress={() => this.onSelectAncestor(item.id)} disabled={selected} style={containerViewStyle}>
                     <Text style={[CommonStyles.styles.smallLabel, textStyle]}>{item.name}</Text>
+                    <Flag caption={countWithoutDuplicated} style={flagStyle}/>
+                    {
+                        duplicatedTags.size > 0 ?
+                        this.getErrorFlag() :
+                        null
+                    }
                 </TouchableOpacity>
-                <Flag caption={countWithoutDuplicated} style={flagStyle}/>
-                {
-                    duplicatedTags.size > 0 ?
-                    this.getErrorFlag() :
-                    null
-                }
-            </View>
         );
     }
 

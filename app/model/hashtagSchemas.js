@@ -1,4 +1,20 @@
 /**
+ * Profiles
+ */
+export const ProfileSchema = {
+    name: 'Profile',
+    primaryKey: 'id',
+    properties: {
+        id: 'string',
+        name: 'string',
+        description: 'string?',
+        categories: { type: 'linkingObjects', objectType: 'TagCategory', property: 'profile' },
+        tags: { type: 'linkingObjects', objectType: 'Hashtag', property: 'profile' },
+        publications: { type: 'linkingObjects', objectType: 'Publication', property: 'profile' },
+    }
+};
+
+/**
  * Hashtag hierarchical categories
  */
 export const TagCategorySchema = {
@@ -7,6 +23,7 @@ export const TagCategorySchema = {
     properties: {
         id: 'string',
         name: 'string',
+        profile: 'Profile',
         parent: 'TagCategory?',
         children: { type: 'linkingObjects', objectType: 'TagCategory', property: 'parent' },
         hashtags: { type: 'linkingObjects', objectType: 'Hashtag', property: 'categories' },
@@ -32,6 +49,7 @@ export const HashtagSchema = {
     properties: {
         id: 'string',
         name: 'string',
+        profile: 'Profile',
         categories: 'TagCategory[]',
         archived: {type: 'bool',  default: false},
         mediaCount: { type: 'MediaCount', optional: true }
@@ -48,6 +66,7 @@ export const PublicationSchema = {
     properties: {
         id: 'string',
         name: 'string?',
+        profile: 'Profile',
         description: 'string?',
         creationDate: 'date',
         tagNames: 'string[]', // contain the name of each tag (category + additional)

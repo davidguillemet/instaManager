@@ -56,6 +56,16 @@ export default class HashtagUtil {
         return this._getCategoriesFromStore();
     }
 
+    getProfiles() {
+
+        return this._getProfilesFromStore();
+    }
+
+    profileIsEmpty(profileId) {
+
+        return global.hashtagPersistenceManager.profileIsEmpty(profileId);
+    }
+
     getTagFromId(tagId) {
 
         return this._getTagsFromStore().get(tagId);
@@ -110,6 +120,11 @@ export default class HashtagUtil {
         return this._getPublicationsFromStore().has(pubId);
     }
 
+    getProfileFromId(profileId) {
+
+        return this._getProfilesFromStore().get(profileId);
+    }
+
     getAncestorCategories(catId) {
 
         let ancestors = [];
@@ -141,6 +156,11 @@ export default class HashtagUtil {
         return global.hashtagPersistenceManager.searchItem(itemType, filter);
     }
 
+    searchProfile(filter) {
+
+        return global.hashtagPersistenceManager.searchProfile(filter);
+    }
+
     getItemTypeCaption(itemType) {
         
         switch (itemType) {
@@ -150,6 +170,8 @@ export default class HashtagUtil {
                 return 'Category';
             case global.PUBLICATION_ITEM:
                 return 'Publication';
+            case global.PROFILE_ITEM:
+                return 'Profile';
             default:
                 return '<unkonwn item type';
         }
@@ -330,5 +352,10 @@ export default class HashtagUtil {
     _getPublicationsFromStore() {
 
         return this.reduxStore.getState().get('publications');
-    } 
+    }
+
+    _getProfilesFromStore() {
+
+        return this.reduxStore.getState().get('profiles');
+    }
 }

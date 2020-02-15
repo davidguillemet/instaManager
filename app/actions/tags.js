@@ -1,4 +1,3 @@
-import { launchControls } from './control';
 import { Map } from 'immutable';
 
 export const TAGS_LOADED = 'TAGS_LOADED';
@@ -12,24 +11,10 @@ export const TagFilters = {
     SHOW_ORPHANS: 'SHOW_ORPHANS'
   }
 
-export function loadTagsIfNeeded() {
-    return (dispatch, getState) => {
-        if (getState().get('tagsLoaded') === false) {
-          return dispatch(createLoadTagsAction())
-        }
-      }
-}
-
-function createLoadTagsAction() {
-    return dispatch => {
-        return global.hashtagPersistenceManager.open()
-        .then(() => {
-            const hashtags = global.hashtagPersistenceManager.getHashtags();
-            const immutableTagsMap = Map(hashtags.map(item => [item.id, item]));
-            dispatch(createTagsLoadedAction(immutableTagsMap));
-            dispatch(launchControls());
-        })
-    }
+export function loadHashtags() {
+    const hashtags = global.hashtagPersistenceManager.getHashtags();
+    const immutableTagsMap = Map(hashtags.map(item => [item.id, item]));
+    return createTagsLoadedAction(immutableTagsMap);
 }
 
 function createTagsLoadedAction(tagsMap) {

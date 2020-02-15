@@ -14,6 +14,7 @@ import RootStack from './navigation/Navigation';
 import { Provider } from 'react-redux';
 import configureStore from './store';
 import HashtagUtil from './managers/HashtagUtil';
+import { loadProfiles } from './actions'
 
 export default class App extends React.Component {
 
@@ -34,6 +35,7 @@ export default class App extends React.Component {
     if (this.state.initialized) {
       const store = configureStore();
       global.hashtagUtil = new HashtagUtil(store);
+      store.dispatch(loadProfiles());
       return (
         <View style={{flex: 1}}>
           <StatusBar barStyle="light-content" />

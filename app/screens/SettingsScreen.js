@@ -37,10 +37,12 @@ class SettingsScreen extends React.PureComponent {
         this.renderHeaderFooterSetting = this.renderHeaderFooterSetting.bind(this);
         this.renderDisplayErrorSetting = this.renderDisplayErrorSetting.bind(this);
         this.renderNewLineSeparator = this.renderNewLineSeparator.bind(this);
+        this.renderActiveProfile = this.renderActiveProfile.bind(this);
         this.setParameter = this.setParameter.bind(this);
         this.clearPublicationHeader = this.clearPublicationHeader.bind(this);
         this.clearPublicationFooter = this.clearPublicationFooter.bind(this);
         this.addFiveDots = this.addFiveDots.bind(this);
+        this.navigateToProfiles = this.navigateToProfiles.bind(this);
         
         this.state = {
             maxTagsCount: global.settingsManager.getMaxNumberOfTags(),
@@ -55,6 +57,16 @@ class SettingsScreen extends React.PureComponent {
         this.state[TAGS_FOOTER_KEY + INPUT_HEIGHT_PARAM_SUFFIX] = 0;
 
         this.settings = [
+            {
+                title: 'Profiles',
+                data: [
+                    {
+                        key: 'profiles',
+                        caption: 'Active Profile',
+                        render: this.renderActiveProfile
+                    }
+                ]
+            },
             {
                 title: 'Tags Formatting',
                 data: [
@@ -143,6 +155,30 @@ class SettingsScreen extends React.PureComponent {
             expandedSetting = settingKey;
         }
         this.setState({expandedSetting: expandedSetting});
+    }
+
+    navigateToProfiles() {
+        this.props.navigation.navigate('ProfileList');
+    }
+
+    renderActiveProfile(item) {
+        return (
+            <View>
+                <TouchableOpacity style={styles.settingsListItem} onPress={this.navigateToProfiles}>
+                    <Text style={CommonStyles.styles.mediumLabel}>{item.caption}</Text>
+                    <View style={[styles.settingsListItem, {justifyContent: 'flex-end',}]}>
+                        <Text style={
+                            [
+                                CommonStyles.styles.mediumLabel,
+                                {marginRight: 20, fontStyle: 'italic'}
+                            ]}>
+                            {this.props.activeProfile.name}
+                        </Text>
+                        <Ionicons style={{ color: CommonStyles.TEXT_COLOR }} name={'ios-arrow-forward'} size={CommonStyles.MEDIUM_FONT_SIZE} />
+                    </View>
+                </TouchableOpacity>
+            </View>
+        );
     }
 
     renderHeaderFooterSetting(item) {
@@ -272,7 +308,7 @@ class SettingsScreen extends React.PureComponent {
             <KeyboardAvoidingView style={[CommonStyles.styles.standardPage, {padding: 0}]} contentContainerStyle={[CommonStyles.styles.standardPage, {padding: 0}]} behavior={'position'} enabled>
                <SectionList
                     sections={this.settings}
-                    extraData={this.state}
+                    extraData={this.props}
                     renderSectionHeader={this.renderSection}
                     renderItem={this.renderSetting}
                     ItemSeparatorComponent={ListItemSeparator}
@@ -294,7 +330,16 @@ const mapDispatchToProps = dispatch => {
     }
 }
 
-export default connect(null, mapDispatchToProps)(SettingsScreen);
+const mapStateToProps = (state, ownProps) => {
+    const activeProfileId = global.settingsManager.getActiveProfile();
+    const activeProfile = global.hashtagUtil.getProfiles().get(activeProfileId);
+    return {
+        activeProfile: activeProfile
+    }
+}
+
+
+export default connect(mapStateToProps, mapDispatchToProps)(SettingsScreen);
 
 const styles = StyleSheet.create({
     settingsListItem: {

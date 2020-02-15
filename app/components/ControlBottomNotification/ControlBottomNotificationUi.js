@@ -1,9 +1,5 @@
 import React from 'react';
 
-import {
-    View
-} from 'react-native';
-
 import { NotificationType, BottomNotification } from '../BottomNotification';
 
 export default class ControlBottomNotificationUi extends React.PureComponent {

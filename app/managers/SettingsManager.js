@@ -1,29 +1,32 @@
 import AsyncStorage from '@react-native-community/async-storage';
 
-const defaultSettings = {
-    publicationFilter: {
-        type: 'period',         // 'all', 'period' 
-        periodUnit: 'month',    // 'year', 'month', 'day'
-        periodCount: 3,
-        referenceDate: null     // today...if not provided        
-    },
-    publicationHeader: '',
-    publicationFooter: '',
-    maximumNumberOfTags: 30,
-    mediaCountRefreshPeriod: {
-        periodCount: 1,
-        periodUnit: 'week'      // 'day', 'week', 'month', 'year'
-    },
-    displayErrors: true,
-    newLineSeparator: true
-}
-
 const settingsStorageKeyName = '@TagManager:settings';
 
 export default class SettingsManager {
 
     /* Returns a Promise */
     initialize() {
+
+        // Define default settings here in order for global.MAIN_PROFILE_ID being defined
+        const defaultSettings = {
+            publicationFilter: {
+                type: 'period',         // 'all', 'period' 
+                periodUnit: 'month',    // 'year', 'month', 'day'
+                periodCount: 3,
+                referenceDate: null     // today...if not provided        
+            },
+            publicationHeader: '',
+            publicationFooter: '',
+            maximumNumberOfTags: 30,
+            mediaCountRefreshPeriod: {
+                periodCount: 1,
+                periodUnit: 'week'      // 'day', 'week', 'month', 'year'
+            },
+            displayErrors: true,
+            newLineSeparator: true,
+            activeProfile: global.MAIN_PROFILE_ID
+        }
+
         return AsyncStorage.getItem(settingsStorageKeyName).then(serializedSettingsFromStorage => {
             if (serializedSettingsFromStorage == null) {
                 this.settings = defaultSettings;
@@ -45,6 +48,9 @@ export default class SettingsManager {
         await AsyncStorage.setItem(settingsStorageKeyName, settingsSerialized);
     }
 
+    getActiveProfile() {
+        return this.settings.activeProfile;
+    }
     getMaxNumberOfTags() {
         return this.settings.maximumNumberOfTags;
     }
@@ -90,5 +96,8 @@ export default class SettingsManager {
     }
     setNewLineSeparator(value) {
         this.setSettings('newLineSeparator', value);
+    }
+    setActiveProfile(value) {
+        this.setSettings('activeProfile', value);
     }
 }
