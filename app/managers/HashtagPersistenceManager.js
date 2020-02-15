@@ -46,7 +46,7 @@ export default class HashtagPersistenceManagerClass {
                     realm.write(() => {
                         // We create the main profile and migrate all entities here since
                         // it seems crrating an entity (main profile) during migration fails...
-                        const mainProfile = realm.create(profileSchema, {id: global.MAIN_PROFILE_ID, name: 'main'});
+                        const mainProfile = realm.create(profileSchema, {id: global.MAIN_PROFILE_ID, name: 'main', description: 'Main profile'});
                         // attach all objects to this main profile
                         // - Categories
                         const newCategories = realm.objects(categorySchema);
@@ -215,7 +215,7 @@ export default class HashtagPersistenceManagerClass {
                 profileDelete.publications.length == 0) {
                 this.realm.delete(profileDelete);
             } else {
-                throw Error(`The profile ${profileDelete.name} is not empty and cannot be deleted`);
+                throw Error(`The profile '${profileDelete.name}' is not empty and cannot be deleted`);
             }
         });
     }
@@ -484,7 +484,10 @@ export default class HashtagPersistenceManagerClass {
         return {
             id: item.id,
             name: item.name,
-            description: item.description
+            description: item.description,
+            tagsCount: item.tags.length,
+            categoriesCount: item.categories.length,
+            publicationsCount: item.publications.length
         }
     }
 
@@ -511,15 +514,6 @@ export default class HashtagPersistenceManagerClass {
             categoryName: item.categoryName,
             archived: item.archived
         }
-    }
-
-    _getProfileProxyFromRealm(item) {
-
-        return {
-            id: item.id,
-            name: item.name,
-            description: item.description
-        };
     }
 
     _getCatProxyFromRealm(item) {

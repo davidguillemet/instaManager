@@ -33,6 +33,7 @@ export default class ProfileListScreen extends React.PureComponent {
         this.keyExtractor = this.keyExtractor.bind(this);
         this.renderListItem = this.renderListItem.bind(this);
         this.onAddProfile = this.onAddProfile.bind(this);
+        this.onEditProfile = this.onEditProfile.bind(this);
         this.setStateProxy = this.setStateProxy.bind(this);
 
         this.state = {
@@ -48,7 +49,14 @@ export default class ProfileListScreen extends React.PureComponent {
     }
 
     onAddProfile() {
-        this.props.navigation.navigate('ProfileEdit');
+        this.onEditProfile(null);
+    }
+
+    onEditProfile(profileId) {
+        const params = {
+            profileId: profileId,
+        };
+        this.props.navigation.navigate('ProfileEdit', params);
     }
 
     keyExtractor(item, index) {
@@ -62,10 +70,10 @@ export default class ProfileListScreen extends React.PureComponent {
     renderListItem({item}) {
         return (
             <ProfileListItem
-                id={item.id}
-                name={item.name}
+                {...item}
                 selected={this.props.activeProfileId == item.id}
                 onDeleteProfile={this.props.onDeleteProfile}
+                onEditProfile={this.onEditProfile}
                 setParentState={this.setStateProxy}
                 onPress={this.props.onSetActiveProfile}
             />
