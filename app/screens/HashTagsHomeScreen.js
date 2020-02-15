@@ -1,11 +1,10 @@
-import React, { Component } from 'react';
+import React  from 'react';
 import {
   StyleSheet,
   View,
   Text,
   SectionList,
   TouchableOpacity,
-  Alert
 } from 'react-native';
 
 import SplashScreen from 'react-native-splash-screen'
@@ -19,12 +18,9 @@ import CommonStyles from '../styles/common';
 import withControlStatus from '../components/WithControlStatus';
 import ListItemSeparator from '../components/ListItemSeparator';
 
-import { loadCategoriesIfNeeded, loadTagsIfNeeded } from '../actions';
-
 class HashTagsHomeScreenComponent extends React.Component {
 
     static navigationOptions = ({ navigation }) => {
-        const params = navigation.state.params || {};
         return {
             headerTitle: 'Hashtag Management'
         }   
@@ -32,12 +28,6 @@ class HashTagsHomeScreenComponent extends React.Component {
 
     constructor(props) {
         super(props);
-    }
-
-    componentDidMount() {
-        const { dispatch } = this.props
-        dispatch(loadCategoriesIfNeeded());
-        dispatch(loadTagsIfNeeded());
     }
     
     configureMenus() {
@@ -103,10 +93,9 @@ class HashTagsHomeScreenComponent extends React.Component {
 
     render() {
 
-        SplashScreen.hide();
-        const { categoriesLoaded, tagsLoaded  } = this.props;
+        const { profilesLoaded  } = this.props;
 
-        if (categoriesLoaded && tagsLoaded) {
+        if (profilesLoaded) {
             this.configureMenus();
             SplashScreen.hide();
             return(
@@ -151,8 +140,7 @@ const styles = StyleSheet.create(
 
 const mapStateToProps = state => {
     return {
-        tagsLoaded: state.get('tagsLoaded'),
-        categoriesLoaded: state.get('categoriesLoaded')
+        profilesLoaded: state.get('profilesLoaded')
     }
 }
 

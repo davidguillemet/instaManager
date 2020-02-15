@@ -1,4 +1,3 @@
-import { launchControls } from './control';
 import { Map } from 'immutable';
 
 export const CATEGORIES_LOADED = 'CATEGORIES_LOADED';
@@ -6,23 +5,10 @@ export const ADD_CATEGORY = 'ADD_CATEGORY';
 export const UPDATE_CATEGORY = 'UPDATE_CATEGORY';
 export const DELETE_CATEGORY = 'DELETE_CATEGORY';
 
-export function loadCategoriesIfNeeded() {
-    return (dispatch, getState) => {
-        if (getState().get('categoriesLoaded') === false) {
-          return dispatch(createLoadCategoriesAction())
-        }
-      }
-}
-
-function createLoadCategoriesAction() {
-    return dispatch => {
-        return global.hashtagPersistenceManager.getCategories()
-        .then((categories) => {
-            const immutableMap = Map(categories.map(item => [item.id, item]));
-            dispatch(createCategoriesLoadedAction(immutableMap));
-            dispatch(launchControls());
-        })
-    }
+export function loadCategories() {
+    const categories = global.hashtagPersistenceManager.getCategories();
+    const immutableMap = Map(categories.map(item => [item.id, item]));
+    return createCategoriesLoadedAction(immutableMap);
 }
 
 export function createCategoriesLoadedAction(map) {

@@ -1,7 +1,7 @@
 import { connect } from 'react-redux';
+import { Alert } from 'react-native';
 import { createMultiUpdateAction } from '../../actions';
 import HashtagCategoryEditScreenUi from './HashtagCategoryEditScreenUi';
-
 
 const itemTypeSelector = (props) => props.navigation.getParam('itemType', null);
 const itemIdSelector = (props) => props.navigation.getParam('itemId', null);

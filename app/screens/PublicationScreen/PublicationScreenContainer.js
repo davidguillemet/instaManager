@@ -106,7 +106,7 @@ const mapDispatchToProps = dispatch => {
             dispatch(createDeletePublicationAction(pubId));
         }
     }
-}
+ }
 
 const PublicationScreen = compose(
         connect(mapStateToProps, mapDispatchToProps),

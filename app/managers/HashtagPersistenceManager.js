@@ -37,23 +37,6 @@ export default class HashtagPersistenceManagerClass {
                 schemaVersion: 4,
                 migration: (oldRealm, newRealm) => {
                     if (oldRealm.schemaVersion < 4) {
-                        const mainProfile = newRealm.create(profileSchema, {id: global.MAIN_PROFILE_ID, name: 'main'});
-                        // attach all objects to this main profile
-                        // - Categories
-                        const newCategories = newRealm.objects(categorySchema);
-                        for (let i = 0; i < newCategories.length; i++) {
-                            newCategories[i].profile = mainProfile;
-                        }
-                        // - Tags
-                        const newTags = newRealm.objects(hashtagSchema);
-                        for (let i = 0; i < newTags.length; i++) {
-                            newTags[i].profile = mainProfile;
-                        }
-                        // - Publications
-                        const newPublications = newRealm.objects(publicationSchema);
-                        for (let i = 0; i < newPublications.length; i++) {
-                            newPublications[i].profile = mainProfile;
-                        }
                     }
                 }
             }).then(realm => {
@@ -61,7 +44,25 @@ export default class HashtagPersistenceManagerClass {
                 const mainProfile = realm.objectForPrimaryKey(profileSchema, global.MAIN_PROFILE_ID);
                 if (mainProfile == null) {
                     realm.write(() => {
-                        realm.create(profileSchema, {id: global.MAIN_PROFILE_ID, name: 'main'});
+                        // We create the main profile and migrate all entities here since
+                        // it seems crrating an entity (main profile) during migration fails...
+                        const mainProfile = realm.create(profileSchema, {id: global.MAIN_PROFILE_ID, name: 'main'});
+                        // attach all objects to this main profile
+                        // - Categories
+                        const newCategories = realm.objects(categorySchema);
+                        for (let i = 0; i < newCategories.length; i++) {
+                            newCategories[i].profile = mainProfile;
+                        }
+                        // - Tags
+                        const newTags = realm.objects(hashtagSchema);
+                        for (let i = 0; i < newTags.length; i++) {
+                            newTags[i].profile = mainProfile;
+                        }
+                        // - Publications
+                        const newPublications = realm.objects(publicationSchema);
+                        for (let i = 0; i < newPublications.length; i++) {
+                            newPublications[i].profile = mainProfile;
+                        }
                     });
                 }
                 this.realm = realm;
@@ -86,6 +87,11 @@ export default class HashtagPersistenceManagerClass {
 
             let profiles = this.realm.objects(profileSchema);
 
+            const activeProfile = this.realm.objectForPrimaryKey(profileSchema, global.settingsManager.getActiveProfile());
+            if (activeProfile == null) {
+                global.settingsManager.setActiveProfile(global.MAIN_PROFILE_ID);
+            }
+
             return profiles.map((item, index, array) => {
                 return this._getProfileProxyFromRealm(item);
             });
@@ -98,16 +104,12 @@ export default class HashtagPersistenceManagerClass {
 
     getCategories() {
         
-        return this.open()
-        .then(() => {
+        const activeProfile = this._getActiveProfileRealmItem();
+        const categories = activeProfile.categories;
 
-            const activeProfile = this._getActiveProfileRealmItem();
-            const categories = activeProfile.categories;
-
-            return categories.map((item, index, array) => {
-                return this._getCatProxyFromRealm(item);
-            });
-        });       
+        return categories.map((item, index, array) => {
+            return this._getCatProxyFromRealm(item);
+        });
     }
 
     getHashtags() {
@@ -121,22 +123,19 @@ export default class HashtagPersistenceManagerClass {
     }
 
     getPublications() {
-        
-        return this.open()
-        .then(() => {
 
-            const publicationFilter = global.settingsManager.getPublicationFilter();
+        const publicationFilter = global.settingsManager.getPublicationFilter();
 
-            const activeProfile = this._getActiveProfileRealmItem();
-            let publications = activeProfile.publications;
-            if (publicationFilter.type != 'all') {
-                publications = publications.filtered('creationDate > $0', Utils.getPivotDate(publicationFilter));
-            }
+        const activeProfile = this._getActiveProfileRealmItem();
 
-            return publications.map(item => {
-                return this._getPubProxyFromRealm(item);
-            });
-        });       
+        let publications = activeProfile.publications;
+        if (publicationFilter.type != 'all') {
+            publications = publications.filtered('creationDate > $0', Utils.getPivotDate(publicationFilter));
+        }
+
+        return publications.map(item => {
+            return this._getPubProxyFromRealm(item);
+        });
     }
 
     getPublicationFromId(pubId) {
@@ -144,7 +143,18 @@ export default class HashtagPersistenceManagerClass {
     }
 
     getTotalPublicationsCount() {
-        return this.realm.objects(publicationSchema).length;
+        return this._getActiveProfileRealmItem().publications.length;
+    }
+
+    saveProfile(profile, update) {
+
+        let updatedProfile = null;
+
+        this.realm.write(() => {
+            updatedProfile = this.realm.create(profileSchema, { id: profile.id, name: profile.name, description: profile.description }, update);
+        });
+
+        return this._getProfileProxyFromRealm(updatedProfile);
     }
 
     saveTag(tag, update) {
@@ -166,7 +176,13 @@ export default class HashtagPersistenceManagerClass {
             
             // Create/Update the tag first
             const parentCategories = tag.categories.map(catId => this.realm.objectForPrimaryKey(categorySchema, catId));
-            updatedTag = this.realm.create(hashtagSchema, { id: tag.id, name: tag.name, categories: parentCategories }, update);
+            const realmTag = {
+                id: tag.id,
+                name: tag.name,
+                profile: this._getActiveProfileRealmItem(),
+                categories: parentCategories
+            };
+            updatedTag = this.realm.create(hashtagSchema, realmTag, update);
 
             // Categories to modify are catgories which are not in both prev and new sets
             let categoriesToUpdate = this._getSetDifferences(prevCategories, newCategories);
@@ -187,6 +203,20 @@ export default class HashtagPersistenceManagerClass {
         this.realm.write(() => {
             const tag = this.realm.objectForPrimaryKey(hashtagSchema, tagId);
             tag.mediaCount = mediaCount;
+        });
+    }
+
+    deleteProfile(profileId) {
+
+        this.realm.write(() => {
+            const profileDelete = this.realm.objectForPrimaryKey(profileSchema, profileId);
+            if (profileDelete.categories.length == 0 &&
+                profileDelete.tags.length == 0 &&
+                profileDelete.publications.length == 0) {
+                this.realm.delete(profileDelete);
+            } else {
+                throw Error(`The profile ${profileDelete.name} is not empty and cannot be deleted`);
+            }
         });
     }
 
@@ -239,8 +269,15 @@ export default class HashtagPersistenceManagerClass {
                 }
             }
 
+            const realmCategory = {
+                id: categoryToSave.id,
+                name: categoryToSave.name,
+                parent: parent,
+                profile: this._getActiveProfileRealmItem()
+            }
+
             // We cannot update hashtags here since this property is of type LinkingObjects
-            let updatedCategory = this.realm.create(categorySchema, { id: categoryToSave.id, name: categoryToSave.name, parent: parent }, update);
+            let updatedCategory = this.realm.create(categorySchema, realmCategory, update);
 
             // add previous parent and new parent in the updated cats if it has changed
             if (prevParentId != categoryToSave.parent) {
@@ -367,10 +404,20 @@ export default class HashtagPersistenceManagerClass {
 
     searchItem(itemType, filter) {
 
-        const searchResults = this.realm.objects(this._getRealmTypeFromItemType(itemType)).filtered('name like[c] $0', filter);
+        const activeProfileId = global.settingsManager.getActiveProfile();
+        const searchResults = this.realm.objects(this._getRealmTypeFromItemType(itemType)).filtered('profile.id = $0 and name like[c] $1', activeProfileId, filter);
         
         return searchResults.map((item, index, array) => {
             return this._getItemProxyFromRealm(itemType, item);
+        });    
+    }
+    
+    searchProfile(filter) {
+
+        const searchResults = this.realm.objects(profileSchema).filtered('name like[c] $0', filter);
+        
+        return searchResults.map((item, index, array) => {
+            return this._getItemProxyFromRealm(global.PROFILE_ITEM, item);
         });    
     }
 
@@ -384,6 +431,7 @@ export default class HashtagPersistenceManagerClass {
                 const realmPublication = {
                     id: rawPublication.id,
                     name: rawPublication.name,
+                    profile: this._getActiveProfileRealmItem(),
                     description: rawPublication.description,
                     creationDate: rawPublication.creationDate,
                     tagNames: rawPublication.tagNames,
@@ -436,10 +484,7 @@ export default class HashtagPersistenceManagerClass {
         return {
             id: item.id,
             name: item.name,
-            description: item.description,
-            tags: item.tags.map((tag, index, array) => tag.id),
-            categories: item.categories.map((category, index, array) => category.id),
-            publications: item.publications.map((publication, index, array) => publication.id),
+            description: item.description
         }
     }
 

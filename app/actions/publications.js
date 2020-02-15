@@ -9,26 +9,22 @@ export const SET_PUBLICATION_FILTER = 'SET_PUBLICATION_FILTER';
 export function loadPublicationsIfNeeded() {
     return (dispatch, getState) => {
         if (getState().get('publicationsLoaded') === false) {
-          dispatch(createLoadPublicationsAction())
+            dispatch(createLoadPublicationsAction())
         }
-      }
+    }
 }
 
 export function forceLoadPublications() {
     return (dispatch, getState) => {
         dispatch(createPublicationsLoadingAction());
         dispatch(createLoadPublicationsAction())
-      }
+    }
 }
 
 function createLoadPublicationsAction() {
-    return dispatch => {
-        return global.hashtagPersistenceManager.getPublications()
-        .then((publications) => {
-            const immutableMap = Map(publications.map(item => [item.id, item]));
-            dispatch(createPublicationsLoadedAction(immutableMap));
-        })
-    }
+    const publications = global.hashtagPersistenceManager.getPublications();
+    const immutableMap = Map(publications.map(item => [item.id, item]));
+    return createPublicationsLoadedAction(immutableMap);
 }
 
 export function createPublicationsLoadingAction() {

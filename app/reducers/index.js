@@ -19,6 +19,9 @@ import {
     SET_TAG_FILTER,
     SET_PUBLICATION_FILTER,
     SET_DISPLAY_ERRORS,
+    PROFILES_LOADED,
+    UPDATE_PROFILE,
+    DELETE_PROFILE,
     TagFilters,
 } from './../actions';
 
@@ -128,6 +131,15 @@ function tagFilterReducer(state = TagFilters.SHOW_ALL, action) {
     }
 }
 
+function profiesLoadingReducer(state = false, action) {
+    switch (action.type) {
+        case PROFILES_LOADED:
+            return true;
+        default:
+            return state;
+    }
+}
+
 function tagsLoadingReducer(state = false, action) {
     switch (action.type) {
         case TAGS_LOADED:
@@ -217,11 +229,30 @@ function settingsReducer(state = Map(global.settingsManager.getSettings()), acti
     }
 }
 
+function profilesReducer(state = Map(), action) {
+
+    switch (action.type) {
+        case PROFILES_LOADED:
+            return action.profiles;
+
+        case UPDATE_PROFILE:
+            return state.set(action.profile.id, action.profile);
+
+        case DELETE_PROFILE:
+            return state.delete(action.profileId);
+
+        default:
+            return state;
+    }
+}
+
 export const rootReducer = combineReducers({
+    profilesLoaded: profiesLoadingReducer,
     tagsLoaded: tagsLoadingReducer,
     categoriesLoaded: categoriesLoadingReducer,
     publicationsLoaded: publicationsLoadingReducer,
     controls: controlsReducer,
+    profiles: profilesReducer,
     categories: categoriesReducer,
     tags: tagReducer,
     tagFilter: tagFilterReducer,
