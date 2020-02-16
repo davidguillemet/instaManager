@@ -4,12 +4,10 @@ import {
     Animated,
     Keyboard,
     ScrollView,
-    StyleSheet,
-    Text,
-    TextInput,
     View
 } from 'react-native';
 
+import Form from '../../components/Form';
 import CommonStyles from '../../styles/common';
 import CustomButton from '../../components/CustomButton';
 
@@ -17,13 +15,21 @@ export default class ProfileEditScreenUi extends React.Component {
 
     constructor(props) {
         super(props);
+
         this.state = {
             dirty: false,
             profileName: this.props.profileName,
-            profileDesc: this.props.profileDesc
+            profileDesc: this.props.profileDesc,
+            setAsActiveProfile: false
         };
+
+        if (this.props.editorMode == global.CREATE_MODE || this.props.profileId == this.props.activeProfileId) {
+            this.state.setAsActiveProfile = true;
+        }
+
         this.onChangeProfileName = this.onChangeProfileName.bind(this);
         this.onChangeProfileDesc = this.onChangeProfileDesc.bind(this);
+        this.onChangeSetAsActiveProfile = this.onChangeSetAsActiveProfile.bind(this);
         this.onSaveItem = this.onSaveItem.bind(this);
         this.onQuit = this.onQuit.bind(this);
         this.isDirty = this.isDirty.bind(this);
@@ -52,10 +58,14 @@ export default class ProfileEditScreenUi extends React.Component {
         const profileToSave = {
             id: this.props.profileId,
             name: profileName,
-            description: profileDesc
+            description: profileDesc,
         };
 
-        this.props.onSaveProfile(profileToSave, this.props.editorMode === global.UPDATE_MODE);
+        let setAsActiveProfile = false;
+        if (this.props.editorMode == global.CREATE_MODE || this.props.profileId != this.props.activeProfileId) {
+            setAsActiveProfile = this.state.setAsActiveProfile;
+        }
+        this.props.onSaveProfile(profileToSave, this.props.editorMode === global.UPDATE_MODE, setAsActiveProfile);
         this.onQuit();
     }
     
@@ -80,7 +90,7 @@ export default class ProfileEditScreenUi extends React.Component {
             } else {
 
                 // Edition mode = error as soon as a profile with another id exists with the same name in the database
-                for (let item of itemsWithSameName) {
+                for (let item of profilesWithSameName) {
                     if (item.id !== this.props.profileId) {
                         nameAlreadyExists = true;
                         break;
@@ -110,6 +120,12 @@ export default class ProfileEditScreenUi extends React.Component {
         this.setState({
             dirty: true,
             profileDesc: text
+        });
+    }
+
+    onChangeSetAsActiveProfile(value) {
+        this.setState({
+            setAsActiveProfile: value
         });
     }
     
@@ -147,25 +163,31 @@ export default class ProfileEditScreenUi extends React.Component {
                                     padding: CommonStyles.GLOBAL_PADDING
                                 }
                             ]} indicatorStyle={'white'}>
-                    <View style={styles.parameterContainerView}>
-                        <Text style={[CommonStyles.styles.smallLabel, styles.parameterLabel, {fontWeight: 'bold'}]}>Name *</Text>
-                        <TextInput
-                            defaultValue={this.state.itemName}
-                            autoFocus={this.props.editorMode == global.CREATE_MODE}
-                            keyboardType='default'
-                            style={styles.parameterInput}
-                            placeholder={`Enter a Profile name`}
-                            selectionColor={CommonStyles.TEXT_COLOR}
-                            placeholderTextColor={CommonStyles.PLACEHOLDER_COLOR}
-                            clearButtonMode={'always'}
-                            onChangeText={this.onChangeProfileName}
-                            autoCapitalize='none'
-                            returnKeyType={'done'}
-                            textContentType={'none'}
-                            autoCorrect={false}
-                            blurOnSubmit={true}
-                        />
-                    </View>
+                    <Form parameters={[
+                        {
+                            name: 'Profile Name',
+                            type: 'text',
+                            mandatory: true,
+                            value: this.state.profileName,
+                            focus: true,
+                            placeholder: `Enter a Profile name`,
+                            onChange: this.onChangeProfileName
+                        },
+                        {
+                            name: 'Profile Description',
+                            type: 'text',
+                            value: this.state.profileDesc,
+                            placeholder: `Enter a Profile description`,
+                            onChange: this.onChangeProfileDesc
+                        },
+                        {
+                            name: 'Set as active profile',
+                            type: 'boolean',
+                            value: this.state.setAsActiveProfile,
+                            onChange: this.onChangeSetAsActiveProfile,
+                            disabled: this.props.profileId == this.props.activeProfileId
+                        }
+                    ]}/>
                 </ScrollView>
                 <Animated.View style={{
                             backgroundColor: CommonStyles.SEPARATOR_COLOR,
@@ -188,34 +210,4 @@ export default class ProfileEditScreenUi extends React.Component {
     }
 }
 
-const styles = StyleSheet.create(
-{
-    parameterContainerView: {
-        flexDirection: 'column'
-    },
-    parameterSeparator: {
-        backgroundColor: CommonStyles.SEPARATOR_COLOR,
-        height: 1,
-        marginBottom: CommonStyles.GLOBAL_PADDING
-    },
-    parameterInput: {
-        flex: 1,
-        fontSize: CommonStyles.MEDIUM_FONT_SIZE,
-        color: CommonStyles.KPI_COLOR,
-        padding: CommonStyles.GLOBAL_PADDING
-    },
-    parameterLabel: {
-        flex: 1,
-        paddingLeft: CommonStyles.GLOBAL_PADDING,
-    },
-    parentParameter: {
-        flex: 1,
-        fontSize: CommonStyles.MEDIUM_FONT_SIZE,
-        color: CommonStyles.PLACEHOLDER_COLOR,
-        padding: CommonStyles.GLOBAL_PADDING
-    },
-    iconSelect: {
-        color: CommonStyles.PLACEHOLDER_COLOR,
-    }
-});
     

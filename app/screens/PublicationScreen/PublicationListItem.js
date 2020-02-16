@@ -80,7 +80,7 @@ class PublicationListItemUi extends React.PureComponent {
                 itemId={this.props.id} 
                 height={70}
                 rightAction={{ caption: 'Delete', icon: 'ios-trash', color: CommonStyles.DELETE_COLOR, callback: this._onDeleteTag }}
-                leftAction={{ caption: 'Copy', icon: 'ios-archive', color: CommonStyles.ARCHIVE_COLOR, callback: this._onCopyTag }}
+                leftAction={{ caption: 'Copy', icon: 'ios-copy', color: CommonStyles.DARK_GREEN, callback: this._onCopyTag }}
                 onSwipeStart={() => this.props.setParentState({isSwiping: true})}
                 onSwipeRelease={() => this.props.setParentState({isSwiping: false})}
             >

@@ -10,6 +10,9 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 
 import CommonStyles from '../styles/common';
 
+const LEFT_ACTION = "LEFT-ACTION";
+const RIGHT_ACTION = "RIGHT-ACTION";
+
 /**
  * expected properties:
  * - itemId = the identifier of the item to render
@@ -55,32 +58,47 @@ export default class SwipeableListViewItem extends React.Component {
     getRightContent() {
         const {rightActionActivated} = this.state;
         const {caption, icon, color} = this.props.rightAction;
-        return this.getSwipeContent(rightActionActivated, caption, icon, color);
+        return this.getSwipeContent(rightActionActivated, caption, icon, color, RIGHT_ACTION);
     }
 
     getLeftContent() {
         const {leftActionActivated} = this.state;
         const {caption, icon, color } = this.props.leftAction;
-        return this.getSwipeContent(leftActionActivated, caption, icon, color);
+        return this.getSwipeContent(leftActionActivated, caption, icon, color, LEFT_ACTION);
     }
 
-    getSwipeContent(activated, caption, icon, color) {
+    getIconElement(icon) {
+        return icon ? <Ionicons key={"icon"} name={icon} style={[CommonStyles.styles.swipeButtonIcon]} /> : null;
+    }
+
+    getTextElement(caption, activated) {
+        return activated && caption ? <Text key={"text"} style={CommonStyles.styles.smallLabel}>{caption}</Text> : null;
+    }
+
+    getSwipeContent(activated, caption, icon, color, actionType) {
+        
+        let customStyle = styles.swipeActionLeft;
+        let actionElements = [];
+        actionElements.push(this.getTextElement(caption, activated));
+        actionElements.push(this.getIconElement(icon));
+
+        if (actionType == RIGHT_ACTION) {
+            actionElements = actionElements.reverse();
+            customStyle = styles.swipeActionRight;
+        }
+
         return (
             <View style={[
+                    customStyle,
                     styles.swipeAction,
-                    { backgroundColor: activated ? color : CommonStyles.DEACTIVATED_SWIPE_ACTION_COLOR, overflow: 'hidden', height: this.props.height}
+                    {
+                        backgroundColor: activated ? color : CommonStyles.DEACTIVATED_SWIPE_ACTION_COLOR,
+                        overflow: 'hidden',
+                        height: this.props.height
+                    }
                 ]}
             >
-                {   
-                    icon ?
-                    <Ionicons name={icon} style={[CommonStyles.styles.swipeButtonIcon]} /> :
-                    null
-                }
-                { 
-                    activated && caption ?
-                    <Text style={CommonStyles.styles.smallLabel}>{caption}</Text> :
-                    null
-                }
+                { actionElements }
             </View>
         );
     }
@@ -138,6 +156,14 @@ const styles = StyleSheet.create(
     swipeAction: {
         flexDirection: 'row',
         alignItems: 'center',
+    },
+    swipeActionLeft: {
+        justifyContent: 'flex-end',
+        paddingRight: CommonStyles.GLOBAL_PADDING*2
+    },
+    swipeActionRight: {
+        justifyContent: 'flex-start',
         paddingLeft: CommonStyles.GLOBAL_PADDING*2
     }
+
 });

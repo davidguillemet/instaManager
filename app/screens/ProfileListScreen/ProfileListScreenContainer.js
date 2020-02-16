@@ -6,7 +6,7 @@ import ProfileListScreenUI from './ProfileListScreenUI';
 
 const mapStateToProps = (state, ownProps) => {
     return {
-        profiles: state.get('profiles').toArray(),
+        profiles: state.get('profiles').toArray().sort((p1, p2) => p1.name.localeCompare(p2.name)),
         activeProfileId: global.settingsManager.getActiveProfile()
     }
 }

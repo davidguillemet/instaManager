@@ -158,7 +158,7 @@ export default class CategoryListItem extends React.PureComponent {
                 itemId={this.props.id}
                 height={this.props.height}
                 rightAction={{ caption: 'Delete', icon: 'ios-trash', color: CommonStyles.DELETE_COLOR, callback: this._onDeleteCategory.bind(this) }}
-                leftAction={{ caption: 'Archive', icon: 'ios-archive', color: CommonStyles.ARCHIVE_COLOR, callback: this._onArchiveCategory.bind(this) }}
+                leftAction={{ caption: 'Archive', icon: 'ios-archive', color: CommonStyles.DARK_GREEN, callback: this._onArchiveCategory.bind(this) }}
                 onSwipeStart={() => this.props.setParentState({isSwiping: true})}
                 onSwipeRelease={() => this.props.setParentState({isSwiping: false})}
             >
