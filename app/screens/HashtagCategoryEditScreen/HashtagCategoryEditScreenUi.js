@@ -15,6 +15,7 @@ import {
 import PropTypes from 'prop-types';
 
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import Form from '../../components/Form';
 import CategorieTagsDisplay from '../../components/CategorieTagsDisplay';
 import CustomButton from '../../components/CustomButton';
 import Flag from '../../components/Flag';
@@ -376,6 +377,14 @@ export default class HashtagCategoryEditScreenUi extends React.Component {
         return this.state.dirty && this.state.itemName.trim().length > 0;
     }
 
+    getCategorySelectPlaceHolder() {
+        return  this.props.itemType === global.TAG_ITEM ?
+                    'Press to select categories' :
+                    this.props.itemType === global.CATEGORY_ITEM ?
+                        'Press to select a parent' :
+                        'Press to select a category';
+    }
+
     render() {
         if (this.isDirty() && this.saveContainerVisible == false) {
             this.saveContainerVisible = true;
@@ -406,62 +415,29 @@ export default class HashtagCategoryEditScreenUi extends React.Component {
                                     padding: CommonStyles.GLOBAL_PADDING
                                 }
                             ]} indicatorStyle={'white'}>
-                    <View style={styles.parameterContainerView}>
-                        <Text style={[CommonStyles.styles.smallLabel, styles.parameterLabel, {fontWeight: 'bold'}]}>Name *</Text>
-                        <TextInput
-                            defaultValue={this.state.itemName}
-                            autoFocus={this.props.editorMode == global.CREATE_MODE}
-                            keyboardType='default'
-                            style={styles.parameterInput}
-                            placeholder={`Enter a ${this.itemTypeName} name`}
-                            selectionColor={CommonStyles.TEXT_COLOR}
-                            placeholderTextColor={CommonStyles.PLACEHOLDER_COLOR}
-                            clearButtonMode={'always'}
-                            onChangeText={this.onChangeText}
-                            autoCapitalize='none'
-                            returnKeyType={'done'}
-                            textContentType={'none'}
-                            autoCorrect={false}
-                            blurOnSubmit={true}
-                        />
-                    </View>
 
-                    <View style={styles.parameterSeparator}></View>
+                    <Form parameters={[
+                        {
+                            name: 'Name',
+                            type: 'text',
+                            mandatory: true,
+                            value: this.state.itemName,
+                            focus: this.props.editorMode == global.CREATE_MODE,
+                            placeholder: `Enter a ${this.itemTypeName} name`,
+                            onChange: this.onChangeText
+                        },
+                        {
+                            name: this.props.itemType === global.TAG_ITEM ? 'Categories' : this.props.itemType === global.CATEGORY_ITEM ? 'Parent' : 'Category',
+                            type: 'select',
+                            value: this.state.parentCategoriesCaption && this.state.parentCategoriesCaption.length > 0 ? this.state.parentCategoriesCaption : null,
+                            placeholder: this.getCategorySelectPlaceHolder(),
+                            onClick: this.onSelectParentCategory,
+                            onChange: this.onCategoriesSelected,
+                            multiSelect: true,
+                            count: this.state.parentCategories != null ? this.state.parentCategories.length : null
+                        }
+                    ]}/>
 
-                    <View style={styles.parameterContainerView}>
-                        <Text style={[CommonStyles.styles.smallLabel, styles.parameterLabel]}>{this.props.itemType === global.TAG_ITEM ? 'Categories' : this.props.itemType === global.CATEGORY_ITEM ? 'Parent' : 'Category'}</Text>
-                        <TouchableOpacity onPress={this.onSelectParentCategory} style={{ flex: 1, flexDirection: 'row', alignItems: 'center' }}>
-                            <Text
-                                style={this.state.parentCategories && this.state.parentCategories.length > 0 ? styles.parameterInput : styles.parentParameter }
-                                numberOfLines={1}
-                            >
-                                {
-                                    this.state.parentCategoriesCaption && this.state.parentCategoriesCaption.length > 0 ? 
-                                    this.state.parentCategoriesCaption : 
-                                    this.props.itemType === global.TAG_ITEM ?
-                                    'Press to select categories' :
-                                    this.props.itemType === global.CATEGORY_ITEM ?
-                                    'Press to select a parent' :
-                                    'Press to select a category'
-                                }
-                            </Text>
-                            <Ionicons name={'ios-arrow-forward'} style={[CommonStyles.styles.textIcon, styles.iconSelect]}/>
-                            {
-                                this.props.itemType == global.CATEGORY_ITEM ||
-                                this.state.parentCategories == null ||
-                                this.state.parentCategories.length == 0 ?
-
-                                null :
-
-                                <Flag caption={this.state.parentCategories.length} style={{
-                                    position: 'absolute',
-                                    right: 30,
-                                    top: -3,
-                                }}/>
-                            }
-                        </TouchableOpacity>
-                    </View>
-                    
                     {
                         this.props.itemType == global.CATEGORY_ITEM ?
                         <CategorieTagsDisplay
@@ -519,34 +495,3 @@ export default class HashtagCategoryEditScreenUi extends React.Component {
         );
     }
 }
-
-const styles = StyleSheet.create(
-{
-    parameterContainerView: {
-        flexDirection: 'column'
-    },
-    parameterSeparator: {
-        backgroundColor: CommonStyles.SEPARATOR_COLOR,
-        height: 1,
-        marginBottom: CommonStyles.GLOBAL_PADDING
-    },
-    parameterInput: {
-        flex: 1,
-        fontSize: CommonStyles.MEDIUM_FONT_SIZE,
-        color: CommonStyles.KPI_COLOR,
-        padding: CommonStyles.GLOBAL_PADDING
-    },
-    parameterLabel: {
-        flex: 1,
-        paddingLeft: CommonStyles.GLOBAL_PADDING,
-    },
-    parentParameter: {
-        flex: 1,
-        fontSize: CommonStyles.MEDIUM_FONT_SIZE,
-        color: CommonStyles.PLACEHOLDER_COLOR,
-        padding: CommonStyles.GLOBAL_PADDING
-    },
-    iconSelect: {
-        color: CommonStyles.PLACEHOLDER_COLOR,
-    }
-});
