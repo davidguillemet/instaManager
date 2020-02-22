@@ -3,10 +3,12 @@ import {
     ActionSheetIOS,
     Alert,
     Dimensions,
+    Keyboard,
     StyleSheet,
     View,
     Text,
     TextInput,
+    TouchableOpacity,
     ScrollView
 } from 'react-native';
 
@@ -19,12 +21,23 @@ import CategoryList from '../../components/categorylist';
 import CategorieTagsDisplay from '../../components/CategorieTagsDisplay';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
+
+function renderBackButton(params) {
+
+    return (
+        <View style={{ flexDirection: 'row'}}>
+            <TouchableOpacity onPress={params.onCancel}><Ionicons name={'ios-arrow-back'} style={CommonStyles.styles.navigationButtonIcon}/></TouchableOpacity>
+        </View>
+    );
+}
+
 export default class PublicationWizardScreenUi extends React.PureComponent {
 
     static navigationOptions = ({ navigation }) => {
         const params = navigation.state.params || {};
         return {
-            headerTitle: 'Publication Wizard'
+            headerTitle: 'Publication Wizard',
+            headerLeft: renderBackButton(params)
         }   
     };
 
@@ -37,7 +50,8 @@ export default class PublicationWizardScreenUi extends React.PureComponent {
             tags: [],
             name: null,
             description: null,
-            copyCompleted: false
+            copyCompleted: false,
+            publicationId: global.uniqueID()
         }
 
         const { params } = this.props.navigation.state;
@@ -73,6 +87,8 @@ export default class PublicationWizardScreenUi extends React.PureComponent {
         this.onShowActiveWizardStepMenu = this.onShowActiveWizardStepMenu.bind(this);
         this.onChangeName = this.onChangeName.bind(this);
         this.onSavePublication = this.onSavePublication.bind(this);
+        this.onCancel = this.onCancel.bind(this);
+        this.onQuit = this.onQuit.bind(this);
 
         this.wizardConfig = {
             complete: {
@@ -119,6 +135,28 @@ export default class PublicationWizardScreenUi extends React.PureComponent {
         };
     }
 
+    componentDidMount() {
+
+        this.props.onOpen(this.state.publicationId);
+
+        this.props.navigation.setParams({ 
+            onCancel: this.onCancel,
+        });
+    }
+
+    onCancel() {
+
+        // Shoudl we check if the publication has been modified or not?
+        this.onQuit();
+    }
+
+    onQuit() {
+
+        Keyboard.dismiss();
+        this.props.onClose(this.state.publicationId);
+        this.props.navigation.goBack(null);
+    }
+
     onSavePublication() {
 
         if (!this.validatePublicationProperties()) {
@@ -139,7 +177,7 @@ export default class PublicationWizardScreenUi extends React.PureComponent {
         const categoryId = this.state.selectedCategory && this.state.selectedCategory.length > 0 ? this.state.selectedCategory[0] : null;
 
         const newPublication = {
-            id: global.uniqueID(),
+            id: this.state.publicationId,
             name: this.state.name,
             description: this.description,
             creationDate: new Date(),
@@ -151,7 +189,7 @@ export default class PublicationWizardScreenUi extends React.PureComponent {
         
         global.hashtagPersistenceManager.savePublication(newPublication, false).then(() => {
             this.props.onSavePublication(newPublication);
-            this.props.navigation.goBack();
+            this.onQuit();
         });
     }
 

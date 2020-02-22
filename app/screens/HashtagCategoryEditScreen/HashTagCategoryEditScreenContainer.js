@@ -1,6 +1,10 @@
 import { connect } from 'react-redux';
 import { Alert } from 'react-native';
-import { createMultiUpdateAction } from '../../actions';
+import {
+    createMultiUpdateAction,
+    createOpenEditorAction,
+    createCloseEditorAction
+} from '../../actions';
 import HashtagCategoryEditScreenUi from './HashtagCategoryEditScreenUi';
 
 const itemTypeSelector = (props) => props.navigation.getParam('itemType', null);
@@ -48,7 +52,7 @@ const mapStateToProps = (state, props) => {
 
     return {
         itemType: itemType,
-        itemId: itemId || global.uniqueID(),
+        itemId: itemId,
         itemName: item ? item.name : '',
         childrenTags: itemType == global.CATEGORY_ITEM && item ? [...item.hashtags] : [],
         parentCategories: parentCategoriesSelector(item, itemType),
@@ -58,6 +62,12 @@ const mapStateToProps = (state, props) => {
 
 const mapDispatchToProps = dispatch => {
     return {
+        onOpen: (itemId) => {
+            dispatch(createOpenEditorAction(itemId));
+        },
+        onClose: (itemId) => {
+            dispatch(createCloseEditorAction(itemId));
+        },
         onSaveTag: (tagToSave, isAnUpdate) => {
             const updates = global.hashtagPersistenceManager.saveTag(tagToSave, isAnUpdate);
             dispatch(createMultiUpdateAction(updates));

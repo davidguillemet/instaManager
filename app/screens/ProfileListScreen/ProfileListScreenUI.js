@@ -7,7 +7,9 @@ import {
 
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import ListItemSeparator from '../../components/ListItemSeparator';
+import Message from '../../components/Message';
 import ProfileListItem from './ProfileListItem';
+import CommonStyles from './../../styles/common';
 
 function renderRightButtons(params) {
 
@@ -75,7 +77,7 @@ export default class ProfileListScreen extends React.PureComponent {
                 onDeleteProfile={this.props.onDeleteProfile}
                 onEditProfile={this.onEditProfile}
                 setParentState={this.setStateProxy}
-                onPress={this.props.onSetActiveProfile}
+                onPress={this.props.editing ? null : this.props.onSetActiveProfile}
             />
         );
     }
@@ -83,6 +85,13 @@ export default class ProfileListScreen extends React.PureComponent {
     render() {
         return(
             <View style={[CommonStyles.styles.standardPage, {padding: 0}]}>
+                {
+                    this.props.editing ?
+                    <View style={{padding: CommonStyles.GLOBAL_PADDING}}>
+                        <Message message={"You cannot change the active profile while editing a tag, a category or a publication."} error={true} />
+                    </View> :
+                    null
+                }
                 <FlatList
                     style={{ flex: 1 }}
                     scrollEnabled={!this.state.isSwiping}

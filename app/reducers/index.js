@@ -1,4 +1,4 @@
-import { Map, List, Record } from 'immutable';
+import { Map, Set } from 'immutable';
 import { combineReducers } from 'redux-immutable';
 import {
     CATEGORIES_LOADED,
@@ -22,6 +22,8 @@ import {
     PROFILES_LOADED,
     UPDATE_PROFILE,
     DELETE_PROFILE,
+    OPEN_EDITOR,
+    CLOSE_EDITOR,
     TagFilters,
 } from './../actions';
 
@@ -246,6 +248,20 @@ function profilesReducer(state = Map(), action) {
     }
 }
 
+function openedEditorsReducer(state = Set(), action) {
+
+    switch (action.type) {
+        case OPEN_EDITOR:
+            return state.add(action.id);
+
+        case CLOSE_EDITOR:
+            return state.remove(action.id);
+
+        default:
+            return state;
+    }
+}
+
 export const rootReducer = combineReducers({
     profilesLoaded: profiesLoadingReducer,
     tagsLoaded: tagsLoadingReducer,
@@ -257,5 +273,6 @@ export const rootReducer = combineReducers({
     tags: tagReducer,
     tagFilter: tagFilterReducer,
     publications: publicationReducer,
-    settings: settingsReducer
+    settings: settingsReducer,
+    openedEditors: openedEditorsReducer
 });

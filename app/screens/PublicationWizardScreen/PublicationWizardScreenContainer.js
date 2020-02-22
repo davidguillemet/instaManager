@@ -1,10 +1,21 @@
 import { connect } from 'react-redux';
-import { createAddPublicationAction } from '../../actions/publications';
+import {
+    createAddPublicationAction,
+    createOpenEditorAction,
+    createCloseEditorAction
+} from '../../actions';
+
 
 import PublicationWizardScreenUi from './PublicationWizardScreenUi';
 
 const mapDispatchToProps = dispatch => {
     return {
+        onOpen: (itemId) => {
+            dispatch(createOpenEditorAction(itemId));
+        },
+        onClose: (itemId) => {
+            dispatch(createCloseEditorAction(itemId));
+        },
         onSavePublication: publication => {
             dispatch(createAddPublicationAction(publication));
         }

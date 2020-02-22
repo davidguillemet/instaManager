@@ -46,7 +46,7 @@ export default class HashtagCategoryEditScreenUi extends React.Component {
 
     static propTypes = {
         itemType: PropTypes.string.isRequired,
-        itemId: PropTypes.string.isRequired,
+        itemId: PropTypes.string, // May be null if new item
         itemName: PropTypes.string.isRequired,
         editorMode: PropTypes.string.isRequired
     };
@@ -72,6 +72,7 @@ export default class HashtagCategoryEditScreenUi extends React.Component {
         
         this.state = {
             dirty: false,
+            itemId: this.props.itemId || global.uniqueID(),
             itemName: this.props.itemName,
             normalizedItemName : this.props.itemName.toLowerCase(),
             parentCategories: this.props.parentCategories,
@@ -101,8 +102,10 @@ export default class HashtagCategoryEditScreenUi extends React.Component {
         this.saveSubscriber = [];
         this.getSuggestionsSubscriber = [];
     }
-    
+
     componentDidMount() {
+
+        this.props.onOpen(this.state.itemId);
 
         const headerTitle =
             this.props.editorMode == global.UPDATE_MODE ? 
@@ -127,6 +130,7 @@ export default class HashtagCategoryEditScreenUi extends React.Component {
 
     onQuit() {
         Keyboard.dismiss();
+        this.props.onClose(this.state.itemId);
         this.props.navigation.goBack(null);
     }
 
@@ -189,7 +193,7 @@ export default class HashtagCategoryEditScreenUi extends React.Component {
         }
 
         const tagToSave = {
-            id: this.props.itemId,
+            id: this.state.itemId,
             name: itemName,
             categories: tagCategories
         };
@@ -205,7 +209,7 @@ export default class HashtagCategoryEditScreenUi extends React.Component {
         }
 
         const categoryToSave = {
-            id: this.props.itemId,
+            id: this.state.itemId,
             name: itemName,
             parent: parent,
             hashtags: this.state.childrenTags // useless...cannot be updated directly (type is "LinkingObjects")
@@ -243,7 +247,7 @@ export default class HashtagCategoryEditScreenUi extends React.Component {
 
                 // Edition mode = error as soon as a category with another id exists with the same name in the database
                 for (let item of itemsWithSameName) {
-                    if (item.id !== this.props.itemId) {
+                    if (item.id !== this.state.itemId) {
                         nameAlreadyExists = true;
                         break;
                     }
@@ -350,7 +354,7 @@ export default class HashtagCategoryEditScreenUi extends React.Component {
         const params = {
             onCategoriesSelected: this.onCategoriesSelected,
             selectedCategories: this.state.parentCategories,
-            itemId: this.props.itemId,
+            itemId: this.state.itemId,
             itemType: this.props.itemType
         };
 

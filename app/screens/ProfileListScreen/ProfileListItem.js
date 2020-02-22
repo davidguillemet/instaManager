@@ -51,7 +51,7 @@ export default class ProfileListItem extends React.PureComponent {
     
     renderContent() {
         return (
-            <TouchableOpacity onPress={this._onPress} disabled={this.props.selected}>
+            <TouchableOpacity onPress={this._onPress} disabled={this.props.selected || this.props.onPress == null}>
                 <View style={{ flexDirection: 'row', flex: 1, alignItems: 'center', paddingRight: CommonStyles.GLOBAL_PADDING }}>
                     <View style={{flexDirection: 'column', flex: 1, paddingVertical: 5}}>
                         <Text style={[
