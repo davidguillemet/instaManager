@@ -86,7 +86,7 @@ export default class ProfileListScreen extends React.PureComponent {
         return(
             <View style={[CommonStyles.styles.standardPage, {padding: 0}]}>
                 {
-                    this.props.editing ?
+                    this.props.editing && this.props.profiles.length > 1 ?
                     <View style={{padding: CommonStyles.GLOBAL_PADDING}}>
                         <Message message={"You cannot change the active profile while editing a tag, a category or a publication."} error={true} />
                     </View> :
