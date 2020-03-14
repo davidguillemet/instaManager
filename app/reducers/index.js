@@ -20,6 +20,7 @@ import {
     SET_PUBLICATION_FILTER,
     SET_DISPLAY_ERRORS,
     PROFILES_LOADED,
+    PROFILE_LOADING,
     UPDATE_PROFILE,
     DELETE_PROFILE,
     OPEN_EDITOR,
@@ -133,10 +134,19 @@ function tagFilterReducer(state = TagFilters.SHOW_ALL, action) {
     }
 }
 
-function profiesLoadingReducer(state = false, action) {
+function profilesLoadedReducer(state = false, action) {
     switch (action.type) {
         case PROFILES_LOADED:
             return true;
+        default:
+            return state;
+    }
+}
+
+function profileLoadingReducer(state = false, action) {
+    switch (action.type) {
+        case PROFILE_LOADING:
+            return action.loading;
         default:
             return state;
     }
@@ -263,7 +273,8 @@ function openedEditorsReducer(state = Set(), action) {
 }
 
 export const rootReducer = combineReducers({
-    profilesLoaded: profiesLoadingReducer,
+    profilesLoaded: profilesLoadedReducer,
+    profileLoading: profileLoadingReducer,
     tagsLoaded: tagsLoadingReducer,
     categoriesLoaded: categoriesLoadingReducer,
     publicationsLoaded: publicationsLoadingReducer,

@@ -74,6 +74,7 @@ export default class ProfileListScreen extends React.PureComponent {
             <ProfileListItem
                 {...item}
                 selected={this.props.activeProfileId == item.id}
+                profileLoading={this.props.profileLoading}
                 onDeleteProfile={this.props.onDeleteProfile}
                 onEditProfile={this.onEditProfile}
                 setParentState={this.setStateProxy}

@@ -1,6 +1,9 @@
 import { connect } from 'react-redux';
-import { createProfileDeleteAction } from '../../actions';
-import { loadActiveProfileContent } from '../../actions'
+import {
+    createProfileDeleteAction,
+    loadActiveProfileContent,
+    loadActiveProfileAsync
+} from '../../actions';
 
 import ProfileListScreenUI from './ProfileListScreenUI';
 
@@ -8,7 +11,8 @@ const mapStateToProps = (state, ownProps) => {
     return {
         profiles: state.get('profiles').toArray().sort((p1, p2) => p1.name.localeCompare(p2.name)),
         activeProfileId: global.settingsManager.getActiveProfile(),
-        editing: state.get('openedEditors').size > 0
+        editing: state.get('openedEditors').size > 0,
+        profileLoading: state.get('profileLoading')
     }
 }
 
@@ -25,7 +29,7 @@ const mapDispatchToProps = dispatch => {
         },
         onSetActiveProfile: (profileId) => {
             global.settingsManager.setActiveProfile(profileId);
-            loadActiveProfileContent(dispatch);
+            dispatch(loadActiveProfileAsync());
         }
     };
 }

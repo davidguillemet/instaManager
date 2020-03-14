@@ -6,12 +6,26 @@ import { launchControls } from './control';
 import { forceLoadPublications } from './publications';
 
 export const PROFILES_LOADED = 'PROFILES_LOADED';
+export const PROFILE_LOADING = 'PROFILE_LOADING';
 export const UPDATE_PROFILE = 'UPDATE_PROFILE';
 export const DELETE_PROFILE = 'DELETE_PROFILE';
 
 export function loadProfiles() {
     return (dispatch, getState) => {
         return dispatch(createLoadProfilesAction())
+    }
+}
+
+export function loadActiveProfileAsync() {
+    return dispatch => {
+        dispatch(createProfileLoadingAction(true));
+        return new Promise(function(resolve, reject) {
+            setTimeout(() => {
+                loadActiveProfileContent(dispatch);
+                dispatch(createProfileLoadingAction(false));
+                resolve();
+            }, 100)
+        });
     }
 }
 
@@ -32,6 +46,13 @@ export function loadActiveProfileContent(dispatch, initialLoad) {
     dispatch(launchControls());
     if (initialLoad == undefined) {
         dispatch(forceLoadPublications());
+    }
+}
+
+export function createProfileLoadingAction(loading) {
+    return {
+        type: PROFILE_LOADING,
+        loading: loading
     }
 }
 

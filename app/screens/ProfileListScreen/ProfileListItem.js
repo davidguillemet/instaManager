@@ -1,5 +1,6 @@
 import React from 'react';
 import {
+    ActivityIndicator,
     Alert,
     View,
     Text,
@@ -48,6 +49,30 @@ export default class ProfileListItem extends React.PureComponent {
             }
         ]);
     }
+
+    renderProfileIndicator() {
+        if (this.props.selected) {
+
+            if (this.props.profileLoading) {
+                return (
+                    <ActivityIndicator style={{marginRight: CommonStyles.GLOBAL_PADDING}} />
+                );
+            }
+
+            return (
+                <Ionicons
+                    style={{
+                        color: CommonStyles.ARCHIVE_COLOR,
+                        paddingRight: CommonStyles.GLOBAL_PADDING
+                    }}
+                    name='ios-checkmark-circle-outline'
+                    size={CommonStyles.LARGE_FONT_SIZE}
+                />
+            );
+        }
+
+        return null
+    }
     
     renderContent() {
         return (
@@ -79,18 +104,7 @@ export default class ProfileListItem extends React.PureComponent {
                             {this.props.description}
                         </Text>
                     </View>
-                    {
-                        this.props.selected ?
-                        <Ionicons
-                            style={{
-                                color: CommonStyles.ARCHIVE_COLOR,
-                                paddingRight: CommonStyles.GLOBAL_PADDING
-                            }}
-                            name='ios-checkmark-circle-outline'
-                            size={CommonStyles.LARGE_FONT_SIZE}
-                        /> :
-                        null
-                    }
+                    { this.renderProfileIndicator() }
                 </View>
             </TouchableOpacity>
         )
