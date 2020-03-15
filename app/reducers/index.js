@@ -18,7 +18,11 @@ import {
     DELETE_PUBLICATION,
     SET_TAG_FILTER,
     SET_PUBLICATION_FILTER,
+    SET_MAX_TAG_NUMBER,
+    SET_PUBLICATION_HEADER,
+    SET_PUBLICATION_FOOTER,
     SET_DISPLAY_ERRORS,
+    SET_NEW_LINE_SEPARATOR,
     PROFILES_LOADED,
     PROFILE_LOADING,
     UPDATE_PROFILE,
@@ -233,8 +237,20 @@ function settingsReducer(state = Map(global.settingsManager.getSettings()), acti
         case SET_PUBLICATION_FILTER:
             return state.set('publicationFilter', action.filter);
 
+        case SET_MAX_TAG_NUMBER:
+            return state.set('maximumNumberOfTags', action.value);
+
+        case SET_PUBLICATION_HEADER:
+            return state.set('publicationHeader', action.value);
+
+        case SET_PUBLICATION_FOOTER:
+            return state.set('publicationFooter', action.value);
+    
         case SET_DISPLAY_ERRORS:
             return state.set('displayErrors', action.value);
+
+        case SET_NEW_LINE_SEPARATOR:
+            return state.set('newLineSeparator', action.value);
 
         default:
             return state;

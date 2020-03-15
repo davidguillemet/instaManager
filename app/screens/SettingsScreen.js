@@ -11,7 +11,13 @@ import {
 } from 'react-native';
 
 import { connect } from 'react-redux';
-import { createSetDisplayErrorsAction, launchControls } from './../actions';
+import {
+    createSetMaxTagNumberAction,
+    createSetPublicationHeaderAction,
+    createSetPublicationFooterAction,
+    createSetDisplayErrorsAction,
+    createSetNewLineSeparatorAction,
+    launchControls } from './../actions';
 
 import CommonStyles from '../styles/common';
 import ListItemSeparator from '../components/ListItemSeparator';
@@ -45,18 +51,13 @@ class SettingsScreen extends React.PureComponent {
         this.navigateToProfiles = this.navigateToProfiles.bind(this);
         
         this.state = {
-            maxTagsCount: global.settingsManager.getMaxNumberOfTags(),
-            expandedSetting: null,
-            displayErrors: global.settingsManager.getDisplayErrors(),
-            newLineSeparator: global.settingsManager.getNewLineSeparator()
+            expandedSetting: null
         }
 
-        this.state[TAGS_HEADER_KEY] = global.settingsManager.getHeader();
-        this.state[TAGS_FOOTER_KEY] = global.settingsManager.getFooter();
         this.state[TAGS_HEADER_KEY + INPUT_HEIGHT_PARAM_SUFFIX] = 0;
         this.state[TAGS_FOOTER_KEY + INPUT_HEIGHT_PARAM_SUFFIX] = 0;
 
-        this.settings = [
+        this.state.settings = [
             {
                 title: 'Profiles',
                 data: [
@@ -114,24 +115,21 @@ class SettingsScreen extends React.PureComponent {
 
         switch (settingKey) {
             case TAGS_HEADER_KEY:
-                global.settingsManager.setPublicationHeader(value);
+                this.props.onSetPublicationHeader(value);
                 break;
             case TAGS_FOOTER_KEY:
-                global.settingsManager.setPublicationFooter(value);
+                this.props.onSetPublicationFooter(value);
                 break;
             case 'maxTagsCount':
-                global.settingsManager.setMaximumNumberOfTags(value);
-                this.props.onLaunchControls();
+                this.props.onSetMaxTagNumber(value);
                 break;
             case 'displayErrors':
-                global.settingsManager.setDisplayErrors(value);
                 this.props.onSetDisplayErrors(value);
                 break;
             case 'newLineSeparator':
-                global.settingsManager.setNewLineSeparator(value);
+                this.props.onSetNewLineSeparator(value);
                 break;
         }
-        this.setState({[settingKey]: value});
     }
 
     addFiveDots() {
@@ -154,7 +152,8 @@ class SettingsScreen extends React.PureComponent {
         if (this.state.expandedSetting != settingKey) {
             expandedSetting = settingKey;
         }
-        this.setState({expandedSetting: expandedSetting});
+        // Set 'settings' propertty to trigger SectionList rendering
+        this.setState({expandedSetting: expandedSetting, settings: [...this.state.settings]});
     }
 
     navigateToProfiles() {
@@ -183,7 +182,7 @@ class SettingsScreen extends React.PureComponent {
 
     renderHeaderFooterSetting(item) {
 
-        const parameterValue = this.state[item.key];
+        const parameterValue = item.key == TAGS_HEADER_KEY ? this.props.publicationHeader : this.props.publicationFooter;
         const inputHeightParameterName = item.key + INPUT_HEIGHT_PARAM_SUFFIX;
         const clearCallback = item.key == TAGS_HEADER_KEY ? this.clearPublicationHeader : this.clearPublicationFooter;
 
@@ -212,7 +211,10 @@ class SettingsScreen extends React.PureComponent {
                             value={parameterValue}
                             onChangeText={item.update}
                             onContentSizeChange={(event) => {
-                                this.setState({ [inputHeightParameterName]: event.nativeEvent.contentSize.height })
+                                this.setState({
+                                    [inputHeightParameterName]: event.nativeEvent.contentSize.height,
+                                    settings: [...this.state.settings]
+                                })
                             }}
                             style={{
                                 margin: CommonStyles.GLOBAL_PADDING,
@@ -259,7 +261,7 @@ class SettingsScreen extends React.PureComponent {
             <View style={styles.settingsListItem}>
                 <Text style={[CommonStyles.styles.mediumLabel, {flex: 1, marginRight: CommonStyles.GLOBAL_PADDING}]} numberOfLines={1}>{item.caption}</Text>
                 <NumericInput
-                    value={this.state.maxTagsCount}
+                    value={this.props.maxTagsCount}
                     minValue={1}
                     maxValue={1000}
                     step={1}
@@ -273,7 +275,7 @@ class SettingsScreen extends React.PureComponent {
             <View style={styles.settingsListItem}>
                 <Text style={[CommonStyles.styles.mediumLabel, {flex: 1, marginRight: CommonStyles.GLOBAL_PADDING}]} numberOfLines={1}>{item.caption}</Text>
                 <Switch
-                    value={this.state.displayErrors}
+                    value={this.props.displayErrors}
                     onValueChange={item.update}/>
             </View>
         );
@@ -284,7 +286,7 @@ class SettingsScreen extends React.PureComponent {
             <View style={styles.settingsListItem}>
                 <Text style={[CommonStyles.styles.mediumLabel, {flex: 1, marginRight: CommonStyles.GLOBAL_PADDING}]} numberOfLines={1}>{item.caption}</Text>
                 <Switch
-                    value={this.state.newLineSeparator}
+                    value={this.props.newLineSeparator}
                     onValueChange={item.update}/>
             </View>
         );
@@ -307,7 +309,7 @@ class SettingsScreen extends React.PureComponent {
         return(
             <KeyboardAvoidingView style={[CommonStyles.styles.standardPage, {padding: 0}]} contentContainerStyle={[CommonStyles.styles.standardPage, {padding: 0}]} behavior={'position'} enabled>
                <SectionList
-                    sections={this.settings}
+                    sections={this.state.settings}
                     extraData={this.props}
                     renderSectionHeader={this.renderSection}
                     renderItem={this.renderSetting}
@@ -321,11 +323,26 @@ class SettingsScreen extends React.PureComponent {
 
 const mapDispatchToProps = dispatch => {
     return {
-        onLaunchControls: () => {
+        onSetMaxTagNumber: (value) => {
+            global.settingsManager.setMaximumNumberOfTags(value);
+            dispatch(createSetMaxTagNumberAction(value));
             dispatch(launchControls());
         },
+        onSetPublicationHeader: (value) => {
+            global.settingsManager.setPublicationHeader(value);
+            dispatch(createSetPublicationHeaderAction(value));
+        },
+        onSetPublicationFooter: (value) => {
+            global.settingsManager.setPublicationFooter(value);
+            dispatch(createSetPublicationFooterAction(value));
+        },
         onSetDisplayErrors: (value) => {
+            global.settingsManager.setDisplayErrors(value);
             dispatch(createSetDisplayErrorsAction(value));
+        },
+        onSetNewLineSeparator: (value) => {
+            global.settingsManager.setNewLineSeparator(value);
+            dispatch(createSetNewLineSeparatorAction(value));
         }
     }
 }
@@ -333,8 +350,14 @@ const mapDispatchToProps = dispatch => {
 const mapStateToProps = (state, ownProps) => {
     const activeProfileId = global.settingsManager.getActiveProfile();
     const activeProfile = global.hashtagUtil.getProfiles().get(activeProfileId);
+    const settings = state.get('settings');
     return {
-        activeProfile: activeProfile
+        activeProfile: activeProfile,
+        maxTagsCount: settings.get('maximumNumberOfTags'),
+        publicationHeader: settings.get('publicationHeader'),
+        publicationFooter: settings.get('publicationFooter'),
+        displayErrors: settings.get('displayErrors'),
+        newLineSeparator: settings.get('newLineSeparator')
     }
 }
 
