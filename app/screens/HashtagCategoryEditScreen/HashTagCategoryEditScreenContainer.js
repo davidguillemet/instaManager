@@ -1,5 +1,4 @@
 import { connect } from 'react-redux';
-import { Alert } from 'react-native';
 import {
     createMultiUpdateAction,
     createOpenEditorAction,

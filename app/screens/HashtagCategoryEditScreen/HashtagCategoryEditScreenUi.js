@@ -1,13 +1,10 @@
-import React, { Component } from 'react';
+import React from 'react';
 import {
     Animated,
     FlatList,
     Keyboard,
-    StyleSheet,
     ScrollView,
     View,
-    Text,
-    TextInput,
     TouchableOpacity,
     Alert
 } from 'react-native';
@@ -18,20 +15,10 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import Form from '../../components/Form';
 import CategorieTagsDisplay from '../../components/CategorieTagsDisplay';
 import CustomButton from '../../components/CustomButton';
-import Flag from '../../components/Flag';
 import ListItemSeparator from '../../components/ListItemSeparator';
 import CommonStyles from '../../styles/common';
 
 import HashtagSuggestionListItem from './HashtagSuggestionListItem';
-
-function renderSaveButton(params) {
-
-    return (
-        <View style={{ flexDirection: 'row'}}>
-            <TouchableOpacity onPress={params.onSaveItem}><Ionicons style={CommonStyles.styles.navigationButtonIcon} name={'md-checkmark'} size={40}/></TouchableOpacity>
-        </View>
-    );
-}
 
 function renderBackButton(params) {
 
@@ -55,7 +42,6 @@ export default class HashtagCategoryEditScreenUi extends React.Component {
         const params = navigation.state.params || {};
         return {
             headerTitle: params.headerTitle,
-            //headerRight: renderSaveButton(params)
             headerLeft: renderBackButton(params)
         }   
     };
@@ -112,7 +98,6 @@ export default class HashtagCategoryEditScreenUi extends React.Component {
             this.props.itemName : 'New ' + global.hashtagUtil.getItemTypeCaption(this.props.itemType);
 
         this.props.navigation.setParams({ 
-            onSaveItem: this.onSaveItem,
             onCancel: this.onCancel,
             headerTitle: headerTitle
         });
@@ -483,8 +468,7 @@ export default class HashtagCategoryEditScreenUi extends React.Component {
                             borderTopColor: CommonStyles.GLOBAL_BACKGROUND,
                             borderTopWidth: 1,
                             height: this.saveContainerAnimatedHeight,
-                        }}
-                        onLayout={this.onSaveContainerLayout}>
+                        }}>
                     <CustomButton
                         title={'Save'}
                         onPress={this.onSaveItem}

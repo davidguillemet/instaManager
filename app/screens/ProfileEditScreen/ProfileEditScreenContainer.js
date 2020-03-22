@@ -1,8 +1,10 @@
 import { connect } from 'react-redux';
+import { compose } from 'redux';
 import { createProfileUpdateAction } from '../../actions';
 import { loadActiveProfileContent } from '../../actions'
 
 import ProfileEditScreenUI from './ProfileEditScreenUI';
+import withSaveButton from './../../components/WithSaveButton';
 
 const mapStateToProps = (state, ownProps) => {
 
@@ -10,9 +12,9 @@ const mapStateToProps = (state, ownProps) => {
     const profile = profileId != null ? global.hashtagUtil.getProfileFromId(profileId) : null;
 
     return {
-        profileId: profileId || global.uniqueID(),
+        profileId: profileId,
         profileName: profile ? profile.name : '',
-        profileDesc: profile ? profile.description : '',
+        profileDesc: profile && profile.description ? profile.description : '',
         editorMode: profile ? global.UPDATE_MODE : global.CREATE_MODE,
         activeProfileId: global.settingsManager.getActiveProfile()
     }
@@ -31,6 +33,6 @@ const mapDispatchToProps = dispatch => {
     };
 }
 
-const ProfileEditScreen = connect(mapStateToProps, mapDispatchToProps)(ProfileEditScreenUI);
+const ProfileEditScreen = compose(connect(mapStateToProps, mapDispatchToProps), withSaveButton)(ProfileEditScreenUI);
 
 export default ProfileEditScreen;

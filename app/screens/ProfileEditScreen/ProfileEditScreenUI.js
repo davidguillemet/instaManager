@@ -1,7 +1,6 @@
 import React from 'react';
 import {
     Alert,
-    Animated,
     Keyboard,
     ScrollView,
     View
@@ -9,7 +8,6 @@ import {
 
 import Form from '../../components/Form';
 import CommonStyles from '../../styles/common';
-import CustomButton from '../../components/CustomButton';
 
 export default class ProfileEditScreenUi extends React.Component {
 
@@ -17,60 +15,72 @@ export default class ProfileEditScreenUi extends React.Component {
         super(props);
 
         this.state = {
-            dirty: false,
+            profileId: this.props.profileId || global.uniqueID(),
             profileName: this.props.profileName,
             profileDesc: this.props.profileDesc,
             setAsActiveProfile: false
         };
 
-        if (this.props.editorMode == global.CREATE_MODE || this.props.profileId == this.props.activeProfileId) {
+        if (this.props.editorMode == global.CREATE_MODE || this.state.profileId == this.props.activeProfileId) {
             this.state.setAsActiveProfile = true;
         }
 
         this.onChangeProfileName = this.onChangeProfileName.bind(this);
         this.onChangeProfileDesc = this.onChangeProfileDesc.bind(this);
         this.onChangeSetAsActiveProfile = this.onChangeSetAsActiveProfile.bind(this);
+        this.getProfileName = this.getProfileName.bind(this);
+        this.notifySaveComponent = this.notifySaveComponent.bind(this);
+
+        // Required functions for HOC withSaveButton
+        this.canSaveItem = this.canSaveItem.bind(this);
         this.onSaveItem = this.onSaveItem.bind(this);
-        this.onQuit = this.onQuit.bind(this);
-        this.isDirty = this.isDirty.bind(this);
-
-        this.saveContainerAnimatedHeight = new Animated.Value(0);
-        this.saveContainerVisible = false;
-
-        this.saveSubscriber = [];
+        this.setSaveComponent = this.setSaveComponent.bind(this);
     }
 
-    onQuit() {
-        Keyboard.dismiss();
-        this.props.navigation.goBack(null);
+    getProfileName() {
+        return this.state.profileName.trim();
+    }
+
+    getHeaderTitle() {
+        return 'Edit Profile';
+    }
+    
+    getItemId() {
+        return this.state.profileId;
+    }
+
+    setSaveComponent(saveComponent) {
+        this.saveComponent = saveComponent;
     }
 
     onSaveItem() {
 
-        const profileName = this.state.profileName.trim();
-        const profileDesc = this.state.profileDesc.trim();
-
-        if (this.validateProfile(profileName) == false) {
-            this.saveSubscriber.forEach(listener => listener.setActionCompleted());
+        // canSaveItem shall be called in HOC component withSaveButton
+        // - we call it here just to be sure...
+        if (this.canSaveItem() == false) {
             return;
         }
 
+        const profileName = this.getProfileName();
+        const profileDesc = this.state.profileDesc.trim();
+
         const profileToSave = {
-            id: this.props.profileId,
+            id: this.state.profileId,
             name: profileName,
             description: profileDesc,
         };
 
         let setAsActiveProfile = false;
-        if (this.props.editorMode == global.CREATE_MODE || this.props.profileId != this.props.activeProfileId) {
+        if (this.props.editorMode == global.CREATE_MODE || this.state.profileId != this.props.activeProfileId) {
             setAsActiveProfile = this.state.setAsActiveProfile;
         }
         this.props.onSaveProfile(profileToSave, this.props.editorMode === global.UPDATE_MODE, setAsActiveProfile);
-        this.onQuit();
     }
     
-    validateProfile(profileName) {
-        
+    canSaveItem() {
+
+        const profileName = this.getProfileName();
+
         // 1. Check the profile name has been entered
         if (profileName == null || profileName.length == 0) {
             Alert.alert('', `Please enter a Profile name.`);
@@ -91,7 +101,7 @@ export default class ProfileEditScreenUi extends React.Component {
 
                 // Edition mode = error as soon as a profile with another id exists with the same name in the database
                 for (let item of profilesWithSameName) {
-                    if (item.id !== this.props.profileId) {
+                    if (item.id !== this.state.profileId) {
                         nameAlreadyExists = true;
                         break;
                     }
@@ -107,20 +117,22 @@ export default class ProfileEditScreenUi extends React.Component {
         return true;
     }
 
+    notifySaveComponent() {
+        this.saveComponent.setState({dirty: this.getProfileName().length > 0});
+    }
+
     onChangeProfileName(text) {
                 
         this.setState({
-            dirty: true,
             profileName: text
-        });
+        }, this.notifySaveComponent);
     }
 
     onChangeProfileDesc(text) {
                 
         this.setState({
-            dirty: true,
             profileDesc: text
-        });
+        }, this.notifySaveComponent);
     }
 
     onChangeSetAsActiveProfile(value) {
@@ -129,31 +141,7 @@ export default class ProfileEditScreenUi extends React.Component {
         });
     }
     
-    isDirty() {
-        return this.state.dirty && this.state.profileName.trim().length > 0;
-    }
-
     render() {
-
-        if (this.isDirty() && this.saveContainerVisible == false) {
-            this.saveContainerVisible = true;
-            Animated.timing(
-                this.saveContainerAnimatedHeight,
-                {
-                    toValue: 60,
-                    duration: 200
-                }
-            ).start();
-        } else if (this.isDirty() == false && this.saveContainerVisible == true) {
-            this.saveContainerVisible = false;
-            Animated.timing(
-                this.saveContainerAnimatedHeight,
-                {
-                    toValue: 0,
-                    duration: 200
-                }
-            ).start();
-        }
 
         return (
             <View style={[CommonStyles.styles.standardPage, { padding: 0 }]}>
@@ -185,26 +173,10 @@ export default class ProfileEditScreenUi extends React.Component {
                             type: 'boolean',
                             value: this.state.setAsActiveProfile,
                             onChange: this.onChangeSetAsActiveProfile,
-                            disabled: this.props.profileId == this.props.activeProfileId
+                            disabled: this.state.profileId == this.props.activeProfileId
                         }
                     ]}/>
                 </ScrollView>
-                <Animated.View style={{
-                            backgroundColor: CommonStyles.SEPARATOR_COLOR,
-                            borderTopColor: CommonStyles.GLOBAL_BACKGROUND,
-                            borderTopWidth: 1,
-                            height: this.saveContainerAnimatedHeight,
-                        }}
-                        onLayout={this.onSaveContainerLayout}>
-                    <CustomButton
-                        title={'Save'}
-                        onPress={this.onSaveItem}
-                        showActivityIndicator={true}
-                        style={[CommonStyles.styles.standardButton, {margin: CommonStyles.GLOBAL_PADDING}]}
-                        deactivated={this.isDirty() == false}
-                        register={this.saveSubscriber}
-                    />
-                </Animated.View>
             </View>
         );
     }
