@@ -1,10 +1,12 @@
 import { connect } from 'react-redux';
+import { compose } from 'redux';
 import {
     createMultiUpdateAction,
     createOpenEditorAction,
     createCloseEditorAction
 } from '../../actions';
 import HashtagCategoryEditScreenUi from './HashtagCategoryEditScreenUi';
+import withSaveButton from './../../components/WithSaveButton';
 
 const itemTypeSelector = (props) => props.navigation.getParam('itemType', null);
 const itemIdSelector = (props) => props.navigation.getParam('itemId', null);
@@ -78,9 +80,6 @@ const mapDispatchToProps = dispatch => {
     }
 }
 
-const HashtagCategoryEditScreen = connect(
-    mapStateToProps,
-    mapDispatchToProps
-)(HashtagCategoryEditScreenUi);
+const HashtagCategoryEditScreen = compose(connect(mapStateToProps, mapDispatchToProps), withSaveButton)(HashtagCategoryEditScreenUi);
 
 export default HashtagCategoryEditScreen;

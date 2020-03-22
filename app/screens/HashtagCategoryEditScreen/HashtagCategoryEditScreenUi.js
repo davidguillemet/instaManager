@@ -1,17 +1,13 @@
 import React from 'react';
 import {
-    Animated,
     FlatList,
-    Keyboard,
     ScrollView,
     View,
-    TouchableOpacity,
     Alert
 } from 'react-native';
 
 import PropTypes from 'prop-types';
 
-import Ionicons from 'react-native-vector-icons/Ionicons';
 import Form from '../../components/Form';
 import CategorieTagsDisplay from '../../components/CategorieTagsDisplay';
 import CustomButton from '../../components/CustomButton';
@@ -20,15 +16,6 @@ import CommonStyles from '../../styles/common';
 
 import HashtagSuggestionListItem from './HashtagSuggestionListItem';
 
-function renderBackButton(params) {
-
-    return (
-        <View style={{ flexDirection: 'row'}}>
-            <TouchableOpacity onPress={params.onCancel}><Ionicons name={'ios-arrow-back'} style={CommonStyles.styles.navigationButtonIcon}/></TouchableOpacity>
-        </View>
-    );
-}
-
 export default class HashtagCategoryEditScreenUi extends React.Component {
 
     static propTypes = {
@@ -36,14 +23,6 @@ export default class HashtagCategoryEditScreenUi extends React.Component {
         itemId: PropTypes.string, // May be null if new item
         itemName: PropTypes.string.isRequired,
         editorMode: PropTypes.string.isRequired
-    };
-
-    static navigationOptions = ({ navigation }) => {
-        const params = navigation.state.params || {};
-        return {
-            headerTitle: params.headerTitle,
-            headerLeft: renderBackButton(params)
-        }   
     };
 
     constructor(props) {
@@ -57,7 +36,6 @@ export default class HashtagCategoryEditScreenUi extends React.Component {
         }
         
         this.state = {
-            dirty: false,
             itemId: this.props.itemId || global.uniqueID(),
             itemName: this.props.itemName,
             normalizedItemName : this.props.itemName.toLowerCase(),
@@ -73,34 +51,13 @@ export default class HashtagCategoryEditScreenUi extends React.Component {
         this.onSelectParentCategory = this.onSelectParentCategory.bind(this);
         this.onDeleteTag = this.onDeleteTag.bind(this);
         this.onSaveItem = this.onSaveItem.bind(this);
-        this.onCancel = this.onCancel.bind(this);
-        this.onQuit = this.onQuit.bind(this);
-        this.isDirty = this.isDirty.bind(this);
         this.queryWebSearch = this.queryWebSearch.bind(this);
         this.tagSuggestionKeyExtractor = this.tagSuggestionKeyExtractor.bind(this);
         this.onRefreshSuggestions = this.onRefreshSuggestions.bind(this);
         this.renderSuggestion = this.renderSuggestion.bind(this);
         this.onSelectSuggestion = this.onSelectSuggestion.bind(this);
 
-        this.saveContainerAnimatedHeight = new Animated.Value(0);
-        this.saveContainerVisible = false;
-
-        this.saveSubscriber = [];
         this.getSuggestionsSubscriber = [];
-    }
-
-    componentDidMount() {
-
-        this.props.onOpen(this.state.itemId);
-
-        const headerTitle =
-            this.props.editorMode == global.UPDATE_MODE ? 
-            this.props.itemName : 'New ' + global.hashtagUtil.getItemTypeCaption(this.props.itemType);
-
-        this.props.navigation.setParams({ 
-            onCancel: this.onCancel,
-            headerTitle: headerTitle
-        });
     }
 
     getCaptionFromCategories(items) {
@@ -113,41 +70,36 @@ export default class HashtagCategoryEditScreenUi extends React.Component {
         return items.map(id => global.hashtagUtil.getCatFromId(id).name).sort().join(', ');
     }
 
-    onQuit() {
-        Keyboard.dismiss();
-        this.props.onClose(this.state.itemId);
-        this.props.navigation.goBack(null);
+    getItemName() {
+        return this.state.itemName.trim();
     }
 
-    onCancel() {
+    getHeaderTitle() {
+        const headerTitle =
+            this.props.editorMode == global.UPDATE_MODE ? 
+            this.props.itemName : 'New ' + global.hashtagUtil.getItemTypeCaption(this.props.itemType);
+        return headerTitle;
+    }
+    
+    getItemId() {
+        return this.state.itemId;
+    }
 
-        if (this.state.dirty == true) {
-            Alert.alert('', `Are you sure you want to quit and lose your changes?`,
-            [
-                { 
-                    text: 'Ooops, no don\'t quit...',
-                    style: 'cancel'
-                },
-                {
-                    text: 'Yes, quit and discard changes',
-                    onPress: () => {
-                        this.onQuit();
-                    }
-                }
-            ]);
-        } else {
-            this.onQuit();
-        }
+    setSaveComponent(saveComponent) {
+        this.saveComponent = saveComponent;
+    }
+
+    notifySaveComponent() {
+        this.saveComponent.setState({dirty: this.getItemName().length > 0});
     }
 
     onSaveItem() {
 
-        const itemName = this.state.itemName.trim();
-
-        if (this.validateItem(itemName) == false) {
-            this.saveSubscriber.forEach(listener => listener.setActionCompleted());
+        if (this.canSaveItem(itemName) == false) {
             return;
         }
+
+        const itemName = this.getItemName();
 
         switch (this.props.itemType) {
 
@@ -159,8 +111,6 @@ export default class HashtagCategoryEditScreenUi extends React.Component {
                 this.saveCategory(itemName);
                 break;
         }
-
-        this.onQuit();
     }
 
     hasNoTags() {
@@ -203,7 +153,9 @@ export default class HashtagCategoryEditScreenUi extends React.Component {
         this.props.onSaveCategory(categoryToSave, this.props.editorMode === global.UPDATE_MODE);
     }
 
-    validateItem(itemName) {
+    canSaveItem() {
+        
+        const itemName = this.getItemName();
         
         // 1. Check the category name has been entered
         if (itemName == null || itemName.length == 0) {
@@ -319,19 +271,17 @@ export default class HashtagCategoryEditScreenUi extends React.Component {
         }
         
         this.setState({
-            dirty: true,
             itemName: text,
             normalizedItemName: text.toLowerCase(),
             searchSuggestions: searchSuggestions
-        });
+        }, this.notifySaveComponent);
     }
 
     onCategoriesSelected(categories) {
         this.setState( {
-            dirty: true,
             parentCategories: categories,
             parentCategoriesCaption: this.getCaptionFromCategories(categories)
-        });
+        }, this.notifySaveComponent);
     }
 
     onSelectParentCategory() {
@@ -349,21 +299,15 @@ export default class HashtagCategoryEditScreenUi extends React.Component {
     onTagSelectionValidated(selection) {
 
         this.setState({
-            dirty: true,
             childrenTags: selection
-        });
+        }, this.notifySaveComponent);
     }
 
     onDeleteTag(tagId) {
 
         this.setState({
-            dirty: true,
             childrenTags: this.state.childrenTags.filter(id => id != tagId)
-        });
-    }
-
-    isDirty() {
-        return this.state.dirty && this.state.itemName.trim().length > 0;
+        }, this.notifySaveComponent);
     }
 
     getCategorySelectPlaceHolder() {
@@ -375,26 +319,6 @@ export default class HashtagCategoryEditScreenUi extends React.Component {
     }
 
     render() {
-        if (this.isDirty() && this.saveContainerVisible == false) {
-            this.saveContainerVisible = true;
-            Animated.timing(
-                this.saveContainerAnimatedHeight,
-                {
-                    toValue: 60,
-                    duration: 200
-                }
-            ).start();
-        } else if (this.isDirty() == false && this.saveContainerVisible == true) {
-            this.saveContainerVisible = false;
-            Animated.timing(
-                this.saveContainerAnimatedHeight,
-                {
-                    toValue: 0,
-                    duration: 200
-                }
-            ).start();
-        }
-
         return (
             <View style={[CommonStyles.styles.standardPage, { padding: 0 }]}>
             
@@ -462,23 +386,6 @@ export default class HashtagCategoryEditScreenUi extends React.Component {
                         </View>
                     }
                 </ScrollView>
-
-                <Animated.View style={{
-                            backgroundColor: CommonStyles.SEPARATOR_COLOR,
-                            borderTopColor: CommonStyles.GLOBAL_BACKGROUND,
-                            borderTopWidth: 1,
-                            height: this.saveContainerAnimatedHeight,
-                        }}>
-                    <CustomButton
-                        title={'Save'}
-                        onPress={this.onSaveItem}
-                        showActivityIndicator={true}
-                        style={[CommonStyles.styles.standardButton, {margin: CommonStyles.GLOBAL_PADDING}]}
-                        deactivated={this.isDirty() == false}
-                        register={this.saveSubscriber}
-                    />
-                </Animated.View>
-
             </View>
         );
     }
