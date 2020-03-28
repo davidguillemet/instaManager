@@ -11,15 +11,20 @@ export function launchControls() {
     }
 }
 
+export function runControls(dispatch, postAction) {
+    return global.hashtagUtil.runControls()
+    .then((errors) => {
+        dispatch(createControlsCompletedAction(errors));
+        if (postAction) {
+            dispatch(postAction);
+        }
+    })
+}
+
 function createRunControlsAction() {
-    return dispatch => {
-        
+    return dispatch => {        
         dispatch(createControlsStartedAction());
-        
-        return global.hashtagUtil.runControls()
-        .then((errors) => {
-            dispatch(createControlsCompletedAction(errors));
-        })
+        return runControls(dispatch);
     }
 }
 
@@ -29,7 +34,7 @@ function createControlsStartedAction() {
     }
 }
 
-function createControlsCompletedAction(errors) {
+export function createControlsCompletedAction(errors) {
     return {
         type: CONTROLS_COMPLETED,
         errors: errors

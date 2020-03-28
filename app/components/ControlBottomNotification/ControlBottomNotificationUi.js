@@ -7,22 +7,24 @@ export default class ControlBottomNotificationUi extends React.PureComponent {
     constructor(props){
         super(props);
 
-        this.state = {
-            didUpdate: false
-        }
-    }
-
-    componentDidUpdate() {
-
-        if (this.props.hasErrors == true && this.state.didUpdate == false) {
-            this.setState({didUpdate: true});
-        }
+        this.hasErrors = this.props.hasErrors;
+        this.activeProfile = this.props.activeProfile;
     }
 
     render() {
 
+        if (this.props.activeProfileLoading == true) {
+            return null;
+        }
+
+        const hadErrors = this.hasErrors;
+        this.hasErrors = this.props.hasErrors;
+
+        const previousProfile = this.activeProfile;
+        this.activeProfile = this.props.activeProfile;
+
         return (
-            this.state.didUpdate == true && this.props.hasErrors == false ?
+            this.hasErrors == false && hadErrors == true && this.activeProfile == previousProfile ?
             <BottomNotification
                 caption={'All issues have been fixed.'}
                 type={NotificationType.SUCCESS}

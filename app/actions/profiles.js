@@ -2,7 +2,7 @@ import { Map } from 'immutable';
 
 import { loadCategories } from './categories';
 import { loadHashtags } from './tags';
-import { launchControls } from './control';
+import { runControls } from './control';
 import { forceLoadPublications } from './publications';
 
 export const PROFILES_LOADED = 'PROFILES_LOADED';
@@ -22,7 +22,7 @@ export function loadActiveProfileAsync() {
         return new Promise(function(resolve, reject) {
             setTimeout(() => {
                 loadActiveProfileContent(dispatch);
-                dispatch(createProfileLoadingAction(false));
+                runControls(dispatch, createProfileLoadingAction(false));
                 resolve();
             }, 100)
         });
@@ -35,7 +35,7 @@ function createLoadProfilesAction() {
         .then((profiles) => {
             const immutableMap = Map(profiles.map(item => [item.id, item]));
             loadActiveProfileContent(dispatch, true);
-            dispatch(createProfilesLoadedAction(immutableMap));
+            runControls(dispatch, createProfilesLoadedAction(immutableMap));
         })
     }
 }
@@ -43,7 +43,6 @@ function createLoadProfilesAction() {
 export function loadActiveProfileContent(dispatch, initialLoad) {
     dispatch(loadCategories());
     dispatch(loadHashtags());
-    dispatch(launchControls());
     if (initialLoad == undefined) {
         dispatch(forceLoadPublications());
     }
