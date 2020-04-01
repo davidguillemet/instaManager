@@ -4,9 +4,10 @@ import { withNavigation } from 'react-navigation';
 import {
   View,
   Text,
-  FlatList,
-  SegmentedControlIOS,
+  FlatList
 } from 'react-native';
+
+import SegmentedControlIOS from '@react-native-community/segmented-control';
 
 import CategoryListItem from './CategoryListItem';
 import LoadingIndicatorView from '../LoadingIndicator';
@@ -289,6 +290,8 @@ class CategoryListUi extends React.PureComponent {
                             this.setDisplayType(event.nativeEvent.selectedSegmentIndex);
                         }}
                         tintColor={CommonStyles.TEXT_COLOR}
+                        textColor={CommonStyles.TEXT_COLOR}
+                        activeTextColor={CommonStyles.GLOBAL_BACKGROUND}
                         style={{ margin: CommonStyles.GLOBAL_PADDING }}
                     />
                     :

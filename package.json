@@ -8,6 +8,7 @@
   },
   "dependencies": {
     "@react-native-community/async-storage": "^1.4.2",
+    "@react-native-community/segmented-control": "^1.2.1",
     "hoist-non-react-statics": "^3.0.1",
     "immutable": "^3.8.2",
     "node": "^9.7.0",

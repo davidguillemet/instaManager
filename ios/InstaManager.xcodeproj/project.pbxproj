@@ -43,6 +43,7 @@
 		BB786B8D46C440FDB83B8DD8 /* EvilIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 93AEE190682F488F9D45DBE2 /* EvilIcons.ttf */; };
 		CFB2FBEE74AF43FDB02A00F3 /* libc++.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 6445D79FBE974CD5B9D65356 /* libc++.tbd */; };
 		CFD1BF203EC7483CAF86AD7D /* Feather.ttf in Resources */ = {isa = PBXBuildFile; fileRef = BA8A9F585F72451BAE23A3D2 /* Feather.ttf */; };
+		D3F7FB0B489E480B97C37C36 /* libRNCSegmentedControl.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B184CE0F4E34EE783F76E08 /* libRNCSegmentedControl.a */; };
 		EF73DBF69BA1407C9BA8BA2F /* libRNCAsyncStorage.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 629A3EF9E8AA432DABC8B50F /* libRNCAsyncStorage.a */; };
 		FBAF5219DF324775B0EA60D7 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 585C659F750944A0A866C489 /* libz.tbd */; };
 /* End PBXBuildFile section */
@@ -223,6 +224,13 @@
 			remoteGlobalIDString = F60690131CA2766F0003FB26;
 			remoteInfo = RealmReact;
 		};
+		30ACC1CE2435122B00E731F1 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 2D4DC847DAF146C6A84FD612 /* RNCSegmentedControl.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 134814201AA4EA6300B7C361;
+			remoteInfo = RNCSegmentedControl;
+		};
 		30AE7B9722B52BBD004221E5 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = FDB611077B90402FA4D357B4 /* SplashScreen.xcodeproj */;
@@ -377,6 +385,7 @@
 		147D1808D3CD4BABB5511069 /* Foundation.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Foundation.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Foundation.ttf"; sourceTree = "<group>"; };
 		25CA4945F39F4103B6C77F85 /* Entypo.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Entypo.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Entypo.ttf"; sourceTree = "<group>"; };
 		2D16E6891FA4F8E400B85C8A /* libReact.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libReact.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		2D4DC847DAF146C6A84FD612 /* RNCSegmentedControl.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RNCSegmentedControl.xcodeproj; path = "../node_modules/@react-native-community/segmented-control/ios/RNCSegmentedControl.xcodeproj"; sourceTree = "<group>"; };
 		2E0FF05F469C4CC1A5ECB0FB /* libRCTFBSDK.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRCTFBSDK.a; sourceTree = "<group>"; };
 		30248B14206826E2004D2C48 /* FBSDKShareKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = FBSDKShareKit.framework; sourceTree = "<group>"; };
 		30549AA620681B89003F248B /* Bolts.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Bolts.framework; sourceTree = "<group>"; };
@@ -385,6 +394,7 @@
 		30DAFC9B22A70A0D00B5C8B6 /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 		57146B03C5CB443C8DCC05E7 /* MaterialCommunityIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = MaterialCommunityIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/MaterialCommunityIcons.ttf"; sourceTree = "<group>"; };
 		585C659F750944A0A866C489 /* libz.tbd */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
+		5B184CE0F4E34EE783F76E08 /* libRNCSegmentedControl.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRNCSegmentedControl.a; sourceTree = "<group>"; };
 		5E91572D1DD0AC6500FF2AA8 /* RCTAnimation.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTAnimation.xcodeproj; path = "../node_modules/react-native/Libraries/NativeAnimation/RCTAnimation.xcodeproj"; sourceTree = "<group>"; };
 		5F400DC318A84CC096ABD3B8 /* RNVectorIcons.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RNVectorIcons.xcodeproj; path = "../node_modules/react-native-vector-icons/RNVectorIcons.xcodeproj"; sourceTree = "<group>"; };
 		629A3EF9E8AA432DABC8B50F /* libRNCAsyncStorage.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRNCAsyncStorage.a; sourceTree = "<group>"; };
@@ -442,6 +452,7 @@
 				372E9D645D1E4786A4B59809 /* libRNVectorIcons.a in Frameworks */,
 				EF73DBF69BA1407C9BA8BA2F /* libRNCAsyncStorage.a in Frameworks */,
 				B3C7F20B48C342448F7F6B7B /* libSplashScreen.a in Frameworks */,
+				D3F7FB0B489E480B97C37C36 /* libRNCSegmentedControl.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -621,6 +632,14 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		30ACC1CB2435122B00E731F1 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				30ACC1CF2435122B00E731F1 /* libRNCSegmentedControl.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		30AE7B9422B52BBC004221E5 /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -639,6 +658,7 @@
 				E33D826DBA794AF7964E48A9 /* libRCTFBSDKLogin.a */,
 				629A3EF9E8AA432DABC8B50F /* libRNCAsyncStorage.a */,
 				94DEF24948C64BA094A962FE /* libSplashScreen.a */,
+				5B184CE0F4E34EE783F76E08 /* libRNCSegmentedControl.a */,
 			);
 			name = "Recovered References";
 			sourceTree = "<group>";
@@ -689,6 +709,7 @@
 				5F400DC318A84CC096ABD3B8 /* RNVectorIcons.xcodeproj */,
 				B6A24DADC7EA4AB3BF712A93 /* RNCAsyncStorage.xcodeproj */,
 				FDB611077B90402FA4D357B4 /* SplashScreen.xcodeproj */,
+				2D4DC847DAF146C6A84FD612 /* RNCSegmentedControl.xcodeproj */,
 			);
 			name = Libraries;
 			sourceTree = "<group>";
@@ -867,6 +888,10 @@
 				{
 					ProductGroup = 30DC600E20573348008AD76B /* Products */;
 					ProjectRef = 00D2BC45B5B049A68D0D5BB8 /* RNCookieManagerIOS.xcodeproj */;
+				},
+				{
+					ProductGroup = 30ACC1CB2435122B00E731F1 /* Products */;
+					ProjectRef = 2D4DC847DAF146C6A84FD612 /* RNCSegmentedControl.xcodeproj */;
 				},
 				{
 					ProductGroup = 30549A9020681142003F248B /* Products */;
@@ -1052,6 +1077,13 @@
 			fileType = archive.ar;
 			path = libRealmReact.a;
 			remoteRef = 30549A9D20681142003F248B /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		30ACC1CF2435122B00E731F1 /* libRNCSegmentedControl.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libRNCSegmentedControl.a;
+			remoteRef = 30ACC1CE2435122B00E731F1 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		30AE7B9822B52BBD004221E5 /* libSplashScreen.a */ = {
@@ -1288,12 +1320,14 @@
 					"$(SRCROOT)/../node_modules/react-native-fbsdklogin/iOS",
 					"$(SRCROOT)/../node_modules/@react-native-community/async-storage/ios",
 					"$(SRCROOT)/../node_modules/react-native-splash-screen/ios",
+					"$(SRCROOT)/../node_modules/@react-native-community/segmented-control/ios",
 				);
 				INFOPLIST_FILE = InstaManagerTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
@@ -1327,12 +1361,14 @@
 					"$(SRCROOT)/../node_modules/react-native-fbsdklogin/iOS",
 					"$(SRCROOT)/../node_modules/@react-native-community/async-storage/ios",
 					"$(SRCROOT)/../node_modules/react-native-splash-screen/ios",
+					"$(SRCROOT)/../node_modules/@react-native-community/segmented-control/ios",
 				);
 				INFOPLIST_FILE = InstaManagerTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
@@ -1372,6 +1408,7 @@
 					"$(SRCROOT)/../node_modules/react-native-fbsdk/ios/RCTFBSDK/**",
 					"$(SRCROOT)/../node_modules/@react-native-community/async-storage/ios",
 					"$(SRCROOT)/../node_modules/react-native-splash-screen/ios",
+					"$(SRCROOT)/../node_modules/@react-native-community/segmented-control/ios",
 				);
 				INFOPLIST_FILE = InstaManager/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 10.3;
@@ -1409,6 +1446,7 @@
 					"$(SRCROOT)/../node_modules/react-native-fbsdk/ios/RCTFBSDK/**",
 					"$(SRCROOT)/../node_modules/@react-native-community/async-storage/ios",
 					"$(SRCROOT)/../node_modules/react-native-splash-screen/ios",
+					"$(SRCROOT)/../node_modules/@react-native-community/segmented-control/ios",
 				);
 				INFOPLIST_FILE = InstaManager/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 10.3;

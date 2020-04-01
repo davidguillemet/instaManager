@@ -5,9 +5,10 @@ import {
     Text,
     FlatList,
     SectionList,
-    SegmentedControlIOS,
-    TouchableOpacity,
+    TouchableOpacity
 } from 'react-native';
+
+import SegmentedControlIOS from '@react-native-community/segmented-control';
 
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import CustomButton from '../../components/CustomButton';
@@ -363,7 +364,9 @@ export default class HashTagListScreenUi extends React.Component {
                     selectedIndex={this.props.tagFilterIndex}
                     onChange={this.setDisplayType}
                     tintColor={CommonStyles.TEXT_COLOR}
-                    style={{ margin: CommonStyles.GLOBAL_PADDING }}
+                    textColor={CommonStyles.TEXT_COLOR}
+                    activeTextColor={CommonStyles.GLOBAL_BACKGROUND}
+                    style={{ margin: CommonStyles.GLOBAL_PADDING}}
                 />
                 <View style={{flexDirection: 'row', alignItems: 'center', padding: CommonStyles.GLOBAL_PADDING, backgroundColor: CommonStyles.MEDIUM_BACKGROUND}}>
                     <SearchInput
