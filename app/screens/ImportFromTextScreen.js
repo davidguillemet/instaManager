@@ -37,7 +37,7 @@ export default class ImportFromTextScreen extends React.Component {
 
         const params = importedTags; // { tags: [...], errors: [...] }
 
-        this.props.navigation.navigate('ImportFromTextResult', params);
+        this.props.navigation.push('ImportFromTextResult', params);
     }
 
     onAddImportTags() {

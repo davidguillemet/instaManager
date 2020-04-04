@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-    StackNavigator
+    createStackNavigator
 } from 'react-navigation';
 
 import NavigationOptions from '../styles/navigation';
@@ -9,7 +9,7 @@ import SettingsScreen from '../screens/SettingsScreen';
 import ProfileListScreen from '../screens/ProfileListScreen';
 import ProfileEditScreen from '../screens/ProfileEditScreen';
 
-export default SettingsStack = StackNavigator(
+export default SettingsStack = createStackNavigator(
 {
     SettingsHome: {
         screen: SettingsScreen,

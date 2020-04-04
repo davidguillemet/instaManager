@@ -111,7 +111,7 @@ export default class HashTagListScreenUi extends React.Component {
     }
 
     onImport() {
-        this.props.navigation.navigate('ImportFromText' /* 'HashTagsImport' */);
+        this.props.navigation.push('ImportFromText');
     }
 
     navigateToEditScreen(itemId) {
@@ -121,7 +121,7 @@ export default class HashTagListScreenUi extends React.Component {
             itemType: global.TAG_ITEM
         };
 
-        this.props.navigation.navigate('HashtagCategoryEdit', params);
+        this.props.navigation.push('HashtagCategoryEdit', params);
     }
 
     onAddTag() {

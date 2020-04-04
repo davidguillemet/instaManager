@@ -57,7 +57,7 @@ class CategoryListUi extends React.PureComponent {
             itemId: categoryToEdit.id,
             itemType: global.CATEGORY_ITEM
         };
-        this.props.navigation.navigate('HashtagCategoryEdit', params);
+        this.props.navigation.push('HashtagCategoryEdit', params);
     }
     
     onAddCategory() {

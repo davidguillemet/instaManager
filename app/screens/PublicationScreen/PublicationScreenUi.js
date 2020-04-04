@@ -69,12 +69,12 @@ export default class PublicationScreenUi extends React.Component {
             id: pubId
         };
 
-        this.props.navigation.navigate('PublicationSummary', params);
+        this.props.navigation.push('PublicationSummary', params);
     }
 
     onCreatePublication() {
 
-        this.props.navigation.navigate('PublicationWizard');
+        this.props.navigation.push('PublicationWizard');
     }
 
     onCopyPublication(pubId) {
@@ -83,7 +83,7 @@ export default class PublicationScreenUi extends React.Component {
             id: pubId
         };
 
-        this.props.navigation.navigate('PublicationWizard', params);
+        this.props.navigation.push('PublicationWizard', params);
     }
 
     renderSectionHeader({section}) {
@@ -177,7 +177,7 @@ export default class PublicationScreenUi extends React.Component {
     }
 
     onFilterPublications() {
-        this.props.navigation.navigate('PublicationFilter');
+        this.props.navigation.push('PublicationFilter');
     }
 
     render() {

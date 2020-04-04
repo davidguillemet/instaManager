@@ -1,8 +1,8 @@
 import React from 'react';
+import {Text} from 'react-native';
 import {
-    StackNavigator,
-    TabNavigator,
-    TabBarBottom
+    createStackNavigator,
+    createBottomTabNavigator
 } from 'react-navigation';
 
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -43,7 +43,7 @@ function getRouteLabel(routeName) {
     return routeCaption;
 }
 
-const ApplicationNavigator = TabNavigator(
+const ApplicationNavigator = createBottomTabNavigator(
 {
     Hashtags: { screen: HashTagsStack },
     Publications: { screen: PublicationStack },
@@ -61,7 +61,7 @@ const ApplicationNavigator = TabNavigator(
         },
         tabBarLabel: () => {
             const { routeName } = navigation.state;
-            return getRouteLabel(routeName);    
+            return <Text style={CommonStyles.styles.tinyLabel}>{getRouteLabel(routeName)}</Text>;    
         }
     }),
     tabBarOptions: {
@@ -72,13 +72,11 @@ const ApplicationNavigator = TabNavigator(
         },
         showIcon: true
     },
-    tabBarComponent: TabBarBottom,
-    tabBarPosition: 'bottom',
     animationEnabled: false,
     swipeEnabled: false
 });
 
-export default Root = StackNavigator(
+export default Root = createStackNavigator(
 {
     ApplicationStack: { screen: ApplicationNavigator },
     ControlDetailsModal: { screen: ControlDetailsStack },

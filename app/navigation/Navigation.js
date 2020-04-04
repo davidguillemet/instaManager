@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-    SwitchNavigator
+    createSwitchNavigator
 } from 'react-navigation';
 
 import AuthLoadingScreen from '../screens/AuthLoadingScreen';
@@ -9,7 +9,7 @@ import AuthenticationStack from './AuthenticationStack';
 
 export default ApplicationStack;
 
-// export default RootStack = SwitchNavigator(
+// export default RootStack = createSwitchNavigator(
 // {
 //     AuthLoading: AuthLoadingScreen,
 //     AppStack: ApplicationStack,

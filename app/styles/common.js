@@ -99,6 +99,10 @@ CommonStyles.styles = StyleSheet.create(
     color: CommonStyles.TEXT_COLOR,
     fontSize: CommonStyles.SMALL_FONT_SIZE
   },
+  tinyLabel: {
+    color: CommonStyles.TEXT_COLOR,
+    fontSize: CommonStyles.TINY_FONT_SIZE
+  },
   standardButton: {
     backgroundColor: CommonStyles.BUTTON_COLOR,
     color: CommonStyles.TEXT_COLOR,

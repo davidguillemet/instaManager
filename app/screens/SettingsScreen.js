@@ -157,7 +157,7 @@ class SettingsScreen extends React.PureComponent {
     }
 
     navigateToProfiles() {
-        this.props.navigation.navigate('ProfileList');
+        this.props.navigation.push('ProfileList');
     }
 
     renderActiveProfile(item) {

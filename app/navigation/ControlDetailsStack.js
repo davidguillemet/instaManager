@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-    StackNavigator,
+    createStackNavigator,
     Text
 } from 'react-navigation';
 
@@ -12,7 +12,7 @@ import CategorySelectionScreen from '../screens/CategorySelectionScreen';
 import ControlDetailsScreen from '../screens/ControlDetailsScreen';
 
 
-const HashtagCategoryEditStack = StackNavigator(
+const HashtagCategoryEditStack = createStackNavigator(
     {
         VirtualHashtagCategoryEdit: { screen: HashtagCategoryEditScreen }
     },
@@ -23,7 +23,7 @@ const HashtagCategoryEditStack = StackNavigator(
     }
 );
 
-const CategorySelectionStack = StackNavigator(
+const CategorySelectionStack = createStackNavigator(
     {
         VirtualCategorySelection: { screen: CategorySelectionScreen }
     },
@@ -34,7 +34,7 @@ const CategorySelectionStack = StackNavigator(
     }
 );
 
-const HashTagListStack = StackNavigator(
+const HashTagListStack = createStackNavigator(
     {
         VirtualHashtagSelection: { screen: HashTagListScreen }
     },
@@ -45,7 +45,7 @@ const HashTagListStack = StackNavigator(
 );
 
 
-export default ControlDetailsStack = StackNavigator(
+export default ControlDetailsStack = createStackNavigator(
     {
         HashTagList: { screen: HashTagListStack },
         HashtagCategoryEdit: { screen: HashtagCategoryEditStack },

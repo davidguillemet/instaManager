@@ -84,13 +84,13 @@ export default class HashTagsImportScreen extends React.Component {
                 "Some tags which have been imported from your media have not been saved. Would you like to continue?",
                 [
                     {text: 'Cancel', onPress: null, style: 'cancel'},
-                    {text: 'OK', onPress: () => this.props.navigation.goBack() }
+                    {text: 'OK', onPress: () => this.props.navigation.goBack(null) }
                 ]
             );
 
         } else {
 
-            this.props.navigation.goBack();
+            this.props.navigation.goBack(null);
         }
     }
 

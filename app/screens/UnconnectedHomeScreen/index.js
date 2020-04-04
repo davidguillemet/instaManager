@@ -32,7 +32,7 @@ export default class UnconnectedHomeScreen extends React.Component {
     }
 
     _onInstagramConnect() {
-      this.props.navigation.navigate('Connection');
+      this.props.navigation.push('Connection');
     }
 
     _onFacebookConnect() {

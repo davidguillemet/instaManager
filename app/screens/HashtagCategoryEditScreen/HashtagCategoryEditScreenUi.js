@@ -293,7 +293,7 @@ export default class HashtagCategoryEditScreenUi extends React.Component {
             itemType: this.props.itemType
         };
 
-        this.props.navigation.navigate('CategorySelection', params);
+        this.props.navigation.push('CategorySelection', params);
     }
 
     onTagSelectionValidated(selection) {

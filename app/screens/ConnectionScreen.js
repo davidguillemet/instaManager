@@ -67,7 +67,7 @@ export default class ConnectionScreen extends React.Component {
         
       } else {
         // cancel authorization = go back to unconnected home
-        this.props.navigation.goBack();
+        this.props.navigation.goBack(null);
       } 
       
       return false;
@@ -88,7 +88,7 @@ export default class ConnectionScreen extends React.Component {
   _onGetUserInfo(userInfo) {
 
     global.userManager.setCurrentUser(userInfo);
-    this.props.navigation.navigate('AppStack');
+    this.props.navigation.push('AppStack');
   }
 }
 

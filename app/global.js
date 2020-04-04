@@ -46,13 +46,20 @@ global.uniqueID = () => {
 
 global._getLocale = () => {
 
-  let langRegionLocale = "en_US";
+  let langRegionLocaleDefault = "en_US";
 
   // If we have an Android phone
   if (Platform.OS === "android") {
-    langRegionLocale = NativeModules.I18nManager.localeIdentifier || "";
+    langRegionLocale = NativeModules.I18nManager.localeIdentifier || langRegionLocaleDefault;
   } else if (Platform.OS === "ios") {
-    langRegionLocale = NativeModules.SettingsManager.settings.AppleLocale || "";
+    langRegionLocale = NativeModules.SettingsManager.settings.AppleLocale;
+    if (langRegionLocale === undefined) {
+      // iOS 13 workaround, take first of AppleLanguages array  ["en", "en-US"]
+      langRegionLocale = NativeModules.SettingsManager.settings.AppleLanguages[0]
+      if (langRegionLocale == undefined) {
+        langRegionLocale = langRegionLocaleDefault // default language
+      }
+    }
   }
   langRegionLocale = langRegionLocale.replace('_', '-');
   return langRegionLocale;

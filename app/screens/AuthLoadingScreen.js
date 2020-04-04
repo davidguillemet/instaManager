@@ -29,19 +29,19 @@ export default class AuthLoadingScreen extends React.Component {
         .then((userInfo) => {
           this._onGetUserInfo.call(this, userInfo);
         }).catch((error) => {
-          this.props.navigation.navigate('AuthStack');
+          this.props.navigation.push('AuthStack');
         });
 
       } else {
 
-        this.props.navigation.navigate('AuthStack');
+        this.props.navigation.push('AuthStack');
       }
     };
 
     _onGetUserInfo(userInfo) {
 
       global.userManager.setCurrentUser(userInfo);      
-      this.props.navigation.navigate('AppStack');
+      this.props.navigation.push('AppStack');
     }
 
 

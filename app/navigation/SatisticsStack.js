@@ -1,13 +1,13 @@
 import React from 'react';
 import {
-    StackNavigator
+    createStackNavigator
 } from 'react-navigation';
 
 import NavigationOptions from '../styles/navigation';
 
 import HomeScreen from '../screens/HomeScreen';
 
-export default StatisticsStack = StackNavigator(
+export default StatisticsStack = createStackNavigator(
     {
         Home: { screen: HomeScreen }
     },

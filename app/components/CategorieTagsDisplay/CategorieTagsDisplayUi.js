@@ -124,7 +124,7 @@ class CategorieTagsDisplayUi extends React.PureComponent {
             onSelectionValidated: this.onTagSelectionValidated
         };
 
-        this.props.navigation.navigate('HashTagList', params);
+        this.props.navigation.push('HashTagList', params);
     }
 
     onNavigateToCategory(catId) {
@@ -132,7 +132,7 @@ class CategorieTagsDisplayUi extends React.PureComponent {
             itemId: catId,
             itemType: global.CATEGORY_ITEM
         };
-        this.props.navigation.navigate('HashtagCategoryEdit', params);
+        this.props.navigation.push('HashtagCategoryEdit', params);
     }
 
     onTagSelectionValidated(selection) {

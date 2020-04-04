@@ -2,11 +2,9 @@ import React from 'react';
 import {
     SectionList,
     ActionSheetIOS,
-    ProgressViewIOS,
     StyleSheet,
     View,
-    Text,
-    TouchableOpacity
+    Text
 } from 'react-native';
 import PropTypes from 'prop-types';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -54,7 +52,7 @@ export default class ControlDetailsUi extends React.PureComponent {
             itemType: global.CATEGORY_ITEM
         };
 
-        this.props.navigation.navigate('HashtagCategoryEdit', params);        
+        this.props.navigation.push('HashtagCategoryEdit', params);        
     }
 
     onShowOverflowItemMenu(catId) {

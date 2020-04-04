@@ -1,8 +1,4 @@
 import React from 'React';
-import {
-    TouchableOpacity,
-    View
-} from 'react-native';
 
 import ControlDetails from '../components/ControlDetails';
 import ModalTemplate from '../components/ModalTemplate';

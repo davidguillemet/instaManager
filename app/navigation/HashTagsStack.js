@@ -1,7 +1,6 @@
-import React from 'react';
 import {
-    StackNavigator,
-    SwitchNavigator
+    createStackNavigator,
+    createSwitchNavigator
 } from 'react-navigation';
 
 import NavigationOptions from '../styles/navigation';
@@ -15,7 +14,7 @@ import CategorySelectionScreen from '../screens/CategorySelectionScreen';
 import ImportFromTextScreen from '../screens/ImportFromTextScreen';
 import ImportFromTextResultScreen from '../screens/ImportFromTextResultScreen';
 
-const ImportStack = SwitchNavigator(
+const ImportStack = createSwitchNavigator(
 {
     HomeAfterImport: { screen: HashTagListScreen },
     ImportFromTextResult: { screen: ImportFromTextResultScreen }
@@ -24,7 +23,7 @@ const ImportStack = SwitchNavigator(
     initialRouteName: 'ImportFromTextResult',
 });
 
-export default HashTagsStack = StackNavigator(
+export default HashTagsStack = createStackNavigator(
     {
         HashTagsHome: {
             screen: HashTagsHomeScreen,
@@ -38,7 +37,7 @@ export default HashTagsStack = StackNavigator(
         HashtagCategoryEdit: { screen: HashtagCategoryEditScreen },
         CategorySelection: { screen: CategorySelectionScreen },
         ImportFromText: { screen: ImportFromTextScreen },
-        Import: { screen: ImportStack }
+        ImportFromTextResult: { screen: ImportStack }
     },
     {
         initialRouteName: 'HashTagsHome',

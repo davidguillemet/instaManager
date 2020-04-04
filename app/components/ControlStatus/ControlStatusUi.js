@@ -19,7 +19,7 @@ export default class ControlStatusUi extends React.PureComponent {
 
     openControlDetails() {
 
-        this.props.navigation.navigate('ControlDetailsModal');
+        this.props.navigation.push('ControlDetailsModal');
     }
 
     render() {

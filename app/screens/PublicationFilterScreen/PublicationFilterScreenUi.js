@@ -2,7 +2,6 @@ import React from 'react';
 import {
     Picker,
     StyleSheet,
-    Text,
     View
 } from 'react-native';
 

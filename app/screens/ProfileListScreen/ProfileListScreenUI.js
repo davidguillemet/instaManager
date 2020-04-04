@@ -58,7 +58,7 @@ export default class ProfileListScreen extends React.PureComponent {
         const params = {
             profileId: profileId,
         };
-        this.props.navigation.navigate('ProfileEdit', params);
+        this.props.navigation.push('ProfileEdit', params);
     }
 
     keyExtractor(item, index) {

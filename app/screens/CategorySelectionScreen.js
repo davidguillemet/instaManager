@@ -61,7 +61,7 @@ export default class CategorySelectionScreen extends React.Component {
         if (this.onCategoriesSelected)
         {
             this.onCategoriesSelected(this.newSelectedCategories);
-            this.props.navigation.goBack();
+            this.props.navigation.goBack(null);
         }
     }
 
