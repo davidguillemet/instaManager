@@ -81,7 +81,7 @@ export default class TagListItem extends React.PureComponent {
             <TouchableOpacity onPress={this._onPress}>
                 <View style={[
                         CommonStyles.styles.singleListItemContainer,
-                        { flex: 1, flexDirection: 'row', alignItems: 'center'}
+                        { flex: 1, flexDirection: 'row', alignItems: 'center', backgroundColor: CommonStyles.GLOBAL_BACKGROUND }
                     ]}
                 >
                     <View style={itemIndicatorStyles} />
