@@ -13,7 +13,7 @@ export default SettingsStack = createStackNavigator(
 {
     SettingsHome: {
         screen: SettingsScreen,
-        navigationOptions: () => ({
+        defaultNavigationOptions: () => ({
             headerLeft: null
         }),
     },
@@ -22,5 +22,5 @@ export default SettingsStack = createStackNavigator(
 },
 {
     initialRouteName: 'SettingsHome',
-    navigationOptions: NavigationOptions
+    defaultNavigationOptions: NavigationOptions
 });

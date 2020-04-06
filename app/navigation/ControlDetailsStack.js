@@ -18,7 +18,7 @@ const HashtagCategoryEditStack = createStackNavigator(
     },
     {
         initialRouteName: 'VirtualHashtagCategoryEdit',
-        navigationOptions: NavigationOptions,
+        defaultNavigationOptions: NavigationOptions,
         mode: 'card'
     }
 );
@@ -29,7 +29,7 @@ const CategorySelectionStack = createStackNavigator(
     },
     {
         initialRouteName: 'VirtualCategorySelection',
-        navigationOptions: NavigationOptions,
+        defaultNavigationOptions: NavigationOptions,
         mode: 'card'
     }
 );
@@ -40,7 +40,7 @@ const HashTagListStack = createStackNavigator(
     },
     {
         initialRouteName: 'VirtualHashtagSelection',
-        navigationOptions: NavigationOptions
+        defaultNavigationOptions: NavigationOptions
     }
 );
 

@@ -1,13 +1,14 @@
-import React from 'react';
+// import React from 'react';
 import {
-    createSwitchNavigator
+    createSwitchNavigator,
+    createAppContainer
 } from 'react-navigation';
 
-import AuthLoadingScreen from '../screens/AuthLoadingScreen';
+//import AuthLoadingScreen from '../screens/AuthLoadingScreen';
 import ApplicationStack from './ApplicationStack';
-import AuthenticationStack from './AuthenticationStack';
+//import AuthenticationStack from './AuthenticationStack';
 
-export default ApplicationStack;
+export default createAppContainer(ApplicationStack);
 
 // export default RootStack = createSwitchNavigator(
 // {

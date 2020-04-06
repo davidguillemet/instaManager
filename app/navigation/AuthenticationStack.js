@@ -15,6 +15,6 @@ export default AuthStack = createStackNavigator(
     },
     {
         initialRouteName: 'Unconnected',
-        navigationOptions: NavigationOptions
+        defaultNavigationOptions: NavigationOptions
     });
     

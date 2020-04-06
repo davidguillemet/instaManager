@@ -27,7 +27,7 @@ export default HashTagsStack = createStackNavigator(
     {
         HashTagsHome: {
             screen: HashTagsHomeScreen,
-            navigationOptions: () => ({
+            defaultNavigationOptions: () => ({
                 headerLeft: null
             }),
         },
@@ -41,7 +41,7 @@ export default HashTagsStack = createStackNavigator(
     },
     {
         initialRouteName: 'HashTagsHome',
-        navigationOptions: NavigationOptions
+        defaultNavigationOptions: NavigationOptions
     }
 );
     

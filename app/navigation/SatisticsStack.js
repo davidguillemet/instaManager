@@ -13,6 +13,6 @@ export default StatisticsStack = createStackNavigator(
     },
     {
         initialRouteName: 'Home',
-        navigationOptions: NavigationOptions
+        defaultNavigationOptions: NavigationOptions
     });
     
