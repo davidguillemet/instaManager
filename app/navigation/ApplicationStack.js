@@ -51,7 +51,7 @@ const ApplicationNavigator = createBottomTabNavigator(
 },
 {
     initialRouteName: 'Hashtags',
-    navigationOptions: ({ navigation }) => ({
+    defaultNavigationOptions: ({ navigation }) => ({
         tabBarIcon: ({ focused, tintColor }) => {
             const { routeName } = navigation.state;
             const iconName = getRouteIcon(routeName, focused);    

@@ -16,7 +16,7 @@ export default PublicationStack = createStackNavigator(
 {
     PublicationHome: {
         screen: PublicationScreen,
-        navigationOptions: () => ({
+        defaultNavigationOptions: () => ({
             headerLeft: null
         }),
     },
@@ -28,5 +28,5 @@ export default PublicationStack = createStackNavigator(
 },
 {
     initialRouteName: 'PublicationHome',
-    navigationOptions: NavigationOptions
+    defaultNavigationOptions: NavigationOptions
 });
